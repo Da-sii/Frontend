@@ -95,13 +95,26 @@ module.exports = {
         '15px': ['15px', { lineHeight: 'normal' }],
         '24px': ['24px', { lineHeight: 'normal' }],
         '16px': ['16px', { lineHeight: '24px' }],
-        'text-lg-eb': ['16px', { lineHeight: '20px' }],
+        
+        'h-lg': ['24px', { lineHeight: '30px' }],
+        'h-md': ['20px', { lineHeight: '24px' }],
+        'h-sm': ['18px', { lineHeight: '24px' }],
+
+        'b-lg': ['16px', { lineHeight: '20px' }],
+        'b-md': ['15px', { lineHeight: '18px' }],
+        'b-sm': ['14px', { lineHeight: '18px' }],
+
+        'c1': ['13px', { lineHeight: '16px' }],
+        'c2': ['12px', { lineHeight: '16px' }],
+        'c3': ['10px', { lineHeight: '14px' }],
+
       },
       fontWeight: {
         normal: '400',
         medium: '500',
         semibold: '600',
         bold: '700',
+        exgraBold: '800',
       },
     },
     backgroundImage: {
