@@ -24,7 +24,7 @@ export default function Home() {
   const viewConfigRef = React.useRef({ viewAreaCoveragePercentThreshold: 50 });
 
   return (
-    <SafeAreaView className='bg-white flex-1'>
+    <SafeAreaView className='bg-white flex-1' edges={['top', 'left', 'right']}>
       <ScrollView className='flex-1'>
         <View className='flex-row justify-between items-center px-4 pt-4 pb-2'>
           <LogoIcon />

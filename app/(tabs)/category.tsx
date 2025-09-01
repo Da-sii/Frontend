@@ -48,7 +48,7 @@ export default function Category() {
   const sidebarWidth = colWidth + 16 * 2;
 
   return (
-    <SafeAreaView className='flex-1 bg-white'>
+    <SafeAreaView className='flex-1 bg-white' edges={['top', 'left', 'right']}>
       <Navigation title='카테고리' />
 
       <View className='w-full border-b-[0.5px] border-gray-200' />

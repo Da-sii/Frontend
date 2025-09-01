@@ -1,5 +1,3 @@
-// app/(tabs)/_layout.tsx
-
 import HomeIcon from '@/assets/icons/ic_home.svg';
 import PersonIcon from '@/assets/icons/ic_person.svg';
 import ShelfIcon from '@/assets/icons/ic_shelf.svg';
@@ -14,6 +12,10 @@ export default function TabsLayout() {
         headerShown: false,
         tabBarActiveTintColor: colors.gray[900],
         tabBarInactiveTintColor: colors.gray[400],
+        tabBarStyle: {
+          paddingBottom: 0, // 하단 패딩 제거
+          marginBottom: 0, // 하단 마진 제거
+        },
       }}
     >
       <Tabs.Screen

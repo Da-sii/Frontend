@@ -1,18 +1,32 @@
 import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
+import ListIcon from '@/assets/icons/ic_clock.svg';
 import SearchIcon from '@/assets/icons/ic_magnifier.svg';
+import ResetIcon from '@/assets/icons/ic_refresh.svg';
 import Navigation from '@/components/layout/Navigation';
-import RankingRow from '@/components/page/home/RankingItem';
+import RankingItem from '@/components/page/home/RankingItem';
 import colors from '@/constants/color';
 
 import { mockRankingData } from '@/mocks/data/home';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Dimensions, FlatList, Pressable, Text, View } from 'react-native';
+import {
+  Dimensions,
+  FlatList,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-export const options = {
-  tabBarStyle: { display: 'none' },
-};
+const categories = [
+  '전체',
+  '체지방 감소',
+  '에너지 소모/기초대사량 증가',
+  '에너지 소모/기초대사량 증가',
+  '에너지 소모/기초대사량 증가',
+  '에너지 소모/기초대사량 증가',
+];
 
 const { width } = Dimensions.get('window');
 
@@ -51,10 +65,13 @@ export default function Ranking() {
   }: {
     item: RankingItem;
     index: number;
-  }) => <RankingRow item={item} index={index} onPress={() => {}} />;
+  }) => <RankingItem item={item} index={index} onPress={() => {}} />;
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: '#fff' }}
+      edges={['top', 'left', 'right']}
+    >
       <Navigation
         title='랭킹'
         left={<ArrowLeftIcon width={20} height={20} fill={colors.gray[900]} />}
@@ -63,15 +80,10 @@ export default function Ranking() {
         onRightPress={() => router.push('/home/search')}
       />
 
-      <View style={{ flexDirection: 'row', marginHorizontal: 16 }}>
+      <View className='flex-row w-full border-t-[0.5px] border-b-[0.5px] border-gray-200'>
         <Pressable
           onPress={() => onChangeTab('day')}
-          style={{
-            flex: 1,
-            paddingVertical: 8,
-            borderBottomWidth: tab === 'day' ? 2 : 1,
-            borderColor: tab === 'day' ? colors.gray[500] : colors.gray[300],
-          }}
+          className='px-2 py-3 mx-2'
         >
           <Text
             style={{
@@ -83,15 +95,7 @@ export default function Ranking() {
             현재 급상승 랭킹
           </Text>
         </Pressable>
-        <Pressable
-          onPress={() => onChangeTab('month')}
-          style={{
-            flex: 1,
-            paddingVertical: 8,
-            borderBottomWidth: tab === 'month' ? 2 : 1,
-            borderColor: tab === 'month' ? colors.gray[500] : colors.gray[300],
-          }}
-        >
+        <Pressable onPress={() => onChangeTab('month')} className='px-2 py-3'>
           <Text
             style={{
               textAlign: 'center',
@@ -104,25 +108,53 @@ export default function Ranking() {
         </Pressable>
       </View>
 
-      <View style={{ flexDirection: 'row', paddingVertical: 12 }}>
-        {['전체', '체지방 감소', '에너지 소모/기초대사량 증가'].map((cat) => (
-          <Pressable
-            key={cat}
-            onPress={() => onFilter(cat)}
-            style={{
-              marginLeft: cat === '전체' ? 16 : 8,
-              paddingHorizontal: 12,
-              paddingVertical: 6,
-            }}
-            className={`${filter === cat ? 'bg-green-500 text-white' : 'bg-white text-gray-700'} rounded-full`}
-          >
-            <Text
-              className={`${filter === cat ? 'text-white border-green-500' : 'text-gray-700 border-gray-300'} text-xs font-medium`}
-            >
-              {cat}
+      <View className='flex-col'>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
+          className='mb-4'
+        >
+          <View className='flex-row'>
+            {categories.map((cat, idx) => {
+              const selected = filter === cat;
+              return (
+                <Pressable
+                  key={idx}
+                  onPress={() => onFilter(cat)}
+                  style={{
+                    borderWidth: 1,
+                    borderColor: selected ? '#22C55E' : '#D1D5DB',
+                  }}
+                  className={`${selected ? 'bg-green-500 text-white' : 'bg-white text-gray-700'} mr-2 rounded-full px-3 py-1`}
+                >
+                  <Text
+                    className={`${selected ? 'text-white' : 'text-gray-700'} text-xs font-medium`}
+                  >
+                    {cat}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        </ScrollView>
+
+        <View className='flex-row justify-between mx-4 items-center'>
+          {tab === 'day' ? (
+            <View className='flex-row items-center'>
+              <ResetIcon width={12} height={12} className='mr-1' />
+              <Text className='text-gray-200 text-xs'>초기화</Text>
+            </View>
+          ) : (
+            <View />
+          )}
+          <View className='flex-row items-center'>
+            <ListIcon width={12} height={12} className='mr-1' />
+            <Text className='text-gray-200 text-xs'>
+              {tab === 'day' && 'MM.DD '}18:00 기준
             </Text>
-          </Pressable>
-        ))}
+          </View>
+        </View>
       </View>
 
       <FlatList
