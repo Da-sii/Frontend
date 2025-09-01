@@ -1,3 +1,4 @@
+import ViewAllIcon from '@/assets/icons/ic_arrow_right.svg';
 import Navigation from '@/components/layout/Navigation';
 import React, { useState } from 'react';
 import {
@@ -55,21 +56,23 @@ export default function Category() {
 
       <View className='flex-1 flex-row bg-white'>
         <ScrollView
-          className='border-r border-gray-200 bg-gray-100'
+          className='flex-none border-gray-200 bg-gray-100'
           style={{
             width: sidebarWidth,
+            flexGrow: 0,
+            flexShrink: 0,
           }}
         >
           {mainCategories.map((cat) => (
             <Pressable
               key={cat}
               onPress={() => setSelectedMain(cat)}
-              className={`items-center py-3 ${
+              className={`items-start py-3 ${
                 selectedMain === cat ? 'bg-white' : 'bg-gray-100'
               }`}
             >
               <Text
-                className={`text-sm font-medium ${
+                className={`text-sm font-medium pl-6 ${
                   selectedMain === cat ? 'text-gray-900' : 'text-gray-400'
                 }`}
                 onLayout={onTextLayout}
@@ -81,14 +84,16 @@ export default function Category() {
         </ScrollView>
 
         <View className='flex-1'>
-          <View className='flex-row justify-between items-center px-4 py-3 border-b border-gray-200'>
+          <View className='flex-row justify-between items-center px-4 py-3'>
             <Text className='text-lg font-semibold text-gray-900'>
               {selectedMain}
             </Text>
-            <Pressable onPress={() => {}}>
-              <Text className='text-sm text-gray-500'>전체보기</Text>
+            <Pressable onPress={() => {}} className='flex-row items-center'>
+              <Text className='text-xs text-gray-500'>전체보기</Text>
+              <ViewAllIcon width={10} height={10} />
             </Pressable>
           </View>
+
           <FlatList
             data={subCategoriesMap[selectedMain] || []}
             keyExtractor={(item) => item}
