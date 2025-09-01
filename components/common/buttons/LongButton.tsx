@@ -17,7 +17,7 @@ export const LongButton: React.FC<LongButtonProps> = ({ label, onPress, disabled
         ${disabled ? "bg-gray-200" : "bg-green-500 active:bg-green-600"}
       `}
     >
-      <Text className="text-white text-lg-eb font-extrabold"
+      <Text className="text-white text-b-lg font-extrabold"
        >{label}</Text>
     </TouchableOpacity>
 
