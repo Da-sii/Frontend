@@ -13,7 +13,7 @@ export const LongButton: React.FC<LongButtonProps> = ({ label, onPress, disabled
     <TouchableOpacity
       onPress={onPress}
       disabled={disabled}
-      className={`w-full h-[60px] rounded-xl py-5 items-center 
+      className={`w-[90%] h-[60px] rounded-xl py-5 items-center 
         ${disabled ? "bg-gray-200" : "bg-green-500 active:bg-green-600"}
       `}
     >
