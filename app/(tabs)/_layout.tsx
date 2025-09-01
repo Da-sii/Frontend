@@ -1,3 +1,5 @@
+// app/(tabs)/_layout.tsx
+
 import HomeIcon from '@/assets/icons/ic_home.svg';
 import PersonIcon from '@/assets/icons/ic_person.svg';
 import ShelfIcon from '@/assets/icons/ic_shelf.svg';
@@ -10,8 +12,8 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#FD359C',
-        tabBarInactiveTintColor: '#9E9E9E',
+        tabBarActiveTintColor: colors.gray[900],
+        tabBarInactiveTintColor: colors.gray[400],
       }}
     >
       <Tabs.Screen
@@ -83,6 +85,14 @@ export default function TabsLayout() {
               마이페이지
             </Text>
           ),
+        }}
+      />
+
+      <Tabs.Screen
+        name='home/ranking'
+        options={{
+          tabBarButton: () => null,
+          tabBarItemStyle: { display: 'none' },
         }}
       />
     </Tabs>

@@ -1,7 +1,7 @@
 export const bannerData = [
   {
     id: '1',
-    image: require('@/assets/images/img_product_1.png'),
+    image: require('@/assets/images/img_product_4.png'),
     description: '빠른 부종 개선에 유용한 인기템',
   },
   {
@@ -11,27 +11,54 @@ export const bannerData = [
   },
 ];
 
-export const rankingData = [
+export const mockRankingData = [
   {
     id: '1',
     image: require('@/assets/images/img_product_1.png'),
-    name: '제품명제품명제품명제품명',
+    brand: '회사명',
+    name: '제품명제품명제품명제품명제품명제품명...',
     rating: 4.79,
-    price: '99,999원',
+    reviewCount: '리뷰수',
+    price: '정가 99,999원',
+    weight: '500g',
+    change: 3,
+    isNew: false,
   },
   {
     id: '2',
     image: require('@/assets/images/img_product_2.png'),
-    name: '다른 제품명',
-    rating: 4.5,
-    price: '89,999원',
+    brand: '회사명',
+    name: '제품명제품명제품명제품명제품명제품명...',
+    rating: 4.79,
+    reviewCount: '리뷰수',
+    price: '정가 99,999원',
+    weight: '27ml x 30포',
+    change: -3,
+    isNew: false,
   },
   {
     id: '3',
     image: require('@/assets/images/img_product_3.png'),
-    name: '제품3',
-    rating: 4.9,
-    price: '79,999원',
+    brand: '회사명',
+    name: '제품명제품명제품명제품명제품명제품명...',
+    rating: 4.79,
+    reviewCount: '리뷰수',
+    price: '정가 99,999원',
+    weight: '27ml x 30포',
+    change: 0,
+    isNew: true,
+  },
+  {
+    id: '4',
+    image: require('@/assets/images/img_product_4.png'),
+    brand: '회사명',
+    name: '제품명제품명제품명제품명제품명제품명...',
+    rating: 4.79,
+    reviewCount: '리뷰수',
+    price: '정가 99,999원',
+    weight: '27ml x 30포',
+    change: 3,
+    isNew: false,
   },
 ];
 

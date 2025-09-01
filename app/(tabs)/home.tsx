@@ -5,7 +5,8 @@ import BannerCarousel from '@/components/page/home/BannerCarousel';
 import ProductCarousel from '@/components/page/home/ProductCarousel';
 import TagsView from '@/components/page/home/TagsView';
 
-import { bannerData, categories, rankingData } from '@/mocks/data/home';
+import { bannerData, categories, mockRankingData } from '@/mocks/data/home';
+import { router } from 'expo-router';
 
 import React, { useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
@@ -29,9 +30,11 @@ export default function Home() {
           <LogoIcon />
 
           <View className='flex-row gap-4'>
-            <Pressable>
-              <MagnifierIcon />
-            </Pressable>
+            <View className='flex-row gap-4'>
+              <Pressable onPress={() => router.push('/home/search')}>
+                <MagnifierIcon width={20} height={20} />
+              </Pressable>
+            </View>
           </View>
         </View>
 
@@ -53,10 +56,12 @@ export default function Home() {
             <Text className='text-base font-semibold mb-2'>
               현재 급상승 랭킹
             </Text>
-            <GoRankingIcon />
+            <GoRankingIcon
+              onPress={() => router.push('/(tabs)/home/ranking')}
+            />
           </View>
 
-          <ProductCarousel data={rankingData} />
+          <ProductCarousel data={mockRankingData} />
         </View>
       </ScrollView>
     </SafeAreaView>
