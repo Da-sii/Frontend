@@ -5,7 +5,7 @@ import 'react-native-reanimated';
 
 export default function RootLayout() {
   const [loaded] = useFonts({
-    pretendard: require('@/assets/fonts/NanumSquareNeo-Variable.ttf'),
+    NanumSquareNeo: require('@/assets/fonts/NanumSquareNeo-Variable.ttf'),
   });
 
   if (!loaded) {
@@ -17,6 +17,7 @@ export default function RootLayout() {
       <Stack>
         <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
         <Stack.Screen name='+not-found' />
+        <Stack.Screen name='home/search' options={{ headerShown: false }} />
       </Stack>
       <StatusBar style='auto' />
     </>

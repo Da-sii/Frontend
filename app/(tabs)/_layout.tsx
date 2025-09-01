@@ -10,8 +10,12 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#FD359C',
-        tabBarInactiveTintColor: '#9E9E9E',
+        tabBarActiveTintColor: colors.gray[900],
+        tabBarInactiveTintColor: colors.gray[400],
+        tabBarStyle: {
+          paddingBottom: 0, // 하단 패딩 제거
+          marginBottom: 0, // 하단 마진 제거
+        },
       }}
     >
       <Tabs.Screen
@@ -83,6 +87,14 @@ export default function TabsLayout() {
               마이페이지
             </Text>
           ),
+        }}
+      />
+
+      <Tabs.Screen
+        name='home/ranking'
+        options={{
+          tabBarButton: () => null,
+          tabBarItemStyle: { display: 'none' },
         }}
       />
     </Tabs>

@@ -89,7 +89,7 @@ module.exports = {
         },
       },
       fontFamily: {
-        pretendard: ['NanumSquareNeo'],
+        NanumSquareNeo: ['NanumSquareNeo'],
       },
       fontSize: {
         '15px': ['15px', { lineHeight: 'normal' }],
