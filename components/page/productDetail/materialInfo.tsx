@@ -5,6 +5,7 @@ import DownArrowIcon from '@/assets/icons/productDetail/ic_arrow_down.svg';
 import UpArrowIcon from '@/assets/icons/productDetail/ic_arrow_up.svg';
 import React, { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
+import ProgressBar from './progressBar';
 
 interface material {
   ko_name: string;
@@ -47,6 +48,10 @@ export default function MaterialInfo({ materialInfo }: materialInfoProups) {
           1일 권장량 {materialInfo.recommended_amount_min}~
           {materialInfo.recommended_amount_max}mg
         </Text>
+        <ProgressBar
+          current={materialInfo.amount}
+          recommended={materialInfo.recommended_amount_max}
+        />
 
         {isOpen ? (
           <View className='bg-[#F6F5FA] rounded-[12px] flex-col px-3'>

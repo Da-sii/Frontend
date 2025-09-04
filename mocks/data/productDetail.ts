@@ -22,7 +22,7 @@ export const mockProductData = [
         {
           ko_name: '가르시니아 캄보지아 추출물', //한국어 이름
           en_name: 'HCA, Hydroxycitric Acid', //영어 이름
-          amount: 11000, // 포함량
+          amount: 1000, // 포함량
           recommended_amount_min: 30, // 최소 권장량
           recommended_amount_max: 1000, //최대 권장량
           effect:
