@@ -7,8 +7,8 @@ import RankingItem from '@/components/page/home/RankingItem';
 import colors from '@/constants/color';
 
 import { mockRankingData } from '@/mocks/data/home';
-import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import React, { useEffect, useState } from 'react';
 import {
   Dimensions,
   FlatList,
@@ -24,9 +24,9 @@ const categories = [
   '전체',
   '체지방 감소',
   '에너지 소모/기초대사량 증가',
-  '에너지 소모/기초대사량 증가',
-  '에너지 소모/기초대사량 증가',
-  '에너지 소모/기초대사량 증가',
+  '에너지 소모/기초대사량 감소',
+  '에너지 소모/기초대사량 일정',
+  '에너지 소모/기초대사량 몰라',
 ];
 
 const { width } = Dimensions.get('window');
@@ -46,9 +46,19 @@ interface RankingItem {
 
 export default function Ranking() {
   const router = useRouter();
+  const params = useLocalSearchParams();
+
+  const initialFilter = params.category ? (params.category as string) : '전체';
+
+  const [filter, setFilter] = useState<string>(initialFilter);
   const [tab, setTab] = useState<'day' | 'month'>('day');
-  const [filter, setFilter] = useState<string>('전체');
   const [data, setData] = useState(mockRankingData);
+
+  useEffect(() => {
+    if (params.category && categories.includes(params.category as string)) {
+      setFilter(params.category as string);
+    }
+  }, [params.category]);
 
   const onChangeTab = (next: 'day' | 'month') => {
     setTab(next);
@@ -117,20 +127,24 @@ export default function Ranking() {
           className='mb-4'
         >
           <View className='flex-row'>
-            {categories.map((cat, idx) => {
+            {categories.map((cat) => {
               const selected = filter === cat;
               return (
                 <Pressable
-                  key={idx}
+                  key={cat}
                   onPress={() => onFilter(cat)}
                   style={{
                     borderWidth: 1,
                     borderColor: selected ? '#22C55E' : '#D1D5DB',
                   }}
-                  className={`${selected ? 'bg-green-500 text-white' : 'bg-white text-gray-700'} mr-2 rounded-full px-3 py-1`}
+                  className={`mr-2 rounded-full px-3 py-1 ${
+                    selected ? 'bg-green-500' : 'bg-white'
+                  }`}
                 >
                   <Text
-                    className={`${selected ? 'text-white' : 'text-gray-700'} text-xs font-medium`}
+                    className={`text-xs font-medium ${
+                      selected ? 'text-white' : 'text-gray-700'
+                    }`}
                   >
                     {cat}
                   </Text>

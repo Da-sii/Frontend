@@ -1,6 +1,13 @@
 import colors from '@/constants/color';
 import React from 'react';
-import { Image, Text, View } from 'react-native';
+import {
+  Image,
+  ImageStyle,
+  Text,
+  TextStyle,
+  View,
+  ViewStyle,
+} from 'react-native';
 
 export interface Product {
   id: string;
@@ -15,28 +22,35 @@ export interface Product {
 
 interface ProductCardProps {
   item: Product;
-  style?: object;
+  style?: ViewStyle;
+  imageStyle?: ImageStyle;
+  titleStyle?: TextStyle;
+  titleNumberOfLines?: number;
+  infoContainerStyle?: ViewStyle;
 }
 
-export default function ProductCard({ item, style }: ProductCardProps) {
+export default function ProductCard({
+  item,
+  style,
+  imageStyle,
+  titleStyle,
+  titleNumberOfLines = 2,
+  infoContainerStyle,
+}: ProductCardProps) {
   return (
     <View
       style={[
-        {
-          backgroundColor: '#fff',
-          borderRadius: 8,
-          overflow: 'hidden',
-        },
+        { backgroundColor: '#fff', borderRadius: 8, overflow: 'hidden' },
         style,
       ]}
     >
       <Image
         source={item.image}
-        style={{ width: '100%', aspectRatio: 1 }}
+        style={[{ width: '100%', aspectRatio: 1 }, imageStyle]}
         resizeMode='cover'
       />
 
-      <View style={{ padding: 8 }}>
+      <View style={[{ padding: 8 }, infoContainerStyle]}>
         <Text
           style={{ fontSize: 12, color: colors.gray[500], marginBottom: 4 }}
         >
@@ -44,13 +58,16 @@ export default function ProductCard({ item, style }: ProductCardProps) {
         </Text>
 
         <Text
-          style={{
-            fontSize: 14,
-            fontWeight: '500',
-            color: colors.gray[900],
-            marginBottom: 4,
-          }}
-          numberOfLines={2}
+          numberOfLines={1}
+          style={[
+            {
+              fontSize: 14,
+              fontWeight: '500',
+              color: colors.gray[900],
+              marginBottom: 4,
+            },
+            titleStyle,
+          ]}
         >
           {item.name}
         </Text>

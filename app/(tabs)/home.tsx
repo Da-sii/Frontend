@@ -26,7 +26,7 @@ export default function Home() {
   return (
     <SafeAreaView className='bg-white flex-1' edges={['top', 'left', 'right']}>
       <ScrollView className='flex-1'>
-        <View className='flex-row justify-between items-center px-4 pt-4 pb-2'>
+        <View className='flex-row justify-between items-center px-6 py-4'>
           <LogoIcon />
 
           <View className='flex-row gap-4'>

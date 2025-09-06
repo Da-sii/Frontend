@@ -97,6 +97,14 @@ export default function TabsLayout() {
           tabBarItemStyle: { display: 'none' },
         }}
       />
+
+      <Tabs.Screen
+        name='category/list'
+        options={{
+          tabBarButton: () => null,
+          tabBarItemStyle: { display: 'none' },
+        }}
+      />
     </Tabs>
   );
 }
