@@ -76,7 +76,18 @@ export default function Ranking() {
   }: {
     item: RankingItem;
     index: number;
-  }) => <RankingItem item={item} index={index} onPress={() => {}} />;
+  }) => (
+    <RankingItem
+      item={item}
+      index={index}
+      onPress={() =>
+        router.push({
+          pathname: '/productDetail/[id]',
+          params: { id: item.id },
+        })
+      }
+    />
+  );
 
   return (
     <SafeAreaView

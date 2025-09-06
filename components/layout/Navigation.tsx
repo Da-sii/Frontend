@@ -6,6 +6,7 @@ interface NavigationProps {
   center?: ReactNode;
   left?: ReactNode;
   right?: ReactNode;
+  secondRight?: ReactNode;
   onCenterPress?: () => void;
   onLeftPress?: () => void;
   onRightPress?: () => void;
@@ -16,6 +17,7 @@ export default function Navigation({
   center,
   left,
   right,
+  secondRight,
   onCenterPress,
   onLeftPress,
   onRightPress,
@@ -30,8 +32,12 @@ export default function Navigation({
         {center || <Text className='text-lg font-semibold'>{title}</Text>}
       </Pressable>
 
-      <Pressable onPress={onRightPress} className='p-1'>
+      <Pressable
+        onPress={onRightPress}
+        className='p-1 flex-row items-center gap-6'
+      >
         {right || <Text></Text>}
+        {secondRight && (secondRight || <Text></Text>)}
       </Pressable>
     </View>
   );
