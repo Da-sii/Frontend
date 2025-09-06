@@ -18,7 +18,7 @@ export const LongButton: React.FC<LongButtonProps> = ({
     <TouchableOpacity
       onPress={onPress}
       disabled={disabled}
-      className={`w-full ${height ? height : 'h-60px'} rounded-xl items-center 
+      className={`w-full ${height ? height : 'h-[60px]'} rounded-xl items-center 
         ${disabled ? 'bg-gray-200' : 'bg-green-500 active:bg-green-600'}
       `}
     >
