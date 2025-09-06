@@ -9,6 +9,16 @@ export const bannerData = [
     image: require('@/assets/images/img_product_2.png'),
     description: '다른 배너 설명',
   },
+  {
+    id: '3',
+    image: require('@/assets/images/img_product_4.png'),
+    description: '빠른 부종 개선에 유용한 인기템',
+  },
+  {
+    id: '4',
+    image: require('@/assets/images/img_product_2.png'),
+    description: '다른 배너 설명',
+  },
 ];
 
 export const mockRankingData = [
@@ -19,7 +29,7 @@ export const mockRankingData = [
     name: '제품명제품명제품명제품명제품명...',
     rating: 4.79,
     reviewCount: '리뷰수',
-    price: '정가 99,999원',
+    price: '99,999원',
     weight: '500g',
     change: 3,
     isNew: false,
@@ -31,7 +41,7 @@ export const mockRankingData = [
     name: '제품명제품명제품명제품명제품명...',
     rating: 4.79,
     reviewCount: '리뷰수',
-    price: '정가 99,999원',
+    price: '99,999원',
     weight: '27ml x 30포',
     change: -3,
     isNew: false,
@@ -43,7 +53,7 @@ export const mockRankingData = [
     name: '제품명제품명제품명제품명제품명...',
     rating: 4.79,
     reviewCount: '리뷰수',
-    price: '정가 99,999원',
+    price: '99,999원',
     weight: '27ml x 30포',
     change: 0,
     isNew: true,
@@ -55,7 +65,7 @@ export const mockRankingData = [
     name: '제품명제품명제품명제품명제품명...',
     rating: 4.79,
     reviewCount: '리뷰수',
-    price: '정가 99,999원',
+    price: '99,999원',
     weight: '27ml x 30포',
     change: 3,
     isNew: false,

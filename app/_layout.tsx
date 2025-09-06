@@ -1,3 +1,4 @@
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -15,12 +16,14 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView>
-      <Stack>
-        <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
-        <Stack.Screen name='+not-found' />
-        <Stack.Screen name='home/search' options={{ headerShown: false }} />
-      </Stack>
-      <StatusBar style='auto' />
+      <BottomSheetModalProvider>
+        <Stack>
+          <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
+          <Stack.Screen name='+not-found' />
+          <Stack.Screen name='home/search' options={{ headerShown: false }} />
+        </Stack>
+        <StatusBar style='auto' />
+      </BottomSheetModalProvider>
     </GestureHandlerRootView>
   );
 }
