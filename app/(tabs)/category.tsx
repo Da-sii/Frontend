@@ -1,5 +1,6 @@
 import ViewAllIcon from '@/assets/icons/ic_arrow_right.svg';
 import Navigation from '@/components/layout/Navigation';
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
   FlatList,
@@ -37,6 +38,7 @@ const subCategoriesMap: Record<string, string[]> = {
 };
 
 export default function Category() {
+  const router = useRouter();
   const [selectedMain, setSelectedMain] = useState(mainCategories[0]);
   const [colWidth, setColWidth] = useState<number>(0);
 
@@ -47,6 +49,13 @@ export default function Category() {
     }
   };
   const sidebarWidth = colWidth + 16 * 2;
+
+  const goToList = (sub?: string) => {
+    router.push({
+      pathname: '/(tabs)/category/list',
+      params: { main: selectedMain, sub: sub || 'all' },
+    });
+  };
 
   return (
     <SafeAreaView className='flex-1 bg-white' edges={['top', 'left', 'right']}>
@@ -88,7 +97,10 @@ export default function Category() {
             <Text className='text-lg font-semibold text-gray-900'>
               {selectedMain}
             </Text>
-            <Pressable onPress={() => {}} className='flex-row items-center'>
+            <Pressable
+              onPress={() => goToList()}
+              className='flex-row items-center'
+            >
               <Text className='text-xs text-gray-500'>전체보기</Text>
               <ViewAllIcon width={10} height={10} />
             </Pressable>
@@ -98,7 +110,7 @@ export default function Category() {
             data={subCategoriesMap[selectedMain] || []}
             keyExtractor={(item) => item}
             renderItem={({ item }) => (
-              <Pressable className='py-3 px-4'>
+              <Pressable className='py-3 px-4' onPress={() => goToList(item)}>
                 <Text className='text-sm text-gray-900'>{item}</Text>
               </Pressable>
             )}

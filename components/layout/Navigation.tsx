@@ -3,18 +3,22 @@ import { Pressable, Text, View } from 'react-native';
 
 interface NavigationProps {
   title?: string;
+  center?: ReactNode;
   left?: ReactNode;
   right?: ReactNode;
   secondRight?: ReactNode;
+  onCenterPress?: () => void;
   onLeftPress?: () => void;
   onRightPress?: () => void;
 }
 
 export default function Navigation({
   title = '',
+  center,
   left,
   right,
   secondRight,
+  onCenterPress,
   onLeftPress,
   onRightPress,
 }: NavigationProps) {
@@ -24,7 +28,9 @@ export default function Navigation({
         {left || <Text></Text>}
       </Pressable>
 
-      <Text className='text-lg font-semibold'>{title}</Text>
+      <Pressable onPress={onCenterPress} className='flex-1 items-center'>
+        {center || <Text className='text-lg font-semibold'>{title}</Text>}
+      </Pressable>
 
       <Pressable
         onPress={onRightPress}
