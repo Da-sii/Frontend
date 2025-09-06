@@ -1,3 +1,6 @@
+export const DEFAULT_IMG =
+  'https://dummyimage.com/600x600/eeeeee/888888.png&text=No+Image';
+
 export const mockProductData = [
   {
     id: '1',
@@ -66,6 +69,54 @@ export const mockProductData = [
           side_effect:
             '부작용#!#!#반짝거리는 창문 너머 햇살이 날 비춰 어느덧 스며온 계절에 꿈꾸듯 널 떠올려 일렁이는 내 맘도 포근한 설렘 속에 움이 터 이토록 예쁜 날엔 널 만나러 갈게', // 부작용
           ingredien_status: '초과', // 성분 상태
+        },
+      ],
+    },
+    review: {
+      reviewCount: 1000,
+      reviewRank: 4.93,
+      fiveStarPercent: 89,
+      fourStarPercent: 7,
+      threeStarPercent: 7,
+      twoStarPercent: 7,
+      oneStarPercent: 7,
+      images: [
+        'https://picsum.photos/id/1018/800/800',
+        'https://picsum.photos/id/1027/800/800',
+        'https://picsum.photos/id/1027/800/800',
+        'https://picsum.photos/id/1035/800/800',
+        'https://picsum.photos/id/1043/800/800',
+        'https://picsum.photos/id/1050/800/800',
+        'https://picsum.photos/id/1069/800/800',
+        'https://picsum.photos/id/1074/800/800',
+      ],
+      reviewList: [
+        {
+          name: '닉네임',
+          date: '2025.08.01',
+          isEdited: true,
+          content:
+            '반짝거리는 창문 너머 햇살이 날 비춰 어느덧 스며온 계절에 꿈꾸듯 널 떠올려 일렁이는 내 맘도 포근한 설렘 속에 움이 터 이토록 예쁜 날엔 널 만나러 갈게 반짝거리는 창문 너머 햇살이 날 비춰 어느덧 스며온 계절에 꿈꾸듯 널 떠올려 일렁이는 내 맘도 포근한 설렘 속에 움이 터 이토록 예쁜 날엔 널 만나러 갈게 반짝거리는 창문 너머 햇살이 날 비춰 어느덧 스며온 계절에 꿈꾸듯 널 떠올려 일렁이는 내 맘도 포근한 설렘 속에 움이 터 이토록 예쁜 날엔 널 만나러 갈게 반짝거리는 창문 너머 햇살이 날 비춰 어느덧 스며온 계절에 꿈꾸듯 널 떠올려 일렁이는 내 맘도 포근한 설렘 속에 움이 터 이토록 예쁜 날엔 널 만나러 갈게 반짝거리는 창문 너머 햇살이 날 비춰 어느덧 스며온 계절에 꿈꾸듯 널 떠올려 일렁이는 내 맘도 포근한 설렘 속에 움이 터 이토록 예쁜 날엔 널 만나러 갈게 반짝거리는 창문 너머 햇살이 날 비춰 어느덧 스며온 계절에 꿈꾸듯 널 떠올려 일렁이는 내 맘도 포근한 설렘 속에 움이 터 이토록 예쁜 날엔 널 만나러 갈게 ',
+          rating: 4,
+          images: [],
+        },
+        {
+          name: '닉네임',
+          date: '2025.08.01',
+          isEdited: true,
+          content:
+            '반짝거리는 창문 너머 햇살이 날 비춰 어느덧 스며온 계절에 꿈꾸듯 널 떠올려 일렁이는 내 맘도 포근한 설렘 속에 움이 터 이토록 예쁜 날엔 널 만나러 갈게 반짝거리는 창문 너머 햇살이 날 비춰 어느덧 스며온 계절에 꿈꾸듯 널 떠올려 일렁이는 내 맘도 포근한 설렘 속에 움이 터 이토록 예쁜 날엔 널 만나러 갈게 반짝거리는 창문 너머 햇살이 날 비춰 어느덧 스며온 계절에 꿈꾸듯 널 떠올려 일렁이는 내 맘도 포근한 설렘 속에 움이 터 이토록 예쁜 날엔 널 만나러 갈게 반짝거리는 창문 너머 햇살이 날 비춰 어느덧 스며온 계절에 꿈꾸듯 널 떠올려 일렁이는 내 맘도 포근한 설렘 속에 움이 터 이토록 예쁜 날엔 널 만나러 갈게 반짝거리는 창문 너머 햇살이 날 비춰 어느덧 스며온 계절에 꿈꾸듯 널 떠올려 일렁이는 내 맘도 포근한 설렘 속에 움이 터 이토록 예쁜 날엔 널 만나러 갈게 반짝거리는 창문 너머 햇살이 날 비춰 어느덧 스며온 계절에 꿈꾸듯 널 떠올려 일렁이는 내 맘도 포근한 설렘 속에 움이 터 이토록 예쁜 날엔 널 만나러 갈게 ',
+          rating: 4,
+          images: [
+            'https://picsum.photos/id/1018/800/800',
+            'https://picsum.photos/id/1027/800/800',
+            'https://picsum.photos/id/1027/800/800',
+            'https://picsum.photos/id/1035/800/800',
+            'https://picsum.photos/id/1043/800/800',
+            'https://picsum.photos/id/1050/800/800',
+            'https://picsum.photos/id/1069/800/800',
+            'https://picsum.photos/id/1074/800/800',
+          ],
         },
       ],
     },

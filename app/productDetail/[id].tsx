@@ -2,32 +2,46 @@ import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
 import HomeIcon from '@/assets/icons/ic_home.svg';
 import SearchIcon from '@/assets/icons/ic_magnifier.svg';
 import StarIcon from '@/assets/icons/ic_star.svg';
+import ArrowRightIcon from '@/assets/icons/productDetail/ic_arrow_right.svg';
+import EmptyReviewIcon from '@/assets/icons/productDetail/ic_no_review.svg';
+import { LongButton } from '@/components/common/buttons/LongButton';
 import Navigation from '@/components/layout/Navigation';
 import MaterialInfo from '@/components/page/productDetail/materialInfo';
+import PhotoCard from '@/components/page/productDetail/PhotoCard';
+import ReviewCard from '@/components/page/productDetail/ReviewCard';
+import ReviewItems from '@/components/page/productDetail/reviewItem';
 import CustomTabs from '@/components/page/productDetail/tab';
 import colors from '@/constants/color';
 import { mockProductData } from '@/mocks/data/productDetail';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useState } from 'react';
-import { Image, ScrollView, Text, View } from 'react-native';
+import { useMemo, useState } from 'react';
+import { FlatList, Image, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
 const tabs = [
   { key: 'ingredient', label: '성분 정보' },
   { key: 'review', label: '리뷰' },
 ];
+
 export default function ProductDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  // mock 데이터에서 해당 id 제품 찾기
   const product = mockProductData.find((item) => item.id === id);
 
   const [activeTab, setActiveTab] = useState<'ingredient' | 'review'>(
     'ingredient',
   );
 
-  if (!product) {
-    return <Text>제품을 찾을 수 없습니다.</Text>;
-  }
+  if (!product) return <Text>제품을 찾을 수 없습니다.</Text>;
+
+  // 리뷰 탭에서 상단 사진 그리드에 쓸 사진 모음(예: 상품/리뷰 이미지 합치기 원하면 여기서 처리)
+  const reviewPhotos = useMemo(
+    () => product.review?.reviewList?.flatMap((r) => r.images ?? []) ?? [],
+    [product.review?.reviewList],
+  );
+
+  // 탭에 따라 리스트 데이터 스위치: ingredient면 빈 배열(아이템 없음), review면 리뷰 리스트
+  const listData = activeTab === 'review' ? product.review?.reviewList : [];
 
   return (
     <SafeAreaView className='flex-1 bg-white'>
@@ -41,82 +55,167 @@ export default function ProductDetail() {
         onRightPress={() => router.push('/home/search')}
       />
 
-      <ScrollView
-        className='flex-1'
-        contentContainerStyle={{ flexGrow: 1, paddingBottom: 24 }}
-      >
-        {/* 상품 이미지 */}
-        <View className='h-[390px] w-full'>
-          {product.image ? (
-            <Image source={product.image} className='w-full h-full' />
-          ) : (
-            <View className='border-gray-100 border w-full h-full mx-auto'>
-              <Text className='text-b-lg font-bold text-gray-500 w-fit mx-auto my-auto'>
-                상품 이미지를 준비중입니다.
-              </Text>
+      <FlatList
+        data={listData}
+        keyExtractor={(_, index) => String(index)}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 24 }}
+        /* 상단 고정 영역 */
+        ListHeaderComponent={
+          <View>
+            {/* 상품 이미지 */}
+            <View className='h-[390px] w-full'>
+              {product.image ? (
+                typeof product.image === 'string' ? (
+                  <Image
+                    source={{ uri: product.image }}
+                    className='w-full h-full'
+                  />
+                ) : (
+                  <Image
+                    source={product.image as any}
+                    className='w-full h-full'
+                  />
+                )
+              ) : (
+                <View className='border-gray-100 border w-full h-full items-center justify-center'>
+                  <Text className='text-b-lg font-bold text-gray-500'>
+                    상품 이미지를 준비중입니다.
+                  </Text>
+                </View>
+              )}
             </View>
-          )}
-        </View>
-        {/* 상품 정보 헤더  */}
-        <View className='flex-col gap-y-5 border-gray-100 border-b py-5 px-5'>
-          <View className='flex-col gap-[15px]'>
-            <Text className='text-b-sm font-bold'>{product.brand}</Text>
-            <Text className='text-h-md font-bold'>{product.name}</Text>
-            <View className='flex-row items-center'>
-              <StarIcon />
-              <Text className='text-c1 font-nomal text-gray-400 ml-[3px]'>
-                {product.rating} ({product.reviewCount})
-              </Text>
-            </View>
-          </View>
-          <View className='flex-row items-center'>
-            <Text className='text-b-lg font-bold '>정가 </Text>
-            <Text className='text-h-md font-extrabold'>{product.price}원 </Text>
-            <Text className='text-c1 font-bold text-gray-300'>
-              / {product.weight}g
-            </Text>
-          </View>
-        </View>
 
-        {/* 랭킹 및 영양 정보 */}
-        <View className='flex-col gap-y-4 border-gray-100 border-b-[3px] py-5 px-5'>
-          <View className='flex-row '>
-            <Text className='text-c2 font-nomal text-gray-400 mr-[26px] w-[46px]'>
-              랭킹
-            </Text>
-            <View className='flex-col'>
-              {product.ranking?.map((item, index) => (
-                <Text key={index} className='text-c2 font-nomal'>
-                  {item.title}
+            {/* 상품 정보 헤더 */}
+            <View className='flex-col gap-y-5 border-gray-100 border-b py-5 px-5'>
+              <View className='flex-col gap-[15px]'>
+                <Text className='text-b-sm font-bold'>{product.brand}</Text>
+                <Text className='text-h-md font-bold'>{product.name}</Text>
+                <View className='flex-row items-center'>
+                  <StarIcon />
+                  <Text className='text-c1 font-normal text-gray-400 ml-[3px]'>
+                    {product.rating} ({product.reviewCount})
+                  </Text>
+                </View>
+              </View>
+              <View className='flex-row items-center'>
+                <Text className='text-b-lg font-bold'>정가 </Text>
+                <Text className='text-h-md font-extrabold'>
+                  {product.price}원{' '}
                 </Text>
-              ))}
+                <Text className='text-c1 font-bold text-gray-300'>
+                  / {product.weight}g
+                </Text>
+              </View>
             </View>
-          </View>
-          <View className='flex-row '>
-            <Text className='text-c2 font-nomal text-gray-400 w-[46px] mr-[26px]'>
-              영양정보
-            </Text>
-            <Text className='text-c2 font-nomal '>{product.antelope} </Text>
-          </View>
-        </View>
 
-        {/* 하단 정보 */}
-        <CustomTabs
-          tabs={tabs}
-          value={activeTab}
-          onChange={(key) => setActiveTab(key as 'ingredient' | 'review')}
-        />
+            {/* 랭킹 및 영양 정보 */}
+            <View className='flex-col gap-y-4 border-gray-100 border-b-[3px] py-5 px-5'>
+              <View className='flex-row'>
+                <Text className='text-c2 font-normal text-gray-400 mr-[26px] w-[46px]'>
+                  랭킹
+                </Text>
+                <View className='flex-col'>
+                  {product.ranking?.map((item, index) => (
+                    <Text key={index} className='text-c2 font-normal'>
+                      {item.title}
+                    </Text>
+                  ))}
+                </View>
+              </View>
+              <View className='flex-row'>
+                <Text className='text-c2 font-normal text-gray-400 w-[46px] mr-[26px]'>
+                  영양정보
+                </Text>
+                <Text className='text-c2 font-normal'>{product.antelope}</Text>
+              </View>
+            </View>
 
-        {/* 탭에 따른 내용 */}
-        {activeTab === 'ingredient' && (
-          <IngredientSection product={product.ingredients} />
-        )}
-        {activeTab === 'review' && <ReviewSection productId={product.id} />}
-      </ScrollView>
+            {/* 탭 */}
+            <CustomTabs
+              tabs={tabs}
+              value={activeTab}
+              onChange={(key) => setActiveTab(key as 'ingredient' | 'review')}
+            />
+
+            {/* 탭별 상단 콘텐츠 */}
+            {activeTab === 'ingredient' ? (
+              <IngredientSection product={product.ingredients} />
+            ) : (
+              <View className='px-5 mt-5'>
+                <View className='flex-row items-center justify-between mb-5'>
+                  <View className='flex-row items-center'>
+                    <Text className='text-b-lg font-bold'>리뷰 </Text>
+                    <Text className='text-b-lg font-bold text-gray-400'>
+                      ({product.review?.reviewList?.length ?? 0})
+                    </Text>
+                  </View>
+                  <ArrowRightIcon />
+                </View>
+
+                <LongButton label={'리뷰 작성하기'} height='h-[40px]' />
+
+                {product.review?.reviewList.length === 0 ? (
+                  <View className='items-center mt-[60px]'>
+                    <EmptyReviewIcon />
+                    <View className='flex-col items-center mt-[15px]'>
+                      <Text className='text-b-md font-bold text-gray-600 mb-[7px]'>
+                        아직 작성된 리뷰가 없어요.
+                      </Text>
+                      <Text className='text-b-md font-bold text-gray-600'>
+                        첫번째 리뷰를 작성해주세요!
+                      </Text>
+                    </View>
+                  </View>
+                ) : (
+                  <View className='mt-[16px]'>
+                    <ReviewCard
+                      reviewRank={product.review?.reviewRank || 0}
+                      distribution={{
+                        5: product.review?.fiveStarPercent || 0,
+                        4: product.review?.fourStarPercent || 0,
+                        3: product.review?.threeStarPercent || 0,
+                        2: product.review?.twoStarPercent || 0,
+                        1: product.review?.oneStarPercent || 0,
+                      }}
+                    />
+
+                    {/* 사진 그리드(주의: 내부가 세로 FlatList면 View+map 버전으로 바꾸기) */}
+                    <View className='mt-4 pb-5'>
+                      <PhotoCard
+                        images={reviewPhotos}
+                        maxPreview={6}
+                        onOpenMore={() => console.log('전체보기 이동')}
+                        onPressPhoto={(idx) => console.log('사진 클릭', idx)}
+                      />
+                    </View>
+
+                    {/* 아래부터는 아이템을 renderItem으로 렌더 */}
+                    <View className='w-[200%] h-[1px] left-[-50%] bg-gray-50' />
+                  </View>
+                )}
+              </View>
+            )}
+          </View>
+        }
+        /* 리뷰 탭일 때만 아이템(리뷰) 렌더 */
+        renderItem={
+          activeTab === 'review'
+            ? ({ item, index }) => (
+                <View key={index} >
+                  <ReviewItems reviewItem={item}  />
+                  <View className='w-[200%] h-[1px] left-[-50%] bg-gray-50' />
+                </View>
+              )
+            : undefined
+        }
+        ListFooterComponent={<View style={{ height: 24 }} />}
+      />
     </SafeAreaView>
   );
 }
 
+/* 그대로 사용 */
 function IngredientSection({
   product,
 }: {
@@ -124,29 +223,15 @@ function IngredientSection({
 }) {
   return (
     <View className='p-5'>
-      {/* 성분/영양 등 상세 */}
       <View className='flex-row mb-[10px]'>
         <Text className='text-b-lg font-bold mb-2'>기능성 원료 </Text>
         <Text className='text-b-lg font-extrabold text-green-500'>
           {product?.materials}개
         </Text>
       </View>
-
-      {product?.materialInfo.map((item, index) => {
-        return <MaterialInfo key={index} materialInfo={item} />;
-      })}
-    </View>
-  );
-}
-
-function ReviewSection({ productId }: { productId: string }) {
-  // 서버/목데이터로 리뷰 불러오기 로직 자리
-  return (
-    <View className='p-5'>
-      <Text className='text-b-md font-bold mb-2'>리뷰</Text>
-      <Text className='text-c2 text-gray-600'>
-        아직 등록된 리뷰가 없습니다.
-      </Text>
+      {product?.materialInfo.map((item, index) => (
+        <MaterialInfo key={index} materialInfo={item} />
+      ))}
     </View>
   );
 }

@@ -40,10 +40,6 @@ export default function ProgressBar({
           <Text className='text-white text-c3 font-extrabold'>{current}mg</Text>
         </View>
       </View>
-
-      {/* 현재 섭취량 텍스트 */}
-
-      {/* 권장량 dot + 텍스트 */}
     </View>
   );
 }
