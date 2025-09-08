@@ -6,7 +6,7 @@ export const mockProductData = [
     id: '1',
     image: null,
     brand: '회사명',
-    name: '제품명제품명제품명제품명제품명...',
+    name: '제품명제품명제품명제품명제품명제품제품제품제품명제품명제품명제품명제품명제품제품제품',
     rating: 4.79,
     reviewCount: 1000,
     price: 99999,

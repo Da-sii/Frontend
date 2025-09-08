@@ -1,20 +1,20 @@
 import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
+import ArrowRightIcon from '@/assets/icons/ic_arrow_right.svg';
 import HomeIcon from '@/assets/icons/ic_home.svg';
 import SearchIcon from '@/assets/icons/ic_magnifier.svg';
 import StarIcon from '@/assets/icons/ic_star.svg';
-import ArrowRightIcon from '@/assets/icons/productDetail/ic_arrow_right.svg';
-import EmptyReviewIcon from '@/assets/icons/productDetail/ic_no_review.svg';
+import EmptyReviewIcon from '@/assets/icons/product/productDetail/ic_no_review.svg';
 import { LongButton } from '@/components/common/buttons/LongButton';
 import Navigation from '@/components/layout/Navigation';
-import MaterialInfo from '@/components/page/productDetail/materialInfo';
-import PhotoCard from '@/components/page/productDetail/PhotoCard';
-import ReviewCard from '@/components/page/productDetail/ReviewCard';
-import ReviewItems from '@/components/page/productDetail/reviewItem';
-import CustomTabs from '@/components/page/productDetail/tab';
+import MaterialInfo from '@/components/page/product/productDetail/materialInfo';
+import PhotoCard from '@/components/page/product/productDetail/PhotoCard';
+import ReviewCard from '@/components/page/product/productDetail/ReviewCard';
+import ReviewItems from '@/components/page/product/productDetail/reviewItem';
+import CustomTabs from '@/components/page/product/productDetail/tab';
 import colors from '@/constants/color';
 import { mockProductData } from '@/mocks/data/productDetail';
 import { PortalProvider } from '@gorhom/portal'; // ← 설치했다면 사용
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { FlatList, Image, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -45,6 +45,7 @@ export default function ProductDetail() {
 
   return (
     <SafeAreaView className='flex-1 bg-white'>
+      <Stack.Screen options={{ headerShown: false }} />
       <PortalProvider>
         <Navigation
           left={
@@ -158,7 +159,11 @@ export default function ProductDetail() {
                     <ArrowRightIcon />
                   </View>
 
-                  <LongButton label={'리뷰 작성하기'} height='h-[40px]' />
+                  <LongButton
+                    label={'리뷰 작성하기'}
+                    height='h-[40px]'
+                    onPress={() => router.push(`/product/${id}/review/write`)}
+                  />
 
                   {product.review?.reviewList.length === 0 ? (
                     <View className='items-center mt-[60px]'>

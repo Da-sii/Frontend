@@ -1,6 +1,6 @@
-import MoreIcon from '@/assets/icons/productDetail/ic_more_line.svg';
+import MoreIcon from '@/assets/icons/product/productDetail/ic_more_line.svg';
 import { LongButton } from '@/components/common/buttons/LongButton';
-import BottomSheetLayout from '@/components/page/productDetail/BottomSeetLayout';
+import BottomSheetLayout from '@/components/page/product/productDetail/BottomSeetLayout';
 import BottomSheet from '@gorhom/bottom-sheet';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import {
