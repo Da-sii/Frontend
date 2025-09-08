@@ -25,7 +25,7 @@ export default function BottomSheetLayout({
         disappearsOnIndex={-1}
         // 배경을 터치해도 닫히지 않고, 대신 터치만 막고 싶다면 'none'
         // 배경 터치로 시트를 닫고 싶다면 'close' 로 바꾸세요.
-        pressBehavior='none'
+        pressBehavior='close'
         opacity={0.5} // 딤 투명도 (0~1)
       />
     ),

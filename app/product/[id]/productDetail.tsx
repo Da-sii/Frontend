@@ -16,7 +16,7 @@ import { mockProductData } from '@/mocks/data/productDetail';
 import { PortalProvider } from '@gorhom/portal'; // ← 설치했다면 사용
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { FlatList, Image, Text, View } from 'react-native';
+import { FlatList, Image, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 const tabs = [
   { key: 'ingredient', label: '성분 정보' },
@@ -156,7 +156,15 @@ export default function ProductDetail() {
                         ({product.review?.reviewList?.length ?? 0})
                       </Text>
                     </View>
-                    <ArrowRightIcon />
+                    {(product?.review?.reviewList?.length ?? 0) > 0 && (
+                      <Pressable
+                        onPress={() =>
+                          router.push(`/product/${id}/review/allReview`)
+                        }
+                      >
+                        <ArrowRightIcon />
+                      </Pressable>
+                    )}
                   </View>
 
                   <LongButton
@@ -165,7 +173,7 @@ export default function ProductDetail() {
                     onPress={() => router.push(`/product/${id}/review/write`)}
                   />
 
-                  {product.review?.reviewList.length === 0 ? (
+                  {(product?.review?.reviewList?.length ?? 0) <= 0 ? (
                     <View className='items-center mt-[60px]'>
                       <EmptyReviewIcon />
                       <View className='flex-col items-center mt-[15px]'>
@@ -237,7 +245,7 @@ function IngredientSection({
       <View className='flex-row mb-[10px]'>
         <Text className='text-b-lg font-bold mb-2'>기능성 원료 </Text>
         <Text className='text-b-lg font-extrabold text-green-500'>
-          {product?.materials}개
+          {product?.materials ?? 0}개
         </Text>
       </View>
       {product?.materialInfo.map((item, index) => (
