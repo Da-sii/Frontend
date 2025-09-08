@@ -63,6 +63,14 @@ export default function Home() {
 
           <ProductCarousel data={mockRankingData} />
         </View>
+
+        <View className='px-4 pb-6'>
+          <Pressable onPress={() => router.push('/auth/login')}>
+            <Text className='text-base font-semibold mb-2'>
+              디버깅용 로그인 이동
+            </Text>
+          </Pressable>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
