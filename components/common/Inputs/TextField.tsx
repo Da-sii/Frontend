@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { TextInput, TouchableOpacity, View, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import React, { useState } from 'react';
+import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 type TextFieldProps = {
   placeholder?: string;
@@ -20,7 +20,7 @@ export const TextField: React.FC<TextFieldProps> = ({
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <View className='flex-row items-center w-[90%] h-[60px] rounded-xl py-[21px] px-4 border border-gray-200'>
+    <View className='flex-row items-center w-full h-[60px] rounded-xl py-[21px] px-4 border border-gray-200'>
       {value.length === 0 && (
         <Text className='absolute left-[16px] text-b-sm font-normal text-gray-400'>
           {placeholder}
