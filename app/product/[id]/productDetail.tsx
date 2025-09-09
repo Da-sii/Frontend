@@ -203,8 +203,10 @@ export default function ProductDetail() {
                         <PhotoCard
                           images={reviewPhotos}
                           maxPreview={6}
-                          onOpenMore={() => console.log('전체보기 이동')}
                           onPressPhoto={(idx) => console.log('사진 클릭', idx)}
+                          onPressMore={() =>
+                            router.push(`/product/${id}/review/allPhoto`)
+                          }
                         />
                       </View>
 
@@ -221,7 +223,7 @@ export default function ProductDetail() {
             activeTab === 'review'
               ? ({ item, index }) => (
                   <View key={index}>
-                    <ReviewItems reviewItem={item} />
+                    <ReviewItems reviewItem={item} id={id} />
                     <View className='w-[200%] h-[1px] left-[-50%] bg-gray-50' />
                   </View>
                 )

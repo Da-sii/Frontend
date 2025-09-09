@@ -92,6 +92,7 @@ export const mockProductData = [
       ],
       reviewList: [
         {
+          id: '1',
           name: '닉네임',
           date: '2025.08.01',
           isEdited: true,
@@ -101,6 +102,7 @@ export const mockProductData = [
           images: [],
         },
         {
+          id: '2',
           name: '닉네임',
           date: '2025.08.01',
           isEdited: true,
@@ -166,4 +168,152 @@ export const categories = [
   '탄수화물 대사 조절',
   '배변활동 개선',
   '포만감 개선',
+];
+
+export const mockPhotoData = [
+  {
+    id: '1',
+    photoReviewList: [
+      {
+        id: '1',
+        image: 'https://picsum.photos/id/1018/800/800',
+      },
+      {
+        id: '2',
+        image: 'https://picsum.photos/id/1027/800/800',
+      },
+      {
+        id: '3',
+        image: 'https://picsum.photos/id/1035/800/800',
+      },
+      {
+        id: '4',
+        image: 'https://picsum.photos/id/1043/800/800',
+      },
+      {
+        id: '5',
+        image: 'https://picsum.photos/id/1050/800/800',
+      },
+      {
+        id: '6',
+        image: 'https://picsum.photos/id/1069/800/800',
+      },
+      {
+        id: '7',
+        image: 'https://picsum.photos/id/1074/800/800',
+      },
+      {
+        id: '8',
+        image: 'https://picsum.photos/id/1080/800/800',
+      },
+      {
+        id: '9',
+        image: 'https://picsum.photos/id/1085/800/800',
+      },
+      {
+        id: '10',
+        image: 'https://picsum.photos/id/1090/800/800',
+      },
+      {
+        id: '11',
+        image: 'https://picsum.photos/id/1095/800/800',
+      },
+      {
+        id: '12',
+        image: 'https://picsum.photos/id/1100/800/800',
+      },
+      {
+        id: '13',
+        image: 'https://picsum.photos/id/1105/800/800',
+      },
+      {
+        id: '14',
+        image: 'https://picsum.photos/id/1110/800/800',
+      },
+      {
+        id: '15',
+        image: 'https://picsum.photos/id/1115/800/800',
+      },
+      {
+        id: '16',
+        image: 'https://picsum.photos/id/1120/800/800',
+      },
+      {
+        id: '17',
+        image: 'https://picsum.photos/id/1125/800/800',
+      },
+      {
+        id: '18',
+        image: 'https://picsum.photos/id/1130/800/800',
+      },
+      {
+        id: '19',
+        image: 'https://picsum.photos/id/1135/800/800',
+      },
+      {
+        id: '20',
+        image: 'https://picsum.photos/id/1140/800/800',
+      },
+      {
+        id: '21',
+        image: 'https://picsum.photos/id/1145/800/800',
+      },
+      {
+        id: '22',
+        image: 'https://picsum.photos/id/1150/800/800',
+      },
+    ],
+  },
+  {
+    id: '2',
+    photoReviewList: [
+      {
+        id: '1',
+        image: 'https://picsum.photos/id/1018/800/800',
+      },
+    ],
+  },
+  {
+    id: '3',
+    photoReviewList: [
+      {
+        id: '1',
+        image: 'https://picsum.photos/id/1018/800/800',
+      },
+    ],
+  },
+  {
+    id: '4',
+    photoReviewList: [
+      {
+        id: '1',
+        image: 'https://picsum.photos/id/1018/800/800',
+      },
+    ],
+  },
+  {
+    id: '5',
+    photoReviewList: [
+      {
+        id: '1',
+        image: 'https://picsum.photos/id/1018/800/800',
+      },
+    ],
+  },
+];
+
+export const mockPhotoReviewDetailData = [
+  {
+    id: '1',
+    name: '닉네임',
+    date: '2025.08.01',
+    content:
+      '반짝거리는 창문 너머 햇살이 날 비춰 어느덧 스며온 계절에 꿈꾸듯 널 떠올려 일렁이는 내 맘도 포근한 설렘 속에 움이 터 이토록 예쁜 날엔 널 만나러 갈게 반짝거리는 창문 너머 햇살이 날 비춰 어느덧 스며온 계절에 꿈꾸듯 널 떠올려 일렁이는 내 맘도 포근한 설렘 속에 움이 터 이토록 예쁜 날엔 널 만나러 갈게 반짝거리는 창문 너머 햇살이 날 비춰 어느덧 스며온 계절에 꿈꾸듯 널 떠올려 일렁이는 내 맘도 포근한 설렘 속에 움이 터 이토록 예쁜 날엔 널 만나러 갈게 반짝거리는 창문 너머 햇살이 날 비춰 어느덧 스며온 계절에 꿈꾸듯 널 떠올려 일렁이는 내 맘도 포근한 설렘 속에 움이 터 이토록 예쁜 날엔 널 만나러 갈게 ',
+    rating: 4,
+    images: [
+      'https://picsum.photos/id/1018/800/800',
+      'https://picsum.photos/id/1027/800/800',
+      'https://picsum.photos/id/1027/800/800',
+    ],
+  },
 ];

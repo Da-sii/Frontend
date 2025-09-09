@@ -1,19 +1,18 @@
 // src/components/common/PhotoCard.tsx
 import React from 'react';
-import { FlatList, Image, Pressable, Text, View } from 'react-native';
-
+import { FlatList, Image, Pressable, Text } from 'react-native';
 interface PhotoCardProps {
   images: string[]; // 이미지 URL 배열
   maxPreview?: number; // 몇 장만 미리보기 (기본 6장)
-  onOpenMore?: () => void; // "+더보기" 눌렀을 때
   onPressPhoto?: (index: number) => void; // 개별 사진 눌렀을 때
+  onPressMore?: () => void; // "+더보기" 눌렀을 때
 }
 
 export default function PhotoCard({
   images,
   maxPreview = 6,
-  onOpenMore,
   onPressPhoto,
+  onPressMore,
 }: PhotoCardProps) {
   const preview = images.slice(0, maxPreview);
   const remain = images.length - preview.length;
@@ -36,7 +35,7 @@ export default function PhotoCard({
             key={index}
             className='w-[32%] aspect-square rounded-[8px] overflow-hidden relative'
             onPress={() =>
-              isLastOverlay ? onOpenMore?.() : onPressPhoto?.(index)
+              isLastOverlay ? onPressMore?.() : onPressPhoto?.(index)
             }
           >
             <Image
@@ -46,14 +45,17 @@ export default function PhotoCard({
             />
 
             {isLastOverlay && (
-              <View className='absolute w-full h-full inset-0 bg-black/50 items-center justify-center'>
+              <Pressable
+                className='absolute w-full h-full inset-0 bg-black/50 items-center justify-center'
+                onPress={onPressMore}
+              >
                 <Text className='text-white font-extrabold text-b-sm'>
                   +{remain}
                 </Text>
                 <Text className='text-white font-extrabold text-b-sm mt-[7px]'>
                   사진 더보기
                 </Text>
-              </View>
+              </Pressable>
             )}
           </Pressable>
         );

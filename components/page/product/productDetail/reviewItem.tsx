@@ -2,6 +2,7 @@ import MoreIcon from '@/assets/icons/product/productDetail/ic_more_line.svg';
 import { LongButton } from '@/components/common/buttons/LongButton';
 import BottomSheetLayout from '@/components/page/product/productDetail/BottomSeetLayout';
 import BottomSheet from '@gorhom/bottom-sheet';
+import { useRouter } from 'expo-router';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import {
   FlatList,
@@ -16,6 +17,7 @@ import Svg, { Path } from 'react-native-svg';
 import ReviewStar from './ReviewStar';
 
 interface reviewItem {
+  id: string;
   name: string;
   date: string;
   isEdited: boolean;
@@ -27,6 +29,9 @@ interface reviewItem {
 interface reviewItemProups {
   reviewItem: reviewItem;
   onMorePress?: () => void;
+  isPhoto?: boolean;
+  isMore?: boolean;
+  id?: string;
 }
 
 const REASONS = [
@@ -39,7 +44,13 @@ const REASONS = [
 
 type SheetView = 'menu' | 'report';
 
-export default function ReviewItems({ reviewItem }: reviewItemProups) {
+export default function ReviewItems({
+  reviewItem,
+  isPhoto = true,
+  isMore = true,
+  id,
+}: reviewItemProups) {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [measured, setMeasured] = useState(false);
   const [needsClamp, setNeedsClamp] = useState(false);
@@ -112,14 +123,16 @@ export default function ReviewItems({ reviewItem }: reviewItemProups) {
       <View>
         <Text
           className='text-[13px] font-normal'
-          numberOfLines={!isOpen && needsClamp ? MAX_LINES : undefined}
+          numberOfLines={
+            isMore && !isOpen && needsClamp ? MAX_LINES : undefined
+          }
           ellipsizeMode='tail'
           onTextLayout={onTextLayout}
         >
           {reviewItem.content}
         </Text>
 
-        {needsClamp && (
+        {needsClamp && isMore && (
           <Pressable
             onPress={() => setIsOpen((v) => !v)}
             accessibilityRole='button'
@@ -135,7 +148,7 @@ export default function ReviewItems({ reviewItem }: reviewItemProups) {
       </View>
 
       {/* 이미지: 가로 스크롤 썸네일 리스트 */}
-      {imageUris.length > 0 && (
+      {imageUris.length > 0 && isPhoto && (
         <FlatList
           className='mt-3'
           data={imageUris}
@@ -154,6 +167,14 @@ export default function ReviewItems({ reviewItem }: reviewItemProups) {
           renderItem={({ item, index }: { item: string; index: number }) => (
             <Pressable
               onPress={() => {
+                router.push({
+                  pathname: '/product/[id]/review/[reviewId]/photoViewer',
+                  params: {
+                    id: String(id),
+                    reviewId: reviewItem.id,
+                    index: String(index),
+                  },
+                });
                 // TODO: 이미지 뷰어 열기 등
                 // router.push({ pathname: '/viewer', params: { start: index } })
               }}
