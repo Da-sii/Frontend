@@ -1,8 +1,8 @@
 import DottedLine from '@/assets/icons/ic_dotted_line.svg';
 import EffectIfon from '@/assets/icons/ic_effect.svg';
+import DownArrowIcon from '@/assets/icons/product/productDetail/ic_arrow_down.svg';
+import UpArrowIcon from '@/assets/icons/product/productDetail/ic_arrow_up.svg';
 import IngredienStatusIcon from '@/assets/icons/ic_ingredien_status.svg';
-import DownArrowIcon from '@/assets/icons/productDetail/ic_arrow_down.svg';
-import UpArrowIcon from '@/assets/icons/productDetail/ic_arrow_up.svg';
 import React, { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import ProgressBar from './progressBar';

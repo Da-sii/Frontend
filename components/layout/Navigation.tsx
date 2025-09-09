@@ -29,7 +29,7 @@ export default function Navigation({
       </Pressable>
 
       <Pressable onPress={onCenterPress} className='flex-1 items-center'>
-        {center || <Text className='text-lg font-semibold'>{title}</Text>}
+        {center || <Text className='text-lg font-extrabold'>{title}</Text>}
       </Pressable>
 
       <Pressable

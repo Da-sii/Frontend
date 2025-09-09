@@ -20,6 +20,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+
 const categories = [
   '전체',
   '체지방 감소',
@@ -82,7 +83,7 @@ export default function Ranking() {
       index={index}
       onPress={() =>
         router.push({
-          pathname: '/productDetail/[id]',
+          pathname: '/product/[id]/productDetail',
           params: { id: item.id },
         })
       }
