@@ -1,22 +1,22 @@
 import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
+import ArrowRightIcon from '@/assets/icons/ic_arrow_right.svg';
 import HomeIcon from '@/assets/icons/ic_home.svg';
 import SearchIcon from '@/assets/icons/ic_magnifier.svg';
 import StarIcon from '@/assets/icons/ic_star.svg';
-import ArrowRightIcon from '@/assets/icons/productDetail/ic_arrow_right.svg';
-import EmptyReviewIcon from '@/assets/icons/productDetail/ic_no_review.svg';
+import EmptyReviewIcon from '@/assets/icons/product/productDetail/ic_no_review.svg';
 import { LongButton } from '@/components/common/buttons/LongButton';
 import Navigation from '@/components/layout/Navigation';
-import MaterialInfo from '@/components/page/productDetail/materialInfo';
-import PhotoCard from '@/components/page/productDetail/PhotoCard';
-import ReviewCard from '@/components/page/productDetail/ReviewCard';
-import ReviewItems from '@/components/page/productDetail/reviewItem';
-import CustomTabs from '@/components/page/productDetail/tab';
+import MaterialInfo from '@/components/page/product/productDetail/materialInfo';
+import PhotoCard from '@/components/page/product/productDetail/PhotoCard';
+import ReviewCard from '@/components/page/product/productDetail/ReviewCard';
+import ReviewItems from '@/components/page/product/productDetail/reviewItem';
+import CustomTabs from '@/components/page/product/productDetail/tab';
 import colors from '@/constants/color';
 import { mockProductData } from '@/mocks/data/productDetail';
 import { PortalProvider } from '@gorhom/portal'; // ← 설치했다면 사용
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { FlatList, Image, Text, View } from 'react-native';
+import { FlatList, Image, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 const tabs = [
   { key: 'ingredient', label: '성분 정보' },
@@ -45,6 +45,7 @@ export default function ProductDetail() {
 
   return (
     <SafeAreaView className='flex-1 bg-white'>
+      <Stack.Screen options={{ headerShown: false }} />
       <PortalProvider>
         <Navigation
           left={
@@ -155,12 +156,24 @@ export default function ProductDetail() {
                         ({product.review?.reviewList?.length ?? 0})
                       </Text>
                     </View>
-                    <ArrowRightIcon />
+                    {(product?.review?.reviewList?.length ?? 0) > 0 && (
+                      <Pressable
+                        onPress={() =>
+                          router.push(`/product/${id}/review/allReview`)
+                        }
+                      >
+                        <ArrowRightIcon />
+                      </Pressable>
+                    )}
                   </View>
 
-                  <LongButton label={'리뷰 작성하기'} height='h-[40px]' />
+                  <LongButton
+                    label={'리뷰 작성하기'}
+                    height='h-[40px]'
+                    onPress={() => router.push(`/product/${id}/review/write`)}
+                  />
 
-                  {product.review?.reviewList.length === 0 ? (
+                  {(product?.review?.reviewList?.length ?? 0) <= 0 ? (
                     <View className='items-center mt-[60px]'>
                       <EmptyReviewIcon />
                       <View className='flex-col items-center mt-[15px]'>
@@ -190,8 +203,10 @@ export default function ProductDetail() {
                         <PhotoCard
                           images={reviewPhotos}
                           maxPreview={6}
-                          onOpenMore={() => console.log('전체보기 이동')}
                           onPressPhoto={(idx) => console.log('사진 클릭', idx)}
+                          onPressMore={() =>
+                            router.push(`/product/${id}/review/allPhoto`)
+                          }
                         />
                       </View>
 
@@ -208,7 +223,7 @@ export default function ProductDetail() {
             activeTab === 'review'
               ? ({ item, index }) => (
                   <View key={index}>
-                    <ReviewItems reviewItem={item} />
+                    <ReviewItems reviewItem={item} id={id} />
                     <View className='w-[200%] h-[1px] left-[-50%] bg-gray-50' />
                   </View>
                 )
@@ -232,7 +247,7 @@ function IngredientSection({
       <View className='flex-row mb-[10px]'>
         <Text className='text-b-lg font-bold mb-2'>기능성 원료 </Text>
         <Text className='text-b-lg font-extrabold text-green-500'>
-          {product?.materials}개
+          {product?.materials ?? 0}개
         </Text>
       </View>
       {product?.materialInfo.map((item, index) => (
