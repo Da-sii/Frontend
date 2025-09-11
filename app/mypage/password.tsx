@@ -45,7 +45,7 @@ export default function ChangePassword() {
   };
 
   return (
-    <SafeAreaView className='flex-1 bg-white'>
+    <SafeAreaView className='flex-1 bg-white px-2'>
       <Stack.Screen
         options={{
           headerTitle: '비밀번호 변경',
@@ -68,11 +68,20 @@ export default function ChangePassword() {
             title='새로운 비밀번호를 입력해주세요'
             value={newPwd}
             onChangeText={setNewPwd}
+            secureTextEntry={true}
+            placeholder='새로운 비밀번호를 입력해주세요'
+            conditionMessage='8-20자 이내 ✓ 영문, 숫자, 특수문자 포함 ✓'
           />
         </View>
 
-        <View className='mb-2'>
-          <TextInput value={confirmPwd} onChangeText={setConfirmPwd} />
+        <View className='mb-8'>
+          <TextInput
+            value={confirmPwd}
+            onChangeText={setConfirmPwd}
+            secureTextEntry={true}
+            placeholder='새로운 비밀번호를 다시 입력해주세요'
+            conditionMessage='비밀번호 일치 ✓'
+          />
         </View>
 
         <View className='mb-2'>
@@ -80,18 +89,21 @@ export default function ChangePassword() {
             title='현재 비밀번호를 입력해주세요'
             value={currentPwd}
             onChangeText={setCurrentPwd}
+            secureTextEntry={true}
+            placeholder='현재 비밀번호를 입력해주세요'
+            conditionMessage='비밀번호 일치 ✓'
           />
         </View>
 
         <TouchableOpacity
           onPress={handleSubmit}
           disabled={disabled}
-          className={`mt-10 rounded-lg mx-4 py-4 items-center ${
-            disabled ? 'bg-gray-300' : 'bg-primary-500'
+          className={`mt-4 rounded-xl py-4 items-center transition-all duration-300  ${
+            disabled ? 'bg-gray-200' : 'bg-green-500'
           }`}
         >
           <Text
-            className={`text-base font-medium ${disabled ? 'text-white' : 'text-white'}`}
+            className={`text-base font-bold ${disabled ? 'text-white' : 'text-white'}`}
           >
             비밀번호 변경
           </Text>

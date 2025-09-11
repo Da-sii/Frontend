@@ -1,5 +1,5 @@
 import GoRankingIcon from '@/assets/icons/ic_arrow_right.svg';
-import LogoIcon from '@/assets/icons/ic_logo_word.svg';
+import LogoIcon from '@/assets/icons/ic_logo_full.svg';
 import MagnifierIcon from '@/assets/icons/ic_magnifier.svg';
 import BannerCarousel from '@/components/page/home/BannerCarousel';
 import ProductCarousel from '@/components/page/home/ProductCarousel';
@@ -27,12 +27,12 @@ export default function Home() {
     <SafeAreaView className='bg-white flex-1' edges={['top', 'left', 'right']}>
       <ScrollView className='flex-1'>
         <View className='flex-row justify-between items-center px-6 py-4'>
-          <LogoIcon />
+          <LogoIcon width={80} height={30} />
 
           <View className='flex-row gap-4'>
             <View className='flex-row gap-4'>
               <Pressable onPress={() => router.push('/home/search')}>
-                <MagnifierIcon width={20} height={20} />
+                <MagnifierIcon />
               </Pressable>
             </View>
           </View>

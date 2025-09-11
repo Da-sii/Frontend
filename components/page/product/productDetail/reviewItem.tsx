@@ -31,6 +31,7 @@ interface reviewItemProups {
   onMorePress?: () => void;
   isPhoto?: boolean;
   isMore?: boolean;
+  isMyReview?: boolean;
   id?: string;
 }
 
@@ -49,6 +50,7 @@ export default function ReviewItems({
   isPhoto = true,
   isMore = true,
   id,
+  isMyReview = false,
 }: reviewItemProups) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
@@ -105,21 +107,49 @@ export default function ReviewItems({
 
   return (
     <View className='w-full p-5'>
-      <View className='flex-row justify-between mb-[19px]'>
+      <View
+        className={`flex-row ${isMyReview ? 'justify-start' : 'justify-between'} mb-[19px]`}
+      >
+        {isMyReview && (
+          <Image
+            source={require('@/assets/images/img_product_1.png')}
+            style={{ width: 40, height: 40, borderRadius: 8 }}
+            resizeMode='cover'
+            className='mr-2'
+          />
+        )}
         <View className='flex-col'>
-          <Text className='mb-[5px]'>{reviewItem.name}</Text>
-          <View className='flex-row items-center '>
-            <ReviewStar height={12} reviewRank={reviewItem.rating} />
-            <Text className='border-l ml-1 pl-1 border-[#E4E6E7] text-c3 font-bold text-gray-300'>
-              {reviewItem.date}
-              {reviewItem.isEdited && '  수정됨'}
+          {isMyReview && (
+            <Text className='mb-[5px] text-xs color-gray-500'>
+              {reviewItem.name}
             </Text>
-          </View>
+          )}
+          <Text className='mb-[5px]'>{reviewItem.name}</Text>
+          {!isMyReview && (
+            <View className='flex-row items-center'>
+              <ReviewStar height={12} reviewRank={reviewItem.rating} />
+              <Text className='border-l ml-1 pl-1 border-[#E4E6E7] text-c3 font-bold text-gray-300'>
+                {reviewItem.date}
+                {reviewItem.isEdited && '  수정됨'}
+              </Text>
+            </View>
+          )}
         </View>
-        <Pressable onPress={openSheet} hitSlop={8} className='my-auto'>
-          <MoreIcon className='my-auto' />
-        </Pressable>
+        {!isMyReview && (
+          <Pressable onPress={openSheet} hitSlop={8} className='my-auto'>
+            <MoreIcon className='my-auto' />
+          </Pressable>
+        )}
       </View>
+      {isMyReview && (
+        <View className='flex-row items-center pb-2'>
+          <ReviewStar height={12} reviewRank={reviewItem.rating} />
+          <Text className='border-l ml-1 pl-1 border-[#E4E6E7] text-c3 font-bold text-gray-300'>
+            {reviewItem.date}
+            {reviewItem.isEdited && '  수정됨'}
+          </Text>
+        </View>
+      )}
       <View>
         <Text
           className='text-[13px] font-normal'
