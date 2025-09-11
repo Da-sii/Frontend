@@ -5,6 +5,7 @@ import { TextField } from './TextField';
 type TextInputProps = {
   title?: string;
   value: string;
+  placeholder?: string;
   onChangeText: (text: string) => void;
   secureTextEntry?: boolean;
   disabled?: boolean;
@@ -15,6 +16,7 @@ type TextInputProps = {
 export default function TextInput({
   title,
   value,
+  placeholder,
   onChangeText,
   secureTextEntry = false,
   disabled = false,
@@ -30,13 +32,11 @@ export default function TextInput({
   return (
     <View className='w-full items-center'>
       {title ? (
-        <Text className='self-start px-4 mb-2 text-base font-medium'>
-          {title}
-        </Text>
+        <Text className='self-start mb-2 text-base font-medium'>{title}</Text>
       ) : null}
 
       <TextField
-        placeholder={title}
+        placeholder={placeholder}
         value={value}
         onChangeText={onChangeText}
         secureTextEntry={secureTextEntry}
@@ -44,7 +44,7 @@ export default function TextInput({
       />
 
       {conditionMessage && !showError ? (
-        <Text className='self-start w-[90%] mt-2 text-sm text-green-600'>
+        <Text className='self-start w-[90%] px-4 text-sm text-green-600'>
           {conditionMessage}
         </Text>
       ) : null}

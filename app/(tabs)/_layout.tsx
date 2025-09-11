@@ -105,6 +105,14 @@ export default function TabsLayout() {
           tabBarItemStyle: { display: 'none' },
         }}
       />
+
+      <Tabs.Screen
+        name='auth/login'
+        options={{
+          tabBarButton: () => null,
+          tabBarItemStyle: { display: 'none' },
+        }}
+      />
     </Tabs>
   );
 }

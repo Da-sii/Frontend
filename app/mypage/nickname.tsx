@@ -2,7 +2,7 @@ import TextInput from '@/components/common/Inputs/TextInput';
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ChangeNickname() {
@@ -23,7 +23,14 @@ export default function ChangeNickname() {
         }}
       />
 
-      <TextInput title='닉네임' value={nickname} onChangeText={setNickname} />
+      <View className='px-5'>
+        <TextInput
+          title='닉네임'
+          value={nickname}
+          onChangeText={setNickname}
+          conditionMessage='2자 이상 10자 ✓ 이하 한글, 영문, 숫자만 ✓'
+        />
+      </View>
     </SafeAreaView>
   );
 }
