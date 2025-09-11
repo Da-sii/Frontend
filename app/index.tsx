@@ -1,4 +1,3 @@
-// app/index.tsx
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { getAccessToken } from '../lib/authToken';
