@@ -16,26 +16,26 @@ module.exports = {
     extend: {
       colors: {
         green: {
-          50: '#CAF2F2',
-          100: '#DEF6F4',
-          200: '#ACE0CA',
-          300: '#8ZE5AF',
-          400: '#5DBA95',
-          500: '#50D88E',
+          50: '#EAFAF2',
+          100: '#D5F6E4',
+          200: '#ACECCA',
+          300: '#82E3AF',
+          400: '#58DA95',
+          500: '#50D88F',
           600: '#25A762',
           700: '#1C7D49',
-          800: '#135531',
+          800: '#135331',
           900: '#092A18',
           950: '#05150C',
         },
 
         blue: {
-          50: '#E3F0FF',
-          100: '#CEE6FF',
+          50: '#E5F0FF',
+          100: '#CCE0FF',
           200: '#99C2FF',
           300: '#66A3FF',
-          400: '#3385FF',
-          500: '#338EFF',
+          400: '#5398FF',
+          500: '#3385FF',
           600: '#0052CC',
           700: '#003D99',
           800: '#002966',
@@ -47,17 +47,19 @@ module.exports = {
           0: '#FFFFFF',
           50: '#F1F2F3',
           100: '#E4E6E7',
-          200: '#C9CCDF',
-          300: '#AED2B7',
+          200: '#C9CCCF',
+          300: '#AEB3B7',
           400: '#939A9F',
-          500: '#696766',
+          500: '#60676C',
           600: '#484D51',
           700: '#363A3D',
-          800: '#20393F',
-          900: '#191A1B',
+          800: '#303336',
+          900: '#181A1B',
           950: '#0C0D0E',
           box: '#F6F5FA',
         },
+
+        kakao: '#FEE500',
 
         lime: {
           100: '#E6F2B8',
@@ -69,6 +71,7 @@ module.exports = {
           100: '#FFD6D6',
           400: '#FF7070',
           500: '#FF3A3A',
+          error: '#FF3A4A',
         },
 
         orange: {
@@ -95,7 +98,7 @@ module.exports = {
         '15px': ['15px', { lineHeight: 'normal' }],
         '24px': ['24px', { lineHeight: 'normal' }],
         '16px': ['16px', { lineHeight: '24px' }],
-        
+
         'h-lg': ['24px', { lineHeight: '30px' }],
         'h-md': ['20px', { lineHeight: '24px' }],
         'h-sm': ['18px', { lineHeight: '24px' }],
@@ -104,10 +107,9 @@ module.exports = {
         'b-md': ['15px', { lineHeight: '18px' }],
         'b-sm': ['14px', { lineHeight: '18px' }],
 
-        'c1': ['13px', { lineHeight: '16px' }],
-        'c2': ['12px', { lineHeight: '16px' }],
-        'c3': ['10px', { lineHeight: '14px' }],
-
+        c1: ['13px', { lineHeight: '16px' }],
+        c2: ['12px', { lineHeight: '16px' }],
+        c3: ['10px', { lineHeight: '14px' }],
       },
       fontWeight: {
         normal: '400',
