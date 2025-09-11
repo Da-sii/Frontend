@@ -2,6 +2,7 @@ import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
 import { LongButton } from '@/components/common/buttons/LongButton';
 import { TextField } from '@/components/common/Inputs/TextField';
 import Navigation from '@/components/layout/Navigation';
+import { isEmail } from '@/utils/validation';
 import { Stack, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, SafeAreaView, Text, View } from 'react-native';
@@ -9,6 +10,22 @@ export default function Email() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isEmailValid, setIsEmailValid] = useState(false);
+  // 이메일 형식 체크
+  const validateEmail = (value: string) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(value);
+  };
+
+  const handleLogin = () => {
+    if (!validateEmail(email)) {
+      setIsEmailValid(true); // 잘못된 경우 false
+      return;
+    } else {
+      setIsEmailValid(false);
+    }
+  };
+
   return (
     <SafeAreaView className='flex-1 bg-white'>
       <Stack.Screen options={{ headerShown: false }} />
@@ -24,9 +41,12 @@ export default function Email() {
         <View className='space-y-3 mb-[25px]'>
           <View>
             <TextField
+              menu={2}
               value={email}
               onChangeText={setEmail}
               placeholder='이메일'
+              firstMessage='이메일 형식'
+              validateFirst={isEmail}
             />
           </View>
           <View>
@@ -40,7 +60,7 @@ export default function Email() {
         </View>
         <LongButton
           label='로그인'
-          onPress={() => {}}
+          onPress={handleLogin}
           disabled={email.length === 0 || password.length === 0}
         />
 

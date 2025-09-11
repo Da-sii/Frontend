@@ -2,12 +2,27 @@ import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
 import { LongButton } from '@/components/common/buttons/LongButton';
 import { TextField } from '@/components/common/Inputs/TextField';
 import Navigation from '@/components/layout/Navigation';
+import { isEmail } from '@/utils/validation';
 import { Stack, useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Pressable, SafeAreaView, Text, View } from 'react-native';
 export default function Index() {
   const router = useRouter();
   const [email, setEmail] = useState('');
+  const [isEmailValid, setIsEmailValid] = useState(false);
+  // 이메일 형식 체크
+  const validateEmail = (value: string) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(value);
+  };
+
+  useEffect(() => {
+    if (!validateEmail(email)) {
+      setIsEmailValid(true);
+    } else {
+      setIsEmailValid(false);
+    }
+  }, [email]);
 
   return (
     <SafeAreaView className='flex-1 bg-white'>
@@ -30,9 +45,12 @@ export default function Index() {
 
         <View className='mb-[30px]'>
           <TextField
+            menu={2}
             value={email}
             onChangeText={setEmail}
             placeholder='이메일 (abc@dasii.com)'
+            firstMessage='이메일 형식'
+            validateFirst={isEmail}
           />
         </View>
         <View className='mb-[25px]'>
