@@ -1,11 +1,14 @@
 import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
 import { LongButton } from '@/components/common/buttons/LongButton';
 import { TextField } from '@/components/common/Inputs/TextField';
+import DefaultModal from '@/components/common/modals/DefaultModal';
 import Navigation from '@/components/layout/Navigation';
+import { useSignin } from '@/hooks/useSignIn';
 import { isEmail } from '@/utils/validation';
 import { Stack, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, SafeAreaView, Text, View } from 'react-native';
+
 export default function Email() {
   const router = useRouter();
   const [email, setEmail] = useState('');
@@ -17,12 +20,18 @@ export default function Email() {
     return regex.test(value);
   };
 
+  const signin = useSignin();
+
   const handleLogin = () => {
     if (!validateEmail(email)) {
       setIsEmailValid(true); // 잘못된 경우 false
       return;
     } else {
       setIsEmailValid(false);
+      signin.mutate({
+        email,
+        password,
+      });
     }
   };
 
@@ -44,7 +53,7 @@ export default function Email() {
               menu={2}
               value={email}
               onChangeText={setEmail}
-              placeholder='이메일'
+              placeholder='이메일 (abc@dasii.com)'
               firstMessage='이메일 형식'
               validateFirst={isEmail}
             />
@@ -61,7 +70,7 @@ export default function Email() {
         <LongButton
           label='로그인'
           onPress={handleLogin}
-          disabled={email.length === 0 || password.length === 0}
+          disabled={!validateEmail(email) || password.length === 0}
         />
 
         <View className='items-center'>
@@ -84,6 +93,14 @@ export default function Email() {
           </View>
         </View>
       </View>
+
+      <DefaultModal
+        visible={signin.isError}
+        message={'이메일 또는 비밀번호가 올바르지 않습니다.'}
+        onConfirm={() => signin.reset()}
+        confirmText='확인'
+        singleButton
+      />
     </SafeAreaView>
   );
 }

@@ -4,7 +4,7 @@ import { Modal, Text, TouchableOpacity, View } from 'react-native';
 type DefaultModalProps = {
   visible: boolean;
   title?: string;
-  message: string;
+  message?: string;
   onConfirm: () => void;
   onCancel?: () => void;
   confirmText?: string;
@@ -38,7 +38,7 @@ export default function DefaultModal({
               {title}
             </Text>
           )}
-          <Text className='text-c2 text-gray-500 font-bold text-center leading-5'>
+          <Text className='text-b-sm text-gray-500 font-bold text-center leading-5'>
             {message}
           </Text>
           {secondMessage && (
