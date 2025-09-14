@@ -28,33 +28,3 @@ export const useKakaoLogin = () => {
     },
   });
 };
-
-// import * as Linking from 'expo-linking';
-// import { useEffect } from 'react';
-// import * as SecureStore from 'expo-secure-store';
-// export function useKakaoLogin() {
-//   useEffect(() => {
-//     const sub = Linking.addEventListener('url', async ({ url }) => {
-//       const code = new URL(url).searchParams.get('code');
-//       if (!code) return;
-
-//       try {
-//         const res = await fetch('http://<서버주소>:8000/auth/kakao/token/', {
-//           method: 'POST',
-//           headers: { 'Content-Type': 'application/json' },
-//           body: JSON.stringify({ code }),
-//         });
-//         const json = await res.json();
-//         console.log('토큰:', json.access, json.refresh);
-
-//         // ✅ SecureStore 등에 저장
-//         await SecureStore.setItemAsync('access', json.access);
-//         await SecureStore.setItemAsync('refresh', json.refresh);
-//       } catch (err) {
-//         console.error('토큰 요청 실패:', err);
-//       }
-//     });
-
-//     return () => sub.remove();
-//   }, []);
-// }

@@ -1,6 +1,5 @@
 import AppleIcon from '@/assets/icons/ic_apple.svg';
 import EmailIcon from '@/assets/icons/ic_email.svg';
-import KakaoIcon from '@/assets/icons/ic_kakao.svg';
 import Logo from '@/assets/icons/ic_logo_start.svg';
 import LoginButton from '@/components/common/buttons/LoginButton';
 import { Stack, useRouter } from 'expo-router';
@@ -9,18 +8,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import KakaoLogin from '@/components/page/login/kakaoLogin';
 import { useState } from 'react';
 import KakaoLoginWebView from '@/components/page/login/KakaoLoginWebView';
-import * as SecureStore from 'expo-secure-store';
-import { useMutation } from '@tanstack/react-query';
-import { axiosInstance } from '@/services/index';
-import { Alert } from 'react-native';
-import { setTokens } from '@/lib/authToken';
 import { useKakaoLogin } from '@/hooks/useKakaoLogin';
 
 export default function Index() {
   const router = useRouter();
   const [showKakao, setShowKakao] = useState(false);
 
-  const exchange = useKakaoLogin();
+  const kakaoLogin = useKakaoLogin();
 
   return (
     <SafeAreaView className='flex-1 bg-white'>
@@ -86,7 +80,7 @@ export default function Index() {
         <KakaoLoginWebView
           visible={showKakao}
           onClose={() => setShowKakao(false)}
-          onAuthCode={exchange.mutate}
+          onAuthCode={kakaoLogin.mutate}
         />
       )}
     </SafeAreaView>
