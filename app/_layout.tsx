@@ -1,3 +1,5 @@
+import 'react-native-reanimated';
+import 'react-native-url-polyfill/auto';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';

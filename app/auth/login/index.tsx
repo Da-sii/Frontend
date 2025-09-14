@@ -6,8 +6,22 @@ import LoginButton from '@/components/common/buttons/LoginButton';
 import { Stack, useRouter } from 'expo-router';
 import { Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import KakaoLogin from '@/components/page/login/kakaoLogin';
+import { useState } from 'react';
+import KakaoLoginWebView from '@/components/page/login/KakaoLoginWebView';
+import * as SecureStore from 'expo-secure-store';
+import { useMutation } from '@tanstack/react-query';
+import { axiosInstance } from '@/services/index';
+import { Alert } from 'react-native';
+import { setTokens } from '@/lib/authToken';
+import { useKakaoLogin } from '@/hooks/useKakaoLogin';
+
 export default function Index() {
   const router = useRouter();
+  const [showKakao, setShowKakao] = useState(false);
+
+  const exchange = useKakaoLogin();
+
   return (
     <SafeAreaView className='flex-1 bg-white'>
       <Stack.Screen options={{ headerShown: false }} />
@@ -25,16 +39,7 @@ export default function Index() {
         </View>
 
         <View className=' w-full px-5 flex-col space-y-3'>
-          <LoginButton
-            label='카카오로 로그인'
-            onPress={() => {}}
-            color='bg-kakao'
-            Icon={KakaoIcon}
-            textColor='text-black'
-            border='border-none'
-            IconWidth={18}
-            IconHeight={18}
-          />
+          <KakaoLogin onPress={() => setShowKakao(true)} />
           <LoginButton
             label='Apple로 로그인'
             onPress={() => {}}
@@ -75,6 +80,15 @@ export default function Index() {
           </Pressable>
         </View>
       </View>
+
+      {/* KakaoLoginWebView 모달 */}
+      {showKakao && (
+        <KakaoLoginWebView
+          visible={showKakao}
+          onClose={() => setShowKakao(false)}
+          onAuthCode={exchange.mutate}
+        />
+      )}
     </SafeAreaView>
   );
 }
