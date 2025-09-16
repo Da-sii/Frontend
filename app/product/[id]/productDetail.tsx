@@ -20,6 +20,7 @@ import { FlatList, Image, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useProductDetail } from '@/hooks/product/useProductDetail';
 import { useProductReviews } from '@/hooks/product/review/useGetProductReview';
+import { useQueryClient } from '@tanstack/react-query';
 const tabs = [
   { key: 'ingredient', label: '성분 정보' },
   { key: 'review', label: '리뷰' },
@@ -30,8 +31,8 @@ export default function ProductDetail() {
   const { data, isLoading, isError, error } = useProductDetail(id);
   const { data: reviews = [], isLoading: isReviewsLoading } =
     useProductReviews(id);
+  const qc = useQueryClient();
 
-  console.log(reviews);
   const router = useRouter();
   const product = mockProductData.find((item) => item.id === id);
 
@@ -168,9 +169,17 @@ export default function ProductDetail() {
                     </View>
                     {(data?.reviewCount ?? 0) > 0 && (
                       <Pressable
-                        onPress={() =>
-                          router.push(`/product/${id}/review/allReview`)
-                        }
+                        onPress={() => {
+                          qc.setQueryData(
+                            ['product', 'detail', Number(id)],
+                            data,
+                          );
+                          qc.setQueryData(
+                            ['product', 'reviews', Number(id)],
+                            reviews,
+                          );
+                          router.push(`/product/${id}/review/allReview`);
+                        }}
                       >
                         <ArrowRightIcon />
                       </Pressable>

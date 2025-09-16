@@ -14,7 +14,8 @@ import { useMemo, useRef, useState } from 'react';
 import { FlatList, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
-
+import { useQueryClient } from '@tanstack/react-query';
+import { ProductReview } from '@/services/product/review/getReviewList';
 const SORT_OPTIONS: {
   key: 'new' | 'rating_high' | 'rating_row';
   label: string;
@@ -26,6 +27,16 @@ const SORT_OPTIONS: {
 
 export default function allReview() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const idNum = Number(id);
+  const qc = useQueryClient();
+
+  const cached = qc.getQueryData<ProductReview[]>([
+    'product',
+    'reviews',
+    idNum,
+  ]);
+  const cachedDetail = qc.getQueryData<any>(['product', 'detail', idNum]);
+  console.log(cached);
   const router = useRouter();
   const product = mockProductData.find((item) => item.id === id);
   if (!product) return <Text>제품을 찾을 수 없습니다.</Text>;
@@ -46,7 +57,7 @@ export default function allReview() {
     [product.review?.reviewList],
   );
 
-  const listData = product.review?.reviewList;
+  // const listData = product.review?.reviewList;
 
   return (
     <SafeAreaView className='flex-1 bg-white'>
@@ -61,7 +72,7 @@ export default function allReview() {
         />
 
         <FlatList
-          data={listData}
+          data={cached}
           keyExtractor={(_, index) => String(index)}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 24 }}
@@ -72,11 +83,11 @@ export default function allReview() {
               <View className='flex-row items-center justify-between mb-[15px]'>
                 <View className='flex-row items-center'>
                   <Text className='text-b-md font-extrabold text-gray-700 mr-[8px]'>
-                    리뷰 {product.review?.reviewList?.length ?? 0}개
+                    리뷰 {cached?.length ?? 0}개
                   </Text>
                   <StarIcon width={20} height={20} />
                   <Text className='text-b-md font-extrabold text-gray-700 ml-[2px]'>
-                    ({product.review?.reviewRank ?? 0})
+                    ({cachedDetail?.reviewAvg ?? 0})
                   </Text>
                 </View>
               </View>
@@ -162,7 +173,18 @@ export default function allReview() {
           }
           renderItem={({ item, index }) => (
             <View key={index}>
-              <ReviewItems reviewItem={item} id={id} />
+              <ReviewItems
+                reviewItem={{
+                  id: item.nickname ?? '',
+                  name: item.nickname ?? '',
+                  date: item.date ?? '-',
+                  isEdited: false,
+                  content: item.review ?? '',
+                  rating: item.rate ?? 0,
+                  images: item.images ?? [],
+                }}
+                id={id}
+              />
               <View className='w-[200%] h-[1px] left-[-50%] bg-gray-50' />
             </View>
           )}
