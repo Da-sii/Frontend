@@ -26,10 +26,10 @@ export async function getRefreshToken() {
 export async function setTokens(at: string, rt?: string) {
   memAT = at;
   await SecureStore.setItemAsync(KEYS.ACCESS_TOKEN, at);
-  if (rt) {
-    memRT = rt;
-    await SecureStore.setItemAsync(KEYS.REFRESH_TOKEN, rt);
-  }
+  // if (rt) {
+  //   memRT = rt;
+  //   await SecureStore.setItemAsync(KEYS.REFRESH_TOKEN, rt);
+  // }
 }
 
 export async function clearTokens() {
