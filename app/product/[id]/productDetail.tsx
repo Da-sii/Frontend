@@ -19,6 +19,7 @@ import { useMemo, useState } from 'react';
 import { FlatList, Image, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useProductDetail } from '@/hooks/product/useProductDetail';
+import { useProductReviews } from '@/hooks/product/review/useGetProductReview';
 const tabs = [
   { key: 'ingredient', label: '성분 정보' },
   { key: 'review', label: '리뷰' },
@@ -27,7 +28,10 @@ const tabs = [
 export default function ProductDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data, isLoading, isError, error } = useProductDetail(id);
+  const { data: reviews = [], isLoading: isReviewsLoading } =
+    useProductReviews(id);
 
+  console.log(reviews);
   const router = useRouter();
   const product = mockProductData.find((item) => item.id === id);
 
@@ -39,12 +43,12 @@ export default function ProductDetail() {
 
   // 리뷰 탭에서 상단 사진 그리드에 쓸 사진 모음(예: 상품/리뷰 이미지 합치기 원하면 여기서 처리)
   const reviewPhotos = useMemo(
-    () => product.review?.reviewList?.flatMap((r) => r.images ?? []) ?? [],
-    [product.review?.reviewList],
+    () => reviews.flatMap((r) => r.images),
+    [reviews],
   );
 
   // 탭에 따라 리스트 데이터 스위치: ingredient면 빈 배열(아이템 없음), review면 리뷰 리스트
-  const listData = activeTab === 'review' ? product.review?.reviewList : [];
+  const listData = activeTab === 'review' ? reviews : [];
 
   const imageUrl =
     typeof product.image === 'string' ? product.image : (product.image as any); // 로컬 require면 params로 넘기지 말고 빈 문자열
@@ -159,10 +163,10 @@ export default function ProductDetail() {
                     <View className='flex-row items-center'>
                       <Text className='text-b-lg font-bold'>리뷰 </Text>
                       <Text className='text-b-lg font-bold text-gray-400'>
-                        ({product.review?.reviewList?.length ?? 0})
+                        ({data?.reviewCount ?? 0})
                       </Text>
                     </View>
-                    {(product?.review?.reviewList?.length ?? 0) > 0 && (
+                    {(data?.reviewCount ?? 0) > 0 && (
                       <Pressable
                         onPress={() =>
                           router.push(`/product/${id}/review/allReview`)
@@ -189,7 +193,7 @@ export default function ProductDetail() {
                     }
                   />
 
-                  {(product?.review?.reviewList?.length ?? 0) <= 0 ? (
+                  {(data?.reviewCount ?? 0) <= 0 ? (
                     <View className='items-center mt-[60px]'>
                       <EmptyReviewIcon />
                       <View className='flex-col items-center mt-[15px]'>
@@ -239,7 +243,18 @@ export default function ProductDetail() {
             activeTab === 'review'
               ? ({ item, index }) => (
                   <View key={index}>
-                    <ReviewItems reviewItem={item} id={id} />
+                    <ReviewItems
+                      reviewItem={{
+                        id: item.nickname ?? '',
+                        name: item.nickname ?? '',
+                        date: item.date ?? '-',
+                        isEdited: false,
+                        content: item.review ?? '',
+                        rating: item.rate ?? 0,
+                        images: item.images ?? [],
+                      }}
+                      id={id}
+                    />
                     <View className='w-[200%] h-[1px] left-[-50%] bg-gray-50' />
                   </View>
                 )

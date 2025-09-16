@@ -46,12 +46,7 @@ function flushQueue(token?: string, err?: any) {
 }
 
 async function refreshViaCookie() {
-  const { data } = await axios.post(
-    `${baseUrl}/auth/token/refresh/`,
-    {}, // 바디 없음
-    { withCredentials: true },
-  );
-  // 응답 키 이름도 서버에 맞게 수정
+  const { data } = await axiosInstance.post('/auth/token/refresh/');
   const newAT = data.access;
   await setTokens(newAT);
   return newAT;
