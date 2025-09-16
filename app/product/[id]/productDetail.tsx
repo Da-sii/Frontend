@@ -27,6 +27,7 @@ const tabs = [
 export default function ProductDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data, isLoading, isError, error } = useProductDetail(id);
+
   const router = useRouter();
   const product = mockProductData.find((item) => item.id === id);
 
@@ -44,6 +45,9 @@ export default function ProductDetail() {
 
   // 탭에 따라 리스트 데이터 스위치: ingredient면 빈 배열(아이템 없음), review면 리뷰 리스트
   const listData = activeTab === 'review' ? product.review?.reviewList : [];
+
+  const imageUrl =
+    typeof product.image === 'string' ? product.image : (product.image as any); // 로컬 require면 params로 넘기지 말고 빈 문자열
 
   return (
     <SafeAreaView className='flex-1 bg-white'>
@@ -100,17 +104,17 @@ export default function ProductDetail() {
                   <View className='flex-row items-center'>
                     <StarIcon />
                     <Text className='text-c1 font-normal text-gray-400 ml-[3px]'>
-                      {data?.reviewAvg} ({data?.reviewCount})
+                      {data?.reviewAvg ?? 0} ({data?.reviewCount ?? 0})
                     </Text>
                   </View>
                 </View>
                 <View className='flex-row items-center'>
                   <Text className='text-b-lg font-bold'>정가 </Text>
                   <Text className='text-h-md font-extrabold'>
-                    {data?.price}원{' '}
+                    {data?.price ?? 0}원{' '}
                   </Text>
                   <Text className='text-c1 font-bold text-gray-300'>
-                    / {data?.unit}
+                    / {data?.unit ?? ''}
                   </Text>
                 </View>
               </View>
@@ -172,7 +176,17 @@ export default function ProductDetail() {
                   <LongButton
                     label={'리뷰 작성하기'}
                     height='h-[40px]'
-                    onPress={() => router.push(`/product/${id}/review/write`)}
+                    onPress={() =>
+                      router.push({
+                        pathname: `/product/${id}/review/write` as any,
+                        params: {
+                          id: String(id), // 제품아이디
+                          name: data?.name ?? '', // 제품명
+                          brand: data?.company ?? '', // 회사명
+                          image: typeof imageUrl === 'string' ? imageUrl : '', // URL만 보내기
+                        },
+                      })
+                    }
                   />
 
                   {(product?.review?.reviewList?.length ?? 0) <= 0 ? (
