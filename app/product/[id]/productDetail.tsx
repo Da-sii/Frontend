@@ -18,6 +18,7 @@ import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { FlatList, Image, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useProductDetail } from '@/hooks/product/useProductDetail';
 const tabs = [
   { key: 'ingredient', label: '성분 정보' },
   { key: 'review', label: '리뷰' },
@@ -25,6 +26,7 @@ const tabs = [
 
 export default function ProductDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const { data, isLoading, isError, error } = useProductDetail(id);
   const router = useRouter();
   const product = mockProductData.find((item) => item.id === id);
 
@@ -93,22 +95,22 @@ export default function ProductDetail() {
               {/* 상품 정보 헤더 */}
               <View className='flex-col gap-y-5 border-gray-100 border-b py-5 px-5'>
                 <View className='flex-col gap-[15px]'>
-                  <Text className='text-b-sm font-bold'>{product.brand}</Text>
-                  <Text className='text-h-md font-bold'>{product.name}</Text>
+                  <Text className='text-b-sm font-bold'>{data?.company}</Text>
+                  <Text className='text-h-md font-bold'>{data?.name}</Text>
                   <View className='flex-row items-center'>
                     <StarIcon />
                     <Text className='text-c1 font-normal text-gray-400 ml-[3px]'>
-                      {product.rating} ({product.reviewCount})
+                      {data?.reviewAvg} ({data?.reviewCount})
                     </Text>
                   </View>
                 </View>
                 <View className='flex-row items-center'>
                   <Text className='text-b-lg font-bold'>정가 </Text>
                   <Text className='text-h-md font-extrabold'>
-                    {product.price}원{' '}
+                    {data?.price}원{' '}
                   </Text>
                   <Text className='text-c1 font-bold text-gray-300'>
-                    / {product.weight}g
+                    / {data?.unit}
                   </Text>
                 </View>
               </View>
@@ -120,7 +122,7 @@ export default function ProductDetail() {
                     랭킹
                   </Text>
                   <View className='flex-col'>
-                    {product.ranking?.map((item, index) => (
+                    {data?.ranking?.map((item, index) => (
                       <Text key={index} className='text-c2 font-normal'>
                         {item.title}
                       </Text>
@@ -129,10 +131,10 @@ export default function ProductDetail() {
                 </View>
                 <View className='flex-row'>
                   <Text className='text-c2 font-normal text-gray-400 w-[46px] mr-[26px]'>
-                    영양정보
+                    식품 유형
                   </Text>
                   <Text className='text-c2 font-normal'>
-                    {product.antelope}
+                    {data?.productType}
                   </Text>
                 </View>
               </View>
@@ -146,7 +148,7 @@ export default function ProductDetail() {
 
               {/* 탭별 상단 콘텐츠 */}
               {activeTab === 'ingredient' ? (
-                <IngredientSection product={product.ingredients} />
+                <IngredientSection product={data} />
               ) : (
                 <View className='px-5 mt-5'>
                   <View className='flex-row items-center justify-between mb-5'>
@@ -237,20 +239,16 @@ export default function ProductDetail() {
 }
 
 /* 그대로 사용 */
-function IngredientSection({
-  product,
-}: {
-  product: (typeof mockProductData)[number]['ingredients'];
-}) {
+function IngredientSection({ product }: { product: any }) {
   return (
     <View className='p-5'>
       <View className='flex-row mb-[10px]'>
         <Text className='text-b-lg font-bold mb-2'>기능성 원료 </Text>
         <Text className='text-b-lg font-extrabold text-green-500'>
-          {product?.materials ?? 0}개
+          {product?.ingredientsCount ?? 0}개
         </Text>
       </View>
-      {product?.materialInfo.map((item, index) => (
+      {product?.ingredients.map((item: any, index: any) => (
         <MaterialInfo key={index} materialInfo={item} />
       ))}
     </View>
