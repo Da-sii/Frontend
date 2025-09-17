@@ -16,6 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
 import { useQueryClient } from '@tanstack/react-query';
 import { ProductReview } from '@/services/product/review/getReviewList';
+import { ProductRatingStatsDTO } from '@/services/product/review/getProductRatingStats';
 const SORT_OPTIONS: {
   key: 'new' | 'rating_high' | 'rating_row';
   label: string;
@@ -30,13 +31,18 @@ export default function allReview() {
   const idNum = Number(id);
   const qc = useQueryClient();
 
-  const cached = qc.getQueryData<ProductReview[]>([
+  const cachedReviews = qc.getQueryData<ProductReview[]>([
     'product',
     'reviews',
     idNum,
   ]);
+  const cachedRatingStats = qc.getQueryData<ProductRatingStatsDTO>([
+    'product',
+    'ratingStats',
+    idNum,
+  ]);
   const cachedDetail = qc.getQueryData<any>(['product', 'detail', idNum]);
-  console.log(cached);
+  console.log(cachedReviews);
   const router = useRouter();
   const product = mockProductData.find((item) => item.id === id);
   if (!product) return <Text>제품을 찾을 수 없습니다.</Text>;
@@ -72,7 +78,7 @@ export default function allReview() {
         />
 
         <FlatList
-          data={cached}
+          data={cachedReviews}
           keyExtractor={(_, index) => String(index)}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 24 }}
@@ -83,11 +89,11 @@ export default function allReview() {
               <View className='flex-row items-center justify-between mb-[15px]'>
                 <View className='flex-row items-center'>
                   <Text className='text-b-md font-extrabold text-gray-700 mr-[8px]'>
-                    리뷰 {cached?.length ?? 0}개
+                    리뷰 {cachedRatingStats?.total_reviews ?? 0}개
                   </Text>
                   <StarIcon width={20} height={20} />
                   <Text className='text-b-md font-extrabold text-gray-700 ml-[2px]'>
-                    ({cachedDetail?.reviewAvg ?? 0})
+                    ({cachedRatingStats?.average_rating ?? 0})
                   </Text>
                 </View>
               </View>

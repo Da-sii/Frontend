@@ -27,6 +27,10 @@ export function useProductRatingStats(productId?: number | string) {
 
       return { ...raw, percentages };
     },
-    staleTime: 60 * 1000, // 1분
+    staleTime: 0,
+    gcTime: 0,
+    refetchOnMount: 'always',
+    refetchOnReconnect: 'always',
+    refetchOnWindowFocus: true, // RN에서는 window focus 개념이 약해서 이건 보너스 정도
   });
 }

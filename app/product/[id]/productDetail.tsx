@@ -1,3 +1,4 @@
+import { useFocusEffect } from 'expo-router';
 import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
 import ArrowRightIcon from '@/assets/icons/ic_arrow_right.svg';
 import HomeIcon from '@/assets/icons/ic_home.svg';
@@ -15,7 +16,7 @@ import colors from '@/constants/color';
 import { mockProductData } from '@/mocks/data/productDetail';
 import { PortalProvider } from '@gorhom/portal'; // ← 설치했다면 사용
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { FlatList, Image, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useProductDetail } from '@/hooks/product/useProductDetail';
@@ -29,11 +30,18 @@ const tabs = [
 
 export default function ProductDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const idNum = Number(id);
   const { data, isLoading, isError, error } = useProductDetail(id);
-  const { data: reviews = [], isLoading: isReviewsLoading } =
-    useProductReviews(id);
-  const { data: ratingStats, isLoading: isRatingStatsLoading } =
-    useProductRatingStats(id);
+  const {
+    data: reviews = [],
+    isLoading: isReviewsLoading,
+    refetch: refetchReviews,
+  } = useProductReviews(id);
+  const {
+    data: ratingStats,
+    isLoading: isRatingStatsLoading,
+    refetch: refetchRatingStats,
+  } = useProductRatingStats(id);
   const qc = useQueryClient();
 
   const router = useRouter();
@@ -44,6 +52,20 @@ export default function ProductDetail() {
   );
 
   if (!product) return <Text>제품을 찾을 수 없습니다.</Text>;
+
+  // 화면이 다시 포커스될 때마다 최신화
+  useFocusEffect(
+    useCallback(() => {
+      // 1) 관련 쿼리 무효화
+      qc.invalidateQueries({ queryKey: ['product', 'reviews', idNum] });
+      qc.invalidateQueries({ queryKey: ['product', 'ratingStats', idNum] });
+      qc.invalidateQueries({ queryKey: ['product', 'detail', idNum] }); // 평균/카운트가 detail에 있을 경우
+
+      // 2) 바로 재조회 (선호에 따라 invalidate만으로도 충분)
+      refetchReviews();
+      refetchRatingStats();
+    }, [qc, idNum, refetchReviews, refetchRatingStats]),
+  );
 
   // 리뷰 탭에서 상단 사진 그리드에 쓸 사진 모음(예: 상품/리뷰 이미지 합치기 원하면 여기서 처리)
   const reviewPhotos = useMemo(
@@ -112,7 +134,8 @@ export default function ProductDetail() {
                   <View className='flex-row items-center'>
                     <StarIcon />
                     <Text className='text-c1 font-normal text-gray-400 ml-[3px]'>
-                      {data?.reviewAvg ?? 0} ({data?.reviewCount ?? 0})
+                      {ratingStats?.average_rating ?? 0} (
+                      {ratingStats?.total_reviews ?? 0})
                     </Text>
                   </View>
                 </View>
@@ -167,10 +190,10 @@ export default function ProductDetail() {
                     <View className='flex-row items-center'>
                       <Text className='text-b-lg font-bold'>리뷰 </Text>
                       <Text className='text-b-lg font-bold text-gray-400'>
-                        ({data?.reviewCount ?? 0})
+                        ({ratingStats?.total_reviews ?? 0})
                       </Text>
                     </View>
-                    {(data?.reviewCount ?? 0) > 0 && (
+                    {(ratingStats?.total_reviews ?? 0) > 0 && (
                       <Pressable
                         onPress={() => {
                           qc.setQueryData(
@@ -180,6 +203,10 @@ export default function ProductDetail() {
                           qc.setQueryData(
                             ['product', 'reviews', Number(id)],
                             reviews,
+                          );
+                          qc.setQueryData(
+                            ['product', 'ratingStats', Number(id)],
+                            ratingStats,
                           );
                           router.push(`/product/${id}/review/allReview`);
                         }}
@@ -205,7 +232,7 @@ export default function ProductDetail() {
                     }
                   />
 
-                  {(data?.reviewCount ?? 0) <= 0 ? (
+                  {(ratingStats?.total_reviews ?? 0) <= 0 ? (
                     <View className='items-center mt-[60px]'>
                       <EmptyReviewIcon />
                       <View className='flex-col items-center mt-[15px]'>
