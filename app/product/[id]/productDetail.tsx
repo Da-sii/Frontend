@@ -21,6 +21,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useProductDetail } from '@/hooks/product/useProductDetail';
 import { useProductReviews } from '@/hooks/product/review/useGetProductReview';
 import { useQueryClient } from '@tanstack/react-query';
+import { useProductRatingStats } from '@/hooks/product/review/useProductRatingStats';
 const tabs = [
   { key: 'ingredient', label: '성분 정보' },
   { key: 'review', label: '리뷰' },
@@ -31,6 +32,8 @@ export default function ProductDetail() {
   const { data, isLoading, isError, error } = useProductDetail(id);
   const { data: reviews = [], isLoading: isReviewsLoading } =
     useProductReviews(id);
+  const { data: ratingStats, isLoading: isRatingStatsLoading } =
+    useProductRatingStats(id);
   const qc = useQueryClient();
 
   const router = useRouter();
@@ -217,13 +220,13 @@ export default function ProductDetail() {
                   ) : (
                     <View className='mt-[16px]'>
                       <ReviewCard
-                        reviewRank={product.review?.reviewRank || 0}
+                        reviewRank={ratingStats?.average_rating || 0}
                         distribution={{
-                          5: product.review?.fiveStarPercent || 0,
-                          4: product.review?.fourStarPercent || 0,
-                          3: product.review?.threeStarPercent || 0,
-                          2: product.review?.twoStarPercent || 0,
-                          1: product.review?.oneStarPercent || 0,
+                          5: ratingStats?.percentages[5] || 0,
+                          4: ratingStats?.percentages[4] || 0,
+                          3: ratingStats?.percentages[3] || 0,
+                          2: ratingStats?.percentages[2] || 0,
+                          1: ratingStats?.percentages[1] || 0,
                         }}
                       />
 
