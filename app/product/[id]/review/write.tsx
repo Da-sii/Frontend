@@ -99,6 +99,7 @@ export default function ReviewWritePage() {
       const okSize = (p.fileSize ?? 0) <= 5 * 1024 * 1024; // 5MB
       return okExt && okSize;
     });
+    console.log(filtered);
 
     setImages((prev) => {
       const merged = [...prev, ...filtered];

@@ -4,7 +4,7 @@ import MagnifierIcon from '@/assets/icons/ic_magnifier.svg';
 import BannerCarousel from '@/components/page/home/BannerCarousel';
 import ProductCarousel from '@/components/page/home/ProductCarousel';
 import TagsView from '@/components/page/home/TagsView';
-
+import AddProductButton from '@/app/product/add';
 import { bannerData, categories, mockRankingData } from '@/mocks/data/home';
 import { router } from 'expo-router';
 
@@ -71,6 +71,8 @@ export default function Home() {
             </Text>
           </Pressable>
         </View>
+
+        <AddProductButton />
       </ScrollView>
     </SafeAreaView>
   );
