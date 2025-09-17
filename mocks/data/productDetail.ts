@@ -159,6 +159,15 @@ export const mockProductData = [
     change: 3,
     isNew: false,
   },
+  {
+    id: '5',
+  },
+  {
+    id: '6',
+  },
+  {
+    id: '7',
+  },
 ];
 
 export const categories = [

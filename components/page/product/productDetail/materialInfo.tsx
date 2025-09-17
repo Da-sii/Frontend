@@ -6,51 +6,42 @@ import IngredienStatusIcon from '@/assets/icons/ic_ingredien_status.svg';
 import React, { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import ProgressBar from './progressBar';
+import { ProductIngredient } from '@/services/product/getProductDetail';
 
-interface material {
-  ko_name: string;
-  en_name: string;
-  amount: number;
-  recommended_amount_min: number;
-  recommended_amount_max: number;
-  effect: string;
-  side_effect: string;
-  ingredien_status: string;
-}
-
-interface materialInfoProups {
-  materialInfo: material;
-}
-
-export default function MaterialInfo({ materialInfo }: materialInfoProups) {
+export default function MaterialInfo({
+  materialInfo,
+}: {
+  materialInfo: ProductIngredient;
+}) {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <View className='flex-row border-b border-gray-100 w-full   '>
       <View className='w-full my-5'>
         <View className='flex-row'>
           <Text className='text-b-sm font-extrabold'>
-            {materialInfo.ko_name}
+            {materialInfo.ingredientName}
           </Text>
-          <View className='bg-[#FF3A4A] px-[11px] py-[2px] rounded-full border-none ml-[8px]'>
+          <View
+            className={`px-[11px] py-[2px] rounded-full border-none ml-[8px] ${materialInfo.status === '초과' ? 'bg-[#FF3A4A]' : materialInfo.status === '미만' ? 'bg-[#FFA600]' : 'bg-green-600'}`}
+          >
             <Text className='text-white font-bold text-c3'>
-              {materialInfo.ingredien_status}
+              {materialInfo.status}
             </Text>
           </View>
         </View>
         <Text className='text-c3 text-gray-400 font-bold mb-[10px]'>
-          {materialInfo.en_name}
+          {materialInfo.englishIngredient}
         </Text>
 
         <Text className='text-b-sm font-extrabold'>
-          포함량 {materialInfo.amount}mg
+          포함량 {materialInfo.amount}
         </Text>
         <Text className='text-c3 text-gray-400 font-bold mb-[10px]'>
-          1일 권장량 {materialInfo.recommended_amount_min}~
-          {materialInfo.recommended_amount_max}mg
+          1일 권장량 {materialInfo.minRecommended}~{materialInfo.maxRecommended}
         </Text>
         <ProgressBar
-          current={materialInfo.amount}
-          recommended={materialInfo.recommended_amount_max}
+          current={parseFloat(materialInfo.amount) || 0}
+          recommended={parseFloat(materialInfo.maxRecommended) || 0}
         />
 
         {isOpen ? (
@@ -73,7 +64,7 @@ export default function MaterialInfo({ materialInfo }: materialInfoProups) {
               <View className='flex-row justify-between mb-5 mt-5 px-[7px]'>
                 <IngredienStatusIcon className='mr-[14px]' />
                 <Text className='flex-1 text-c1 font-nomal'>
-                  {materialInfo.side_effect}
+                  {materialInfo.sideEffect}
                 </Text>
               </View>
             </View>

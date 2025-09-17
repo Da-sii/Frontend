@@ -5,7 +5,7 @@ import {
   setTokens,
   clearTokens,
 } from '../lib/authToken';
-
+import { router } from 'expo-router';
 const MOCK_ACTIVATE = process.env.MOCK_ACTIVATE;
 
 const baseUrl =
@@ -14,8 +14,8 @@ const baseUrl =
     : process.env.EXPO_PUBLIC_API_URL;
 
 export const axiosInstance = axios.create({
-  adapter: 'fetch',
   baseURL: baseUrl,
+  withCredentials: true,
 });
 
 // ---- 요청 로깅 + accessToken 주입
@@ -26,7 +26,9 @@ axiosInstance.interceptors.request.use(
       console.log('[AXIOS] →', url, 'params=', config.params);
     }
     const accessToken = await getAccessToken();
+    console.log('accessToken', accessToken);
     if (accessToken) config.headers.Authorization = `Bearer ${accessToken}`;
+
     return config;
   },
 );
@@ -38,22 +40,15 @@ let waitQueue: {
   reject: (e: any) => void;
 }[] = [];
 
-function processQueue(token?: string, err?: any) {
+function flushQueue(token?: string, err?: any) {
   waitQueue.forEach((p) => (token ? p.resolve(token) : p.reject(err)));
   waitQueue = [];
 }
 
-async function refreshAccessToken() {
-  const refreshToken = await getRefreshToken();
-  if (!refreshToken) throw new Error('NO_REFRESH_TOKEN');
-
-  const { data } = await axios.post(`${baseUrl}/api/token/refresh`, {
-    refresh: refreshToken,
-  });
-  // 응답 키 이름도 서버에 맞게 수정
+async function refreshViaCookie() {
+  const { data } = await axiosInstance.post('/auth/token/refresh/');
   const newAT = data.access;
-  const newRT = data.refresh ?? refreshToken;
-  await setTokens(newAT, newRT);
+  await setTokens(newAT);
   return newAT;
 }
 
@@ -86,14 +81,14 @@ axiosInstance.interceptors.response.use(
 
       isRefreshing = true;
       try {
-        const newAT = await refreshAccessToken();
-        processQueue(newAT);
+        const newAT = await refreshViaCookie();
+        flushQueue(newAT);
         original.headers.Authorization = `Bearer ${newAT}`;
         return axiosInstance(original);
       } catch (e) {
-        processQueue(undefined, e);
+        flushQueue(undefined, e);
         await clearTokens();
-        // TODO: 전역 상태로 로그아웃 처리/로그인 페이지 이동 트리거
+        router.replace('/auth/login');
         return Promise.reject(e);
       } finally {
         isRefreshing = false;

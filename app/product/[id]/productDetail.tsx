@@ -18,6 +18,10 @@ import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { FlatList, Image, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useProductDetail } from '@/hooks/product/useProductDetail';
+import { useProductReviews } from '@/hooks/product/review/useGetProductReview';
+import { useQueryClient } from '@tanstack/react-query';
+import { useProductRatingStats } from '@/hooks/product/review/useProductRatingStats';
 const tabs = [
   { key: 'ingredient', label: '성분 정보' },
   { key: 'review', label: '리뷰' },
@@ -25,6 +29,13 @@ const tabs = [
 
 export default function ProductDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const { data, isLoading, isError, error } = useProductDetail(id);
+  const { data: reviews = [], isLoading: isReviewsLoading } =
+    useProductReviews(id);
+  const { data: ratingStats, isLoading: isRatingStatsLoading } =
+    useProductRatingStats(id);
+  const qc = useQueryClient();
+
   const router = useRouter();
   const product = mockProductData.find((item) => item.id === id);
 
@@ -36,12 +47,15 @@ export default function ProductDetail() {
 
   // 리뷰 탭에서 상단 사진 그리드에 쓸 사진 모음(예: 상품/리뷰 이미지 합치기 원하면 여기서 처리)
   const reviewPhotos = useMemo(
-    () => product.review?.reviewList?.flatMap((r) => r.images ?? []) ?? [],
-    [product.review?.reviewList],
+    () => reviews.flatMap((r) => r.images),
+    [reviews],
   );
 
   // 탭에 따라 리스트 데이터 스위치: ingredient면 빈 배열(아이템 없음), review면 리뷰 리스트
-  const listData = activeTab === 'review' ? product.review?.reviewList : [];
+  const listData = activeTab === 'review' ? reviews : [];
+
+  const imageUrl =
+    typeof product.image === 'string' ? product.image : (product.image as any); // 로컬 require면 params로 넘기지 말고 빈 문자열
 
   return (
     <SafeAreaView className='flex-1 bg-white'>
@@ -93,22 +107,22 @@ export default function ProductDetail() {
               {/* 상품 정보 헤더 */}
               <View className='flex-col gap-y-5 border-gray-100 border-b py-5 px-5'>
                 <View className='flex-col gap-[15px]'>
-                  <Text className='text-b-sm font-bold'>{product.brand}</Text>
-                  <Text className='text-h-md font-bold'>{product.name}</Text>
+                  <Text className='text-b-sm font-bold'>{data?.company}</Text>
+                  <Text className='text-h-md font-bold'>{data?.name}</Text>
                   <View className='flex-row items-center'>
                     <StarIcon />
                     <Text className='text-c1 font-normal text-gray-400 ml-[3px]'>
-                      {product.rating} ({product.reviewCount})
+                      {data?.reviewAvg ?? 0} ({data?.reviewCount ?? 0})
                     </Text>
                   </View>
                 </View>
                 <View className='flex-row items-center'>
                   <Text className='text-b-lg font-bold'>정가 </Text>
                   <Text className='text-h-md font-extrabold'>
-                    {product.price}원{' '}
+                    {data?.price ?? 0}원{' '}
                   </Text>
                   <Text className='text-c1 font-bold text-gray-300'>
-                    / {product.weight}g
+                    / {data?.unit ?? ''}
                   </Text>
                 </View>
               </View>
@@ -120,7 +134,7 @@ export default function ProductDetail() {
                     랭킹
                   </Text>
                   <View className='flex-col'>
-                    {product.ranking?.map((item, index) => (
+                    {data?.ranking?.map((item, index) => (
                       <Text key={index} className='text-c2 font-normal'>
                         {item.title}
                       </Text>
@@ -129,10 +143,10 @@ export default function ProductDetail() {
                 </View>
                 <View className='flex-row'>
                   <Text className='text-c2 font-normal text-gray-400 w-[46px] mr-[26px]'>
-                    영양정보
+                    식품 유형
                   </Text>
                   <Text className='text-c2 font-normal'>
-                    {product.antelope}
+                    {data?.productType}
                   </Text>
                 </View>
               </View>
@@ -146,21 +160,29 @@ export default function ProductDetail() {
 
               {/* 탭별 상단 콘텐츠 */}
               {activeTab === 'ingredient' ? (
-                <IngredientSection product={product.ingredients} />
+                <IngredientSection product={data} />
               ) : (
                 <View className='px-5 mt-5'>
                   <View className='flex-row items-center justify-between mb-5'>
                     <View className='flex-row items-center'>
                       <Text className='text-b-lg font-bold'>리뷰 </Text>
                       <Text className='text-b-lg font-bold text-gray-400'>
-                        ({product.review?.reviewList?.length ?? 0})
+                        ({data?.reviewCount ?? 0})
                       </Text>
                     </View>
-                    {(product?.review?.reviewList?.length ?? 0) > 0 && (
+                    {(data?.reviewCount ?? 0) > 0 && (
                       <Pressable
-                        onPress={() =>
-                          router.push(`/product/${id}/review/allReview`)
-                        }
+                        onPress={() => {
+                          qc.setQueryData(
+                            ['product', 'detail', Number(id)],
+                            data,
+                          );
+                          qc.setQueryData(
+                            ['product', 'reviews', Number(id)],
+                            reviews,
+                          );
+                          router.push(`/product/${id}/review/allReview`);
+                        }}
                       >
                         <ArrowRightIcon />
                       </Pressable>
@@ -170,10 +192,20 @@ export default function ProductDetail() {
                   <LongButton
                     label={'리뷰 작성하기'}
                     height='h-[40px]'
-                    onPress={() => router.push(`/product/${id}/review/write`)}
+                    onPress={() =>
+                      router.push({
+                        pathname: `/product/${id}/review/write` as any,
+                        params: {
+                          id: String(id), // 제품아이디
+                          name: data?.name ?? '', // 제품명
+                          brand: data?.company ?? '', // 회사명
+                          image: typeof imageUrl === 'string' ? imageUrl : '', // URL만 보내기
+                        },
+                      })
+                    }
                   />
 
-                  {(product?.review?.reviewList?.length ?? 0) <= 0 ? (
+                  {(data?.reviewCount ?? 0) <= 0 ? (
                     <View className='items-center mt-[60px]'>
                       <EmptyReviewIcon />
                       <View className='flex-col items-center mt-[15px]'>
@@ -188,13 +220,13 @@ export default function ProductDetail() {
                   ) : (
                     <View className='mt-[16px]'>
                       <ReviewCard
-                        reviewRank={product.review?.reviewRank || 0}
+                        reviewRank={ratingStats?.average_rating || 0}
                         distribution={{
-                          5: product.review?.fiveStarPercent || 0,
-                          4: product.review?.fourStarPercent || 0,
-                          3: product.review?.threeStarPercent || 0,
-                          2: product.review?.twoStarPercent || 0,
-                          1: product.review?.oneStarPercent || 0,
+                          5: ratingStats?.percentages[5] || 0,
+                          4: ratingStats?.percentages[4] || 0,
+                          3: ratingStats?.percentages[3] || 0,
+                          2: ratingStats?.percentages[2] || 0,
+                          1: ratingStats?.percentages[1] || 0,
                         }}
                       />
 
@@ -223,7 +255,18 @@ export default function ProductDetail() {
             activeTab === 'review'
               ? ({ item, index }) => (
                   <View key={index}>
-                    <ReviewItems reviewItem={item} id={id} />
+                    <ReviewItems
+                      reviewItem={{
+                        id: item.nickname ?? '',
+                        name: item.nickname ?? '',
+                        date: item.date ?? '-',
+                        isEdited: false,
+                        content: item.review ?? '',
+                        rating: item.rate ?? 0,
+                        images: item.images ?? [],
+                      }}
+                      id={id}
+                    />
                     <View className='w-[200%] h-[1px] left-[-50%] bg-gray-50' />
                   </View>
                 )
@@ -237,20 +280,16 @@ export default function ProductDetail() {
 }
 
 /* 그대로 사용 */
-function IngredientSection({
-  product,
-}: {
-  product: (typeof mockProductData)[number]['ingredients'];
-}) {
+function IngredientSection({ product }: { product: any }) {
   return (
     <View className='p-5'>
       <View className='flex-row mb-[10px]'>
         <Text className='text-b-lg font-bold mb-2'>기능성 원료 </Text>
         <Text className='text-b-lg font-extrabold text-green-500'>
-          {product?.materials ?? 0}개
+          {product?.ingredientsCount ?? 0}개
         </Text>
       </View>
-      {product?.materialInfo.map((item, index) => (
+      {product?.ingredients.map((item: any, index: any) => (
         <MaterialInfo key={index} materialInfo={item} />
       ))}
     </View>

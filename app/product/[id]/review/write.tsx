@@ -21,6 +21,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import useCreateReview from '@/hooks/product/review/useCreateReview';
 
 type Picked = {
   uri: string;
@@ -42,16 +43,25 @@ const startContent = {
 
 export default function ReviewWritePage() {
   const router = useRouter();
-  const { id } = useLocalSearchParams<{ id: string }>(); // 제품 id
-  const [rating, setRating] = useState(0);
-  const [content, setContent] = useState('');
+  const { id, name, brand, image } = useLocalSearchParams<{
+    id: string;
+    name?: string;
+    brand?: string;
+    image?: string; // URL만
+  }>();
+  const [rate, setRate] = useState<number>(0);
+  const [review, setReview] = useState<string>('');
   const product = mockProductData.find((item) => item.id === id);
   const [images, setImages] = useState<Picked[]>([]);
+  const { mutate, isPending } = useCreateReview(Number(id));
+
+  const canSubmit =
+    Number.isFinite(rate) && rate >= 1 && rate <= 5 && review.trim().length > 0;
 
   const onSubmit = async () => {
-    // TODO: API 호출로 리뷰 저장 (id, rating, content, images 등)
-    // await postReview({ productId: id, rating, content, images });
-    router.push(`/product/${id}/review/success`); // 저장 후 이전 페이지로
+    if (!canSubmit) return;
+    mutate({ rate, review: review.trim() });
+    router.push(`/product/${id}/review/success`);
   };
 
   const openPicker = async () => {
@@ -89,6 +99,7 @@ export default function ReviewWritePage() {
       const okSize = (p.fileSize ?? 0) <= 5 * 1024 * 1024; // 5MB
       return okExt && okSize;
     });
+    console.log(filtered);
 
     setImages((prev) => {
       const merged = [...prev, ...filtered];
@@ -228,10 +239,7 @@ export default function ReviewWritePage() {
               <View className=' w-[14%] aspect-square mr-[10px] border-gray-100 border rounded-[10px]'>
                 {product?.image ? (
                   typeof product.image === 'string' ? (
-                    <Image
-                      source={{ uri: product.image }}
-                      className='w-full h-full'
-                    />
+                    <Image source={{ uri: image }} className='w-full h-full' />
                   ) : (
                     <Image
                       source={product.image as any}
@@ -251,14 +259,14 @@ export default function ReviewWritePage() {
                   ellipsizeMode='tail'
                   numberOfLines={1}
                 >
-                  {product?.brand}
+                  {brand}
                 </Text>
                 <Text
                   className='text-b-sm font-bold'
                   ellipsizeMode='tail'
                   numberOfLines={1}
                 >
-                  {product?.name}
+                  {name}
                 </Text>
               </View>
             </View>
@@ -273,14 +281,14 @@ export default function ReviewWritePage() {
                 </Text>
               </View>
               <ReviewStar
-                reviewRank={rating}
+                reviewRank={rate}
                 height={24}
                 gap={8}
                 editable
-                onChange={setRating}
+                onChange={setRate}
               />
               <Text className='mt-[10px] text-c2 font-regular'>
-                {startContent[rating as keyof typeof startContent]}
+                {startContent[rate as keyof typeof startContent]}
               </Text>
             </View>
 
@@ -293,15 +301,15 @@ export default function ReviewWritePage() {
               <View className='border border-gray-100 rounded-[12px] p-[15px] pb-[40px] h-[150px] text-b-md relative'>
                 <TextInput
                   placeholder={`사용하신 제품에 대한 효과나\n양/부작용/섭취 팁 등에 대해 남겨주세요!`}
-                  value={content}
-                  onChangeText={setContent}
+                  value={review}
+                  onChangeText={setReview}
                   multiline
                 />
               </View>
 
               <View className='flex-row items-center absolute bottom-[15px] right-5'>
                 <Text className='text-c3 font-bold text-gray-700'>
-                  {content.length}
+                  {review.length}
                 </Text>
                 <Text className='text-c3 font-regular text-gray-400'>
                   {' '}
@@ -367,7 +375,7 @@ export default function ReviewWritePage() {
             <LongButton
               label='리뷰 등록하기'
               onPress={onSubmit}
-              disabled={rating === 0}
+              disabled={rate === 0}
             />
           </View>
         </ScrollView>

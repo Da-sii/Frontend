@@ -37,10 +37,12 @@ export default function ReviewCard({
             return (
               <View
                 key={score}
-                className='flex-col items-center w-[20px] not-last:mr-[11px] justify-center space-y-[5px]'
+                className=' flex-col items-center justify-center space-y-[5px] relative'
               >
                 <Text
-                  className={` text-[8px] ${isTop ? 'text-green-500 font-extrabold' : ' text-gray-700 font-bold'}`}
+                  numberOfLines={1}
+                  ellipsizeMode='clip'
+                  className={`absolute top-[0%] text-center text-c3 ${isTop ? 'text-green-500 font-extrabold' : ' text-gray-700 font-bold'}`}
                 >
                   {percent}%
                 </Text>
@@ -51,7 +53,7 @@ export default function ReviewCard({
                   />
                 </View>
 
-                <Text className='text-gray-700 text-[8px] font-bold'>
+                <Text className='text-gray-700 text-c3 font-bold'>
                   {score}점
                 </Text>
               </View>
