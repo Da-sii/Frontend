@@ -2,7 +2,13 @@ import ChekckIcon from '@/assets/icons/auth/ic_green_check.svg';
 import XIcon from '@/assets/icons/auth/ic_red_x.svg';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useMemo, useState } from 'react';
-import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  KeyboardTypeOptions,
+} from 'react-native';
 
 type TextFieldProps = {
   placeholder?: string;
@@ -19,6 +25,7 @@ type TextFieldProps = {
   menu?: 1 | 2;
   validateFirst?: (text: string) => boolean;
   validateSecond?: (text: string) => boolean;
+  keyboardType?: KeyboardTypeOptions;
 };
 
 export const TextField: React.FC<TextFieldProps> = ({
@@ -35,6 +42,7 @@ export const TextField: React.FC<TextFieldProps> = ({
   menu,
   validateFirst,
   validateSecond,
+  keyboardType,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -264,6 +272,7 @@ export const TextField: React.FC<TextFieldProps> = ({
           placeholderTextColor='#9ca3af'
           returnKeyType='done'
           blurOnSubmit
+          keyboardType={keyboardType}
         />
 
         {secureTextEntry && !disabled && (

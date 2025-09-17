@@ -88,11 +88,12 @@ export default function Index() {
 
   const onPressSubmit = async () => {
     if (!canSubmit) return;
-    signupMutation.mutate({
-      email,
-      password,
-      password2: confirmPassword,
-    });
+    router.replace('/auth/phone');
+    // signupMutation.mutate({
+    //   email,
+    //   password,
+    //   password2: confirmPassword,
+    // });
   };
 
   return (
