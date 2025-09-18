@@ -5,11 +5,14 @@ import { Ionicons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 import { MyReview } from '@/services/my/getReviewList';
-
+import DefaultModal from '@/components/common/modals/DefaultModal';
+import { useState } from 'react';
+import { useDeleteReview } from '@/hooks/my/useDeleteMyReview';
 export default function MyReviews() {
   const router = useRouter();
   const { data: myReviews } = useGetMyReview();
-
+  const [showDeleteCheckModal, setShowDeleteCheckModal] = useState(false);
+  const { mutate: deleteReview } = useDeleteReview();
   const renderItem = ({ item }: { item: MyReview }) => (
     <View className='border-b border-gray-100'>
       <ReviewItems
@@ -39,11 +42,26 @@ export default function MyReviews() {
           className='p-1 px-4 border border-gray-200 rounded-full ml-2 items-center'
           onPress={() => {
             console.log('삭제:', item.nickname);
+            setShowDeleteCheckModal(true);
           }}
         >
           <Text className='text-xs'>삭제</Text>
         </TouchableOpacity>
       </View>
+      <DefaultModal
+        visible={showDeleteCheckModal}
+        title='리뷰를 삭제하시겠습니까?'
+        message='소중하게 남겨주신 리뷰는 삭제 후 복구 불가합니다.'
+        secondMessage='정말 삭제하시겠습니까?'
+        onConfirm={() => {
+          // deleteReview(); 리뷰아이디 필요
+        }}
+        onCancel={() => {
+          setShowDeleteCheckModal(false);
+        }}
+        confirmText='확인'
+        cancelText='취소'
+      />
     </View>
   );
 
