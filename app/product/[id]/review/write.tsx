@@ -277,7 +277,7 @@ export default function ReviewWritePage() {
           >
             <View className='gap-y-4'>
               <View className='flex-row'>
-                <View className=' w-[14%] aspect-square mr-[10px] border-gray-100 border rounded-[10px]'>
+                <View className='w-[49px] aspect-square mr-[10px] border-gray-100 border rounded-[10px]'>
                   {product?.image ? (
                     typeof product.image === 'string' ? (
                       <Image
@@ -299,9 +299,9 @@ export default function ReviewWritePage() {
                   )}
                 </View>
 
-                <View className='gap-y-[7px] flex-1'>
+                <View className='py-1 flex-1'>
                   <Text
-                    className='text-c2 text-gray-500'
+                    className='text-c2 text-gray-500 mb-[7px]'
                     ellipsizeMode='tail'
                     numberOfLines={1}
                   >
