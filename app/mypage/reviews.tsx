@@ -1,108 +1,36 @@
 // app/mypage/review.tsx
 import ReviewItems from '@/components/page/product/productDetail/reviewItem'; // 실제 경로로 수정
+import { useGetMyReview } from '@/hooks/my/useGetMyReview';
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
-import React from 'react';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
-
-interface Review {
-  id: string;
-  productImage: string;
-  productName: string;
-  rating: number;
-  date: string;
-  modified: boolean;
-  content: string;
-  photos: string[];
-}
-
-const mockReviews: Review[] = [
-  {
-    id: '1',
-    productImage: '@/assets/images/product/product1.png',
-    productName: '아모레서피',
-    rating: 4,
-    date: '2025.08.28',
-    modified: true,
-    content: '반짝거리는 창문 너머 햇살이 날 비춰 … 예쁜 날엔 널 만나러 갈게',
-    photos: [
-      '@/assets/images/product/product1.png',
-      '@/assets/images/product/product1.png',
-      '@/assets/images/product/product1.png',
-    ],
-  },
-  {
-    id: '2',
-    productImage: '@/assets/images/product/product1.png',
-    productName: '아모레서피',
-    rating: 4,
-    date: '2025.08.28',
-    modified: true,
-    content: '반짝거리는 창문 너머 햇살이 날 비춰 … 예쁜 날엔 널 만나러 갈게',
-    photos: [
-      '@/assets/images/product/product1.png',
-      '@/assets/images/product/product1.png',
-      '@/assets/images/product/product1.png',
-    ],
-  },
-  {
-    id: '3',
-    productImage: '@/assets/images/product/product1.png',
-    productName: '아모레서피',
-    rating: 4,
-    date: '2025.08.28',
-    modified: true,
-    content: '반짝거리는 창문 너머 햇살이 날 비춰 … 예쁜 날엔 널 만나러 갈게',
-    photos: [
-      '@/assets/images/product/product1.png',
-      '@/assets/images/product/product1.png',
-      '@/assets/images/product/product1.png',
-    ],
-  },
-  {
-    id: '4',
-    productImage: '@/assets/images/product/product1.png',
-    productName: '아모레서피',
-    rating: 4,
-    date: '2025.08.28',
-    modified: true,
-    content: '반짝거리는 창문 너머 햇살이 날 비춰 … 예쁜 날엔 널 만나러 갈게',
-    photos: [
-      '@/assets/images/product/product1.png',
-      '@/assets/images/product/product1.png',
-      '@/assets/images/product/product1.png',
-    ],
-  },
-];
+import { MyReview } from '@/services/my/getReviewList';
 
 export default function MyReviews() {
   const router = useRouter();
+  const { data: myReviews } = useGetMyReview();
 
-  const convertToReviewItem = (review: Review) => ({
-    id: review.id,
-    name: review.productName,
-    date: review.date,
-    isEdited: review.modified,
-    content: review.content,
-    rating: review.rating,
-    images: review.photos,
-  });
-
-  const renderItem = ({ item }: { item: Review }) => (
+  const renderItem = ({ item }: { item: MyReview }) => (
     <View className='border-b border-gray-100'>
       <ReviewItems
-        reviewItem={convertToReviewItem(item)}
-        isPhoto={true}
-        isMore={true}
+        reviewItem={{
+          id: item.nickname ?? '',
+          name: item.nickname ?? '',
+          date: item.date ?? '-',
+          isEdited: false,
+          content: item.review ?? '',
+          rating: item.rate ?? 0,
+          images: item.images ?? [],
+        }}
         isMyReview={true}
-        id={item.id}
+        id={item.nickname}
       />
 
       <View className='flex-row px-4 pb-4'>
         <TouchableOpacity
           className='p-1 px-4 border border-gray-200 rounded-full items-center'
           onPress={() => {
-            console.log('수정:', item.id);
+            console.log('수정:', item.nickname);
           }}
         >
           <Text className='text-xs'>수정</Text>
@@ -110,7 +38,7 @@ export default function MyReviews() {
         <TouchableOpacity
           className='p-1 px-4 border border-gray-200 rounded-full ml-2 items-center'
           onPress={() => {
-            console.log('삭제:', item.id);
+            console.log('삭제:', item.nickname);
           }}
         >
           <Text className='text-xs'>삭제</Text>
@@ -135,11 +63,11 @@ export default function MyReviews() {
       />
 
       <FlatList
-        data={mockReviews}
-        keyExtractor={(item) => item.id}
+        data={myReviews ?? []}
+        keyExtractor={(item) => item.nickname}
         ListHeaderComponent={
           <Text className='px-4 pt-4 pb-2 text-base font-medium'>
-            {mockReviews.length}개의 리뷰를 작성했어요!
+            {myReviews?.length ?? 0}개의 리뷰를 작성했어요!
           </Text>
         }
         renderItem={renderItem}

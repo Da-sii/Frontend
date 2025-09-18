@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import ReviewStar from './ReviewStar';
-
+import { toCdnUrl } from '@/utils/cdn';
 interface reviewItem {
   id: string;
   name: string;
@@ -103,6 +103,7 @@ export default function ReviewItems({
   // reviewItem.images가 string[]/object[] 혼용일 수 있으니 URL로 정규화
   const imageUris: string[] = (reviewItem.images ?? [])
     .map((it: any) => (typeof it === 'string' ? it : (it?.url ?? '')))
+    .map((it: string) => toCdnUrl(it))
     .filter(Boolean);
 
   return (

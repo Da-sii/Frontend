@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useGetMyReview } from '@/hooks/my/useGetMyReview';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLogout } from '../../hooks/useLogout';
 import { getAccessToken } from '../../lib/authToken';
@@ -21,7 +22,7 @@ export default function Mypage() {
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
 
   const [isLogin, setIsLogin] = useState(false);
-
+  const { data: myReviews } = useGetMyReview();
   const handleOAuthPasswordPress = () => {
     // setShowPasswordModal(true);
     router.replace('/mypage/password');
@@ -104,7 +105,7 @@ export default function Mypage() {
                 <View className='flex-row items-center'>
                   <Text className='text-base'>내가 쓴 리뷰 </Text>
                   <Text className='text-base text-green-600 font-medium'>
-                    32개
+                    {myReviews?.length ?? 0}개
                   </Text>
                 </View>
                 <Ionicons name='chevron-forward' size={20} color='#666' />
