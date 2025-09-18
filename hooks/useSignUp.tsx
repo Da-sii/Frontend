@@ -1,5 +1,4 @@
 import { useMutation } from '@tanstack/react-query';
-import { Alert } from 'react-native';
 import { signUp, SignUpRequest, SignUpResponse } from '../services/auth/signUp';
 
 export const useSignup = (opts?: {
@@ -10,7 +9,6 @@ export const useSignup = (opts?: {
     mutationFn: signUp,
     onSuccess: (data) => {
       console.log('회원가입 성공:', data);
-      Alert.alert('회원가입 완료', '휴대폰 본인인증을 진행해주세요.');
       opts?.onSuccess?.(data);
     },
     onError: (err: any) => {
@@ -32,7 +30,6 @@ export const useSignup = (opts?: {
         msg = err.response.data;
       }
 
-      Alert.alert(msg);
       opts?.onError?.(err);
     },
   });

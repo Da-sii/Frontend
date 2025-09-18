@@ -258,10 +258,10 @@ export const TextField: React.FC<TextFieldProps> = ({
   return (
     <View>
       <View
-        className={`flex-row items-center w-full h-[60px] rounded-xl py-[21px] px-4 border ${borderColorClass}`}
+        className={`flex-row items-center w-full h-[60px] rounded-xl py-[21px] px-4 border ${borderColorClass} ${disabled ? 'bg-gray-50' : ''}`}
       >
         <TextInput
-          className='flex-1 text-b-sm font-bold text-gray-900'
+          className={`flex-1 text-b-sm font-bold text-gray-900 ${disabled ? 'text-gray-400' : ''}`}
           value={value}
           onChangeText={handleChangeText}
           onBlur={handleBlur}
