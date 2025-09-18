@@ -23,6 +23,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import useCreateReview from '@/hooks/product/review/useCreateReview';
 import { useReviewImageUpload } from '@/hooks/product/review/image/useReviewImageUpload';
+import { Keyboard, TouchableWithoutFeedback } from 'react-native';
 
 type Picked = {
   uri: string;
@@ -54,17 +55,17 @@ export default function ReviewWritePage() {
   const [review, setReview] = useState<string>('');
   const product = mockProductData.find((item) => item.id === id);
   const [images, setImages] = useState<Picked[]>([]);
+  const [showMinError, setShowMinError] = useState(false);
+  const [touched, setTouched] = useState(false);
   const { mutateAsync: createReviewMutate, isPending } = useCreateReview(
     Number(id),
   );
   const { upload, isUploading, progress, error, cancel } =
     useReviewImageUpload();
 
+  const isReviewValid = (text: string) => text.trim().length >= 20;
   const canSubmit =
-    Number.isFinite(rate) &&
-    rate >= 1 &&
-    rate <= 5 &&
-    review.trim().length >= 20;
+    Number.isFinite(rate) && rate >= 1 && rate <= 5 && isReviewValid(review);
 
   const onSubmit = async () => {
     if (!canSubmit) return;
@@ -172,6 +173,7 @@ export default function ReviewWritePage() {
 
   // iOS/Android 공통 선택창
   const handleAttachPress = () => {
+    forceBlurCheck();
     if (images.length >= 5) {
       Alert.alert('사진은 최대 5개까지 첨부 가능합니다.');
       return;
@@ -199,6 +201,19 @@ export default function ReviewWritePage() {
         { cancelable: true },
       );
     }
+  };
+  const handleReviewBlur = () => {
+    const len = review.trim().length;
+    // 아무것도 안 썼다면 굳이 에러 안 띄움(원하면 len === 0 도 에러로 바꿔도 됨)
+    if (len === 0) return setShowMinError(false);
+
+    setShowMinError(len < 20);
+  };
+
+  const forceBlurCheck = () => {
+    Keyboard.dismiss();
+    if (!touched) setTouched(true);
+    setShowMinError(!isReviewValid(review));
   };
 
   //   const upload = async () => {
@@ -234,172 +249,211 @@ export default function ReviewWritePage() {
   //   };
 
   return (
-    <SafeAreaView className='flex-1 bg-white'>
-      <Stack.Screen options={{ headerShown: false }} />
-      <Navigation
-        title='리뷰 작성'
-        left={<ArrowLeftIcon width={20} height={20} fill={colors.gray[900]} />}
-        onLeftPress={() => router.back()}
-      />
-      <KeyboardAvoidingView
-        behavior={Platform.select({ ios: 'padding', android: undefined })}
-        className='flex-1 bg-white'
-      >
-        <ScrollView
-          className='flex-1'
-          keyboardShouldPersistTaps='handled'
-          nestedScrollEnabled
-          contentContainerStyle={{
-            padding: 20,
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <SafeAreaView className='flex-1 bg-white'>
+        <Stack.Screen options={{ headerShown: false }} />
+        <Navigation
+          title='리뷰 작성'
+          left={
+            <ArrowLeftIcon width={20} height={20} fill={colors.gray[900]} />
+          }
+          onLeftPress={() => {
+            forceBlurCheck();
+            router.back();
           }}
-          showsVerticalScrollIndicator={false}
+        />
+        <KeyboardAvoidingView
+          behavior={Platform.select({ ios: 'padding', android: undefined })}
+          className='flex-1 bg-white'
         >
-          <View className='gap-y-4'>
-            <View className='flex-row'>
-              <View className=' w-[14%] aspect-square mr-[10px] border-gray-100 border rounded-[10px]'>
-                {product?.image ? (
-                  typeof product.image === 'string' ? (
-                    <Image source={{ uri: image }} className='w-full h-full' />
-                  ) : (
-                    <Image
-                      source={product.image as any}
-                      className='w-full h-full'
-                    />
-                  )
-                ) : (
-                  <View className='border-gray-100 w-full h-full items-center justify-center'>
-                    <Text className='text-b-lg font-bold text-gray-500'>?</Text>
-                  </View>
-                )}
-              </View>
-
-              <View className='gap-y-[7px] flex-1'>
-                <Text
-                  className='text-c2 text-gray-500'
-                  ellipsizeMode='tail'
-                  numberOfLines={1}
-                >
-                  {brand}
-                </Text>
-                <Text
-                  className='text-b-sm font-bold'
-                  ellipsizeMode='tail'
-                  numberOfLines={1}
-                >
-                  {name}
-                </Text>
-              </View>
-            </View>
-
-            <View className='border-y border-gray-100 py-5 flex-col items-center'>
+          <ScrollView
+            className='flex-1'
+            keyboardShouldPersistTaps='handled'
+            nestedScrollEnabled
+            contentContainerStyle={{
+              padding: 20,
+            }}
+            showsVerticalScrollIndicator={false}
+          >
+            <View className='gap-y-4'>
               <View className='flex-row'>
-                <Text className='text-b-sm font-bold text-[#FF3A4A] mr-1'>
-                  *
-                </Text>
-                <Text className='text-h-md font-extrabold mb-[15px]'>
-                  제품은 어떠셨나요?
-                </Text>
+                <View className=' w-[14%] aspect-square mr-[10px] border-gray-100 border rounded-[10px]'>
+                  {product?.image ? (
+                    typeof product.image === 'string' ? (
+                      <Image
+                        source={{ uri: image }}
+                        className='w-full h-full'
+                      />
+                    ) : (
+                      <Image
+                        source={product.image as any}
+                        className='w-full h-full'
+                      />
+                    )
+                  ) : (
+                    <View className='border-gray-100 w-full h-full items-center justify-center'>
+                      <Text className='text-b-lg font-bold text-gray-500'>
+                        ?
+                      </Text>
+                    </View>
+                  )}
+                </View>
+
+                <View className='gap-y-[7px] flex-1'>
+                  <Text
+                    className='text-c2 text-gray-500'
+                    ellipsizeMode='tail'
+                    numberOfLines={1}
+                  >
+                    {brand}
+                  </Text>
+                  <Text
+                    className='text-b-sm font-bold'
+                    ellipsizeMode='tail'
+                    numberOfLines={1}
+                  >
+                    {name}
+                  </Text>
+                </View>
               </View>
-              <ReviewStar
-                reviewRank={rate}
-                height={24}
-                gap={8}
-                editable
-                onChange={setRate}
-              />
-              <Text className='mt-[10px] text-c2 font-regular'>
-                {startContent[rate as keyof typeof startContent]}
-              </Text>
-            </View>
 
-            <View>
-              <Text className='text-b-sm font-extrabold mb-[20px]'>
-                자세한 제품 리뷰를 남겨주세요
-              </Text>
-              {/* 내용 입력 */}
-
-              <View className='border border-gray-100 rounded-[12px] p-[15px] pb-[40px] h-[150px] text-b-md relative'>
-                <TextInput
-                  placeholder={`사용하신 제품에 대한 효과나\n양/부작용/섭취 팁 등에 대해 남겨주세요!`}
-                  value={review}
-                  onChangeText={setReview}
-                  multiline
+              <View className='border-y border-gray-100 py-5 flex-col items-center'>
+                <View className='flex-row'>
+                  <Text className='text-b-sm font-bold text-[#FF3A4A] mr-1'>
+                    *
+                  </Text>
+                  <Text className='text-h-md font-extrabold mb-[15px]'>
+                    제품은 어떠셨나요?
+                  </Text>
+                </View>
+                <ReviewStar
+                  reviewRank={rate}
+                  height={24}
+                  gap={8}
+                  editable
+                  onChange={(newRate) => {
+                    setRate(newRate);
+                    if (!touched) setTouched(true);
+                    setShowMinError(!isReviewValid(review));
+                  }}
                 />
-              </View>
-
-              <View className='flex-row items-center absolute bottom-[15px] right-5'>
-                <Text className='text-c3 font-bold text-gray-700'>
-                  {review.length}
-                </Text>
-                <Text className='text-c3 font-regular text-gray-400'>
-                  {' '}
-                  / 1,000 (최소 20자)
+                <Text className='mt-[10px] text-c2 font-regular'>
+                  {startContent[rate as keyof typeof startContent]}
                 </Text>
               </View>
-            </View>
 
-            <Pressable
-              onPress={handleAttachPress}
-              className='h-[50px] rounded-[12px] items-center justify-center bg-white border border-blue-600 flex-row'
-            >
-              <PhotoCameraIcon className='mr-2' />
-              <Text className='text-b-md font-bold text-blue-600'>
-                사진 첨부하기
-              </Text>
-            </Pressable>
+              <View>
+                <Text className='text-b-sm font-extrabold mb-[20px]'>
+                  자세한 제품 리뷰를 남겨주세요
+                </Text>
+                {/* 내용 입력 */}
 
-            {images.length > 0 && (
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                className='mt-4'
-                contentContainerStyle={{ gap: 8 }}
+                <View className='border border-gray-100 rounded-[12px] p-[15px] pb-[40px] h-[150px] text-b-md relative'>
+                  <TextInput
+                    placeholder={`사용하신 제품에 대한 효과나\n양/부작용/섭취 팁 등에 대해 남겨주세요!`}
+                    value={review}
+                    onChangeText={(t) => {
+                      if (t.trim().length <= 1000) {
+                        setReview(t);
+                      }
+                      // TextField(menu=2)와 동일: blur 이후에는 입력 변화 즉시 유효/무효 반영
+                      if (touched) setShowMinError(!isReviewValid(t));
+                      else if (showMinError) setShowMinError(false); // blur 전에는 숨김
+                    }}
+                    onBlur={() => {
+                      setTouched(true);
+                      setShowMinError(!isReviewValid(review));
+                    }}
+                    onEndEditing={() => {
+                      setTouched(true);
+                      setShowMinError(!isReviewValid(review));
+                    }}
+                    multiline
+                  />
+                  {touched && showMinError && (
+                    <Text className='mt-2 text-c3 font-regular text-[#FF3A4A] absolute bottom-[15px] left-[20px]'>
+                      최소 20자 이상 입력해 주세요.
+                    </Text>
+                  )}
+                </View>
+
+                <View className='flex-row items-center absolute bottom-[15px] right-5'>
+                  <Text className='text-c3 font-bold text-gray-700'>
+                    {review.length}
+                  </Text>
+                  <Text className='text-c3 font-regular text-gray-400'>
+                    {' '}
+                    / 1,000 (최소 20자)
+                  </Text>
+                </View>
+              </View>
+
+              <Pressable
+                onPress={handleAttachPress}
+                className='h-[50px] rounded-[12px] items-center justify-center bg-white border border-blue-600 flex-row'
               >
-                {images.map((img, idx) => (
-                  <View key={idx} className='relative'>
-                    <Image
-                      source={{ uri: img.uri }}
-                      className='w-[100px] h-[100px] rounded-[10px] bg-gray-100'
-                    />
-                    <Pressable
-                      onPress={() => removeAt(idx)}
-                      className='absolute top-2 right-2 w-[18px] h-[18px] rounded-full bg-black/50 items-center justify-center'
-                    >
-                      <Text className='text-white text-xs'>✕</Text>
-                    </Pressable>
-                  </View>
-                ))}
-              </ScrollView>
-            )}
-            <View className='p-[13px] bg-gray-50 rounded-[12px] '>
-              <View className='flex-row items-start mb-[5px]'>
-                <Text className='mr-1 text-c3 font-regular text-gray-400'>
-                  •
+                <PhotoCameraIcon className='mr-2' />
+                <Text className='text-b-md font-bold text-blue-600'>
+                  사진 첨부하기
                 </Text>
-                <Text className='flex-1 text-c3 font-regular text-gray-400'>
-                  상품과 무관하거나 비속어 및 음란물이 포함된 사진 및 리뷰는
-                  통보 없이 삭제처리 될 수 있으며 고지 없이 경고 조치 됩니다.
-                </Text>
-              </View>
-              <View className='flex-row items-start'>
-                <Text className='mr-1 text-c3 font-regular text-gray-400'>
-                  •
-                </Text>
-                <Text className='flex-1 text-c3 font-regular text-gray-400'>
-                  경고 누적 시 리뷰 작성이 제한될 수 있습니다.
-                </Text>
+              </Pressable>
+
+              {images.length > 0 && (
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  className='mt-4'
+                  contentContainerStyle={{ gap: 8 }}
+                >
+                  {images.map((img, idx) => (
+                    <View key={idx} className='relative'>
+                      <Image
+                        source={{ uri: img.uri }}
+                        className='w-[100px] h-[100px] rounded-[10px] bg-gray-100'
+                      />
+                      <Pressable
+                        onPress={() => removeAt(idx)}
+                        className='absolute top-2 right-2 w-[18px] h-[18px] rounded-full bg-black/50 items-center justify-center'
+                      >
+                        <Text className='text-white text-xs'>✕</Text>
+                      </Pressable>
+                    </View>
+                  ))}
+                </ScrollView>
+              )}
+              <View className='p-[13px] bg-gray-50 rounded-[12px] '>
+                <View className='flex-row items-start mb-[5px]'>
+                  <Text className='mr-1 text-c3 font-regular text-gray-400'>
+                    •
+                  </Text>
+                  <Text className='flex-1 text-c3 font-regular text-gray-400'>
+                    상품과 무관하거나 비속어 및 음란물이 포함된 사진 및 리뷰는
+                    통보 없이 삭제처리 될 수 있으며 고지 없이 경고 조치 됩니다.
+                  </Text>
+                </View>
+                <View className='flex-row items-start'>
+                  <Text className='mr-1 text-c3 font-regular text-gray-400'>
+                    •
+                  </Text>
+                  <Text className='flex-1 text-c3 font-regular text-gray-400'>
+                    경고 누적 시 리뷰 작성이 제한될 수 있습니다.
+                  </Text>
+                </View>
               </View>
             </View>
-          </View>
-          <View className='mb-7 mt-[59px]'>
-            <LongButton
-              label='리뷰 등록하기'
-              onPress={onSubmit}
-              disabled={!canSubmit}
-            />
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+            <View className='mb-7 mt-[59px]'>
+              <LongButton
+                label='리뷰 등록하기'
+                onPress={() => {
+                  forceBlurCheck();
+                  onSubmit();
+                }}
+                disabled={!canSubmit}
+              />
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 }
