@@ -1,15 +1,3 @@
-<<<<<<< HEAD
-import { useQuery } from '@tanstack/react-query';
-import { getMyReviewList, MyReview } from '@/services/my/getReviewList';
-
-export function useGetMyReview() {
-  return useQuery<MyReview[], Error>({
-    queryKey: ['my', 'reviews'],
-    queryFn: () => getMyReviewList(),
-    enabled: true,
-    staleTime: 1000 * 30, // 30s
-  });
-=======
 import { getMyReviewList } from '@/services/my/getReviewList';
 import { useInfiniteQuery } from '@tanstack/react-query';
 
@@ -51,5 +39,4 @@ export function useGetMyReview(initialReviewId = 0) {
     refetchOnWindowFocus: false,
   });
   return q;
->>>>>>> c79eb88 (feat: 마이페이지 내가 쓴 리뷰 조회 api 연동)
 }

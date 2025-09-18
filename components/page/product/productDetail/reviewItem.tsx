@@ -18,8 +18,6 @@ import MoreIcon from '@/assets/icons/product/productDetail/ic_more_line.svg';
 import { LongButton } from '@/components/common/buttons/LongButton';
 import BottomSheetLayout from '@/components/page/product/productDetail/BottomSeetLayout';
 
-import { toCdnUrl } from '@/utils/cdn';
-
 import ReviewStar from './ReviewStar';
 import { toCdnUrl } from '@/utils/cdn';
 interface reviewItem {
