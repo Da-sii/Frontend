@@ -1,7 +1,12 @@
 // app/mypage/review.tsx
 import ReviewItems from '@/components/page/product/productDetail/reviewItem'; // 실제 경로로 수정
 import { useGetMyReview } from '@/hooks/my/useGetMyReview';
+import { useDeleteReview } from '@/hooks/my/useDeleteMyReview';
+import DefaultModal from '@/components/common/modals/DefaultModal';
+import { useState } from 'react';
+
 import { Ionicons } from '@expo/vector-icons';
+
 import { Stack, useRouter } from 'expo-router';
 import DefaultModal from '@/components/common/modals/DefaultModal';
 import { useState } from 'react';
@@ -18,6 +23,7 @@ import { useCallback } from 'react';
 
 export default function MyReviews() {
   const router = useRouter();
+  const [showDeleteCheckModal, setShowDeleteCheckModal] = useState(false);
   const {
     data: myReviews,
     fetchNextPage,
@@ -29,6 +35,8 @@ export default function MyReviews() {
   } = useGetMyReview(0);
   
   const [showDeleteCheckModal, setShowDeleteCheckModal] = useState(false);
+  const { mutate: deleteReview } = useDeleteReview();
+
   const { mutate: deleteReview } = useDeleteReview();
 
   const keyExtractor = useCallback((item: MyReview, idx: number) => {
