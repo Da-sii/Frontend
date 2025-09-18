@@ -6,10 +6,12 @@ import { isEmail } from '@/utils/validation';
 import { Stack, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Pressable, SafeAreaView, Text, View } from 'react-native';
+import { useSignupDraft } from '@/store/useSignupDraft';
 export default function Index() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
+
   const [isEmailValid, setIsEmailValid] = useState(false);
+  const { email, setEmail } = useSignupDraft();
   // 이메일 형식 체크
   const validateEmail = (value: string) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

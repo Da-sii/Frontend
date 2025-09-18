@@ -18,6 +18,7 @@ import { PortalProvider } from '@gorhom/portal';
 import { Stack, useRouter } from 'expo-router';
 import { useMemo, useRef, useState } from 'react';
 import { Pressable, SafeAreaView, Text, View } from 'react-native';
+import { useSignupDraft } from '@/store/useSignupDraft';
 import Svg, { Path } from 'react-native-svg';
 const TERMS: { id: string; terms: string; essential: boolean }[] = [
   { id: 'service', terms: '이용 약관 동의', essential: true },
@@ -26,13 +27,19 @@ const TERMS: { id: string; terms: string; essential: boolean }[] = [
   { id: 'appUsage', terms: '앱 이용 정보 수집 동의', essential: true },
   { id: 'notification', terms: '알림 및 푸시 알림 동의', essential: false },
 ];
+
 export default function Index() {
   const router = useRouter();
-
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [checkedSet, setCheckedSet] = useState<Set<number>>(new Set());
+  const {
+    email,
+    password,
+    confirmPassword,
+    setEmail,
+    setPassword,
+    setConfirmPassword,
+  } = useSignupDraft();
+
   // ===== BottomSheet =====
   const sheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => [462], []);
@@ -82,17 +89,13 @@ export default function Index() {
 
   const signupMutation = useSignup({
     onSuccess: (data) => {
-      router.replace('/auth/phone');
+      router.replace('/auth/phone?menu=signUp');
     },
   });
 
   const onPressSubmit = async () => {
     if (!canSubmit) return;
-    signupMutation.mutate({
-      email,
-      password,
-      password2: confirmPassword,
-    });
+    router.push('/auth/phone?menu=signUp');
   };
 
   return (
