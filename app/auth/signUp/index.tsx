@@ -89,13 +89,13 @@ export default function Index() {
 
   const signupMutation = useSignup({
     onSuccess: (data) => {
-      router.replace('/auth/phone');
+      router.replace('/auth/phone?menu=signUp');
     },
   });
 
   const onPressSubmit = async () => {
     if (!canSubmit) return;
-    router.push('/auth/phone');
+    router.push('/auth/phone?menu=signUp');
   };
 
   return (

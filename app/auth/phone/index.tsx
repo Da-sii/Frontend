@@ -1,6 +1,6 @@
 import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
 import Navigation from '@/components/layout/Navigation';
-import { Stack, useRouter } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { Pressable, SafeAreaView, Text, View } from 'react-native';
 import { useState } from 'react';
 import { TextField } from '@/components/common/Inputs/TextField';
@@ -9,9 +9,10 @@ import { useMemo } from 'react';
 import DefaultModal from '@/components/common/modals/DefaultModal';
 import { useSignup } from '@/hooks/useSignUp';
 import { useSignupDraft } from '@/store/useSignupDraft';
-export default function Index() {
-  const router = useRouter();
 
+export default function Index() {
+  const { menu } = useLocalSearchParams<{ menu?: string }>();
+  const router = useRouter();
   const [phone, setPhone] = useState('');
   const [authNumber, setAuthNumber] = useState('');
   const [requestAuthNumber, setRequestAuthNumber] = useState(false);
@@ -55,11 +56,17 @@ export default function Index() {
   }, [phone, authNumber, requestAuthNumber]);
 
   const onVerified = () => {
-    signupMutation.mutate({
-      email,
-      password,
-      password2: confirmPassword,
-    });
+    if (menu === 'signUp') {
+      signupMutation.mutate({
+        email,
+        password,
+        password2: confirmPassword,
+      });
+    } else if (menu === 'findPassword') {
+      // router.push('/auth/find/result');
+    } else if (menu === 'findId') {
+      // router.push('/auth/find/id/result');
+    }
   };
 
   return (
