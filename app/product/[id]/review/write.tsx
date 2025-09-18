@@ -22,6 +22,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import useCreateReview from '@/hooks/product/review/useCreateReview';
+import { useReviewImageUpload } from '@/hooks/product/review/image/useReviewImageUpload';
 
 type Picked = {
   uri: string;
@@ -53,15 +54,34 @@ export default function ReviewWritePage() {
   const [review, setReview] = useState<string>('');
   const product = mockProductData.find((item) => item.id === id);
   const [images, setImages] = useState<Picked[]>([]);
-  const { mutate, isPending } = useCreateReview(Number(id));
+  const { mutateAsync: createReviewMutate, isPending } = useCreateReview(
+    Number(id),
+  );
+  const { upload, isUploading, progress, error, cancel } =
+    useReviewImageUpload();
 
   const canSubmit =
-    Number.isFinite(rate) && rate >= 1 && rate <= 5 && review.trim().length > 0;
+    Number.isFinite(rate) &&
+    rate >= 1 &&
+    rate <= 5 &&
+    review.trim().length >= 20;
 
   const onSubmit = async () => {
     if (!canSubmit) return;
-    mutate({ rate, review: review.trim() });
-    router.push(`/product/${id}/review/success`);
+    try {
+      // 1) 리뷰 생성 → review_id 확보
+      const created = await createReviewMutate({ rate, review: review.trim() });
+      const reviewId = created?.review_id;
+      if (!reviewId) throw new Error('리뷰 생성 실패: review_id 없음');
+      // 2) 이미지 있으면 업로드
+      if (images.length) {
+        await upload(reviewId, images);
+      }
+
+      router.push(`/product/${id}/review/success`);
+    } catch (e) {
+      console.log('리뷰업로드실패: ', e);
+    }
   };
 
   const openPicker = async () => {
@@ -375,7 +395,7 @@ export default function ReviewWritePage() {
             <LongButton
               label='리뷰 등록하기'
               onPress={onSubmit}
-              disabled={rate === 0}
+              disabled={!canSubmit}
             />
           </View>
         </ScrollView>
