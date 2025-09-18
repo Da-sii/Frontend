@@ -203,7 +203,7 @@ export default function Index() {
                       >
                         <Path
                           d='M16.5 4.5L6.5 15L1.5 9'
-                          stroke={checked ? '#181A1B' : '#C9CDD2'}
+                          stroke={checked ? '#50D88F' : '#C9CDD2'}
                           strokeWidth={1.5}
                           strokeLinecap='round'
                           strokeLinejoin='round'
