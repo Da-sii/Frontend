@@ -2,6 +2,7 @@ import { axiosInstance } from '../index';
 
 type ReviewImagesDTO = { url: string };
 
+<<<<<<< HEAD
 type ReviewValueDTO = {
   rate: number;
   date?: string;
@@ -15,10 +16,27 @@ export type MyReviewListDTO = {
 };
 
 export type MyReview = {
+=======
+export type MyReviewListDTO = {
+  success: boolean;
+  user_id: number;
+  reviews: Record<string, MyReview>; // key = 닉네임
+};
+
+export type ProductInfoDTO = {
+  id: number;
+  name: string;
+  company: string;
+  image: string;
+};
+export type MyReview = {
+  review_id: number;
+>>>>>>> c79eb88 (feat: 마이페이지 내가 쓴 리뷰 조회 api 연동)
   nickname: string;
   rate: number;
   date?: string;
   review: string;
+<<<<<<< HEAD
   images: string[]; // url만 뽑아 정규화
 };
 export async function getMyReviewList(): Promise<MyReview[]> {
@@ -26,11 +44,29 @@ export async function getMyReviewList(): Promise<MyReview[]> {
     await axiosInstance.get<MyReviewListDTO>(`/review/myReviews/`);
   return Object.entries(data.reviews ?? {}).map(
     ([nickname, v]: [string, ReviewValueDTO]) => ({
+=======
+  images: ReviewImagesDTO[]; // url만 뽑아 정규화
+  product_info: ProductInfoDTO;
+};
+export async function getMyReviewList(review_id: number): Promise<MyReview[]> {
+  const { data } = await axiosInstance.get<MyReviewListDTO>(
+    `/review/myReviews/${review_id}/`,
+  );
+
+  return Object.entries(data.reviews ?? {}).map(
+    ([nickname, v]: [string, MyReview]) => ({
+      review_id: v.review_id,
+>>>>>>> c79eb88 (feat: 마이페이지 내가 쓴 리뷰 조회 api 연동)
       nickname,
       rate: v.rate,
       date: v.date,
       review: v.review,
+<<<<<<< HEAD
       images: (v.images ?? []).map((img) => img.url),
+=======
+      images: v.images,
+      product_info: v.product_info,
+>>>>>>> c79eb88 (feat: 마이페이지 내가 쓴 리뷰 조회 api 연동)
     }),
   );
 }

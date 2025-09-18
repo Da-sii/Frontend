@@ -26,6 +26,8 @@ interface reviewItem {
   id: number;
   reviewId?: number;
   name: string;
+  company?: string;
+  product_name?: string;
   date: string;
   isEdited: boolean;
   content: string;
@@ -128,13 +130,15 @@ export default function ReviewItems({
             className='mr-2'
           />
         )}
-        <View className='flex-col'>
+        <View className='flex-col flex-1'>
           {isMyReview && (
-            <Text className='mb-[5px] text-xs color-gray-500'>
-              {reviewItem.name}
+            <Text numberOfLines={1} className='mb-[5px] text-xs color-gray-500'>
+              {reviewItem.company}
             </Text>
           )}
-          <Text className='mb-[5px]'>{reviewItem.name}</Text>
+          <Text numberOfLines={1} className='mb-[5px]'>
+            {reviewItem.name}
+          </Text>
           {!isMyReview && (
             <View className='flex-row items-center'>
               <ReviewStar height={12} reviewRank={reviewItem.rating} />
