@@ -22,7 +22,7 @@ export default function MaterialInfo({
             {materialInfo.ingredientName}
           </Text>
           <View
-            className={`px-[11px] py-[2px] rounded-full border-none ml-[8px] ${materialInfo.status === '초과' ? 'bg-[#FF3A4A]' : materialInfo.status === '미만' ? 'bg-[#FFA600]' : 'bg-green-600'}`}
+            className={`px-[9px] py-[2px] rounded-full border-none ml-[8px] ${materialInfo.status === '초과' ? 'bg-[#FF3A4A]' : materialInfo.status === '미만' ? 'bg-[#FFA600]' : 'bg-green-600'}`}
           >
             <Text className='text-white font-bold text-c3'>
               {materialInfo.status}
@@ -30,7 +30,7 @@ export default function MaterialInfo({
           </View>
         </View>
         <Text className='text-c3 text-gray-400 font-bold mb-[10px]'>
-          {materialInfo.englishIngredient}
+          ({materialInfo.englishName})
         </Text>
 
         <Text className='text-b-sm font-extrabold'>
