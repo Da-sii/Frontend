@@ -16,7 +16,7 @@ export default function MaterialInfo({
   const [isOpen, setIsOpen] = useState(false);
   return (
     <>
-      <View className='flex-row w-full   '>
+      <View className='flex-row w-full'>
         <View className='w-full my-5'>
           <View className='flex-row'>
             <Text className='text-b-sm font-extrabold'>
