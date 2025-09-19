@@ -1,7 +1,8 @@
 import ViewAllIcon from '@/assets/icons/ic_arrow_right.svg';
 import Navigation from '@/components/layout/Navigation';
+import { useCategory } from '@/hooks/useCategory';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   FlatList,
   LayoutChangeEvent,
@@ -12,35 +13,45 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const mainCategories = [
-  '대분류1',
-  '대분류2',
-  '대분류3',
-  '대분류4',
-  '대분류5',
-  '대분류6',
-  '대분류7',
-];
-
-const subCategoriesMap: Record<string, string[]> = {
-  대분류1: [
-    '소분류1',
-    '소분류2',
-    '소분류3',
-    '소분류4',
-    '소분류5',
-    '소분류6',
-    '소분류7',
-    '소분류8',
-    '소분류9',
-  ],
-  대분류2: ['소분류A', '소분류B'],
-};
-
 export default function Category() {
   const router = useRouter();
-  const [selectedMain, setSelectedMain] = useState(mainCategories[0]);
+  const { categories, fetchCategories } = useCategory();
+
+  const [selectedBigCategory, setSelectedBigCategory] = useState('');
   const [colWidth, setColWidth] = useState<number>(0);
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const bigCategories = useMemo(
+    () => categories.map((cat) => cat.category),
+    [categories],
+  );
+
+  const subCategoriesMap = useMemo(
+    () =>
+      categories.reduce(
+        (acc, current) => {
+          acc[current.category] = current.smallCategories;
+          return acc;
+        },
+        {} as Record<string, string[]>,
+      ),
+    [categories],
+  );
+
+  useEffect(() => {
+    if (bigCategories.length > 0 && !selectedBigCategory) {
+      setSelectedBigCategory(bigCategories[0]);
+    }
+  }, [bigCategories, selectedBigCategory]);
+
+  useEffect(() => {
+    if (categories && categories.length > 0 && !selectedBigCategory) {
+      setSelectedBigCategory(categories[0].category);
+    }
+  }, [categories]);
 
   const onTextLayout = (e: LayoutChangeEvent) => {
     const w = e.nativeEvent.layout.width;
@@ -51,9 +62,10 @@ export default function Category() {
   const sidebarWidth = colWidth + 16 * 2;
 
   const goToList = (sub?: string) => {
+    if (!selectedBigCategory) return;
     router.push({
       pathname: '/(tabs)/category/list',
-      params: { main: selectedMain, sub: sub || 'all' },
+      params: { main: selectedBigCategory, sub: sub || 'all' },
     });
   };
 
@@ -72,17 +84,19 @@ export default function Category() {
             flexShrink: 0,
           }}
         >
-          {mainCategories.map((cat) => (
+          {bigCategories.map((cat) => (
             <Pressable
               key={cat}
-              onPress={() => setSelectedMain(cat)}
+              onPress={() => setSelectedBigCategory(cat)}
               className={`items-start py-3 ${
-                selectedMain === cat ? 'bg-white' : 'bg-gray-100'
+                selectedBigCategory === cat ? 'bg-white' : 'bg-gray-100'
               }`}
             >
               <Text
                 className={`text-sm font-medium pl-6 ${
-                  selectedMain === cat ? 'text-gray-900' : 'text-gray-400'
+                  selectedBigCategory === cat
+                    ? 'text-gray-900'
+                    : 'text-gray-400'
                 }`}
                 onLayout={onTextLayout}
               >
@@ -95,7 +109,7 @@ export default function Category() {
         <View className='flex-1'>
           <View className='flex-row justify-between items-center px-4 py-3'>
             <Text className='text-lg font-semibold text-gray-900'>
-              {selectedMain}
+              {selectedBigCategory}
             </Text>
             <Pressable
               onPress={() => goToList()}
@@ -107,10 +121,17 @@ export default function Category() {
           </View>
 
           <FlatList
-            data={subCategoriesMap[selectedMain] || []}
+            data={subCategoriesMap[selectedBigCategory] || []}
             keyExtractor={(item) => item}
             renderItem={({ item }) => (
-              <Pressable className='py-3 px-4' onPress={() => goToList(item)}>
+              <Pressable
+                className='py-3 px-4'
+                onPress={() => {
+                  console.log(item);
+                  console.log(selectedBigCategory);
+                  goToList(item);
+                }}
+              >
                 <Text className='text-sm text-gray-900'>{item}</Text>
               </Pressable>
             )}
