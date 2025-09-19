@@ -1,11 +1,6 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
-import {
-  getAccessToken,
-  getRefreshToken,
-  setTokens,
-  clearTokens,
-} from '../lib/authToken';
 import { router } from 'expo-router';
+import { clearTokens, getAccessToken, setTokens } from '../lib/authToken';
 const MOCK_ACTIVATE = process.env.MOCK_ACTIVATE;
 
 const baseUrl =

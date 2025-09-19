@@ -1,26 +1,19 @@
+import { RankingProduct } from '@/types/responses/product';
 import { Dimensions, FlatList, Image, Text, View } from 'react-native';
 
 const screenWidth = Dimensions.get('window').width;
 const cardWidth = screenWidth / 3;
 
-interface ProductItem {
-  id: string;
-  image: string;
-  name: string;
-  rating: number;
-  price: string;
+interface Props {
+  data: RankingProduct[];
 }
 
-interface ProductCarouselProps {
-  data: ProductItem[];
-}
-
-export default function ProductCarousel({ data }: ProductCarouselProps) {
+export default function ProductRankingCarousel({ data }: Props) {
   const renderRankingItem = ({
     item,
     index,
   }: {
-    item: ProductItem;
+    item: RankingProduct;
     index: number;
   }) => (
     <View
@@ -45,7 +38,7 @@ export default function ProductCarousel({ data }: ProductCarouselProps) {
       </Text>
       <View className='flex-row items-center gap-1 mb-1'>
         <Text className='text-yellow-star text-xs'>★</Text>
-        <Text className='text-xs text-gray-600'>{item.rating} (리뷰수)</Text>
+        <Text className='text-xs text-gray-600'>{item.reviewAvg} (리뷰수)</Text>
       </View>
       <Text className='text-sm text-gray-900 font-semibold'>
         정가 {item.price}
@@ -57,7 +50,7 @@ export default function ProductCarousel({ data }: ProductCarouselProps) {
     <FlatList
       data={data}
       renderItem={renderRankingItem}
-      keyExtractor={(item) => item.id}
+      keyExtractor={(item) => item.id.toString()}
       horizontal
       showsHorizontalScrollIndicator={false}
     />

@@ -1,4 +1,3 @@
-// features/auth/useSignin.ts
 import { signIn, SignInRequest, SignInResponse } from '@/services/auth/signIn';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
@@ -11,6 +10,7 @@ export const useSignin = () => {
     mutationFn: signIn,
     onSuccess: async (data) => {
       //   console.log('로그인 성공:', data);
+      
 
       await setTokens(data.access, data.refresh);
       //   Alert.alert('로그인 성공', `${data.user.nickname}님 환영합니다!`);

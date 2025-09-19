@@ -11,9 +11,11 @@ import SearchIcon from '@/assets/icons/ic_magnifier.svg';
 import Navigation from '@/components/layout/Navigation';
 import TabSwitcher, { TabItem } from '@/components/page/category/TabSwitcher';
 import ProductCard from '@/components/page/home/ProductCard';
-import RankingItem from '@/components/page/home/RankingItem';
+import ProductListRow from '@/components/page/home/ProductListRow';
 import colors from '@/constants/color';
-import { mockRankingData } from '@/mocks/data/home';
+import { useCategory } from '@/hooks/useCategory';
+import { useProduct } from '@/hooks/useProduct';
+import { IProduct } from '@/types/models/product';
 import {
   BottomSheetBackdrop,
   BottomSheetBackdropProps,
@@ -21,67 +23,24 @@ import {
   BottomSheetView,
 } from '@gorhom/bottom-sheet';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Dimensions, FlatList, Pressable, Text, View } from 'react-native';
 import Modal from 'react-native-modal';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const screenWidth = Dimensions.get('window').width;
 const cardWidth = (screenWidth - 16 * 2 - 8 * 2) / 2;
-
-type ListTab =
-  | 'sub1'
-  | 'sub2'
-  | 'sub3'
-  | 'sub4'
-  | 'sub5'
-  | 'sub6'
-  | 'sub7'
-  | 'sub8'
-  | 'sub9';
-
-const listItems: TabItem<ListTab>[] = [
-  { key: 'sub1', label: '소분류 1' },
-  { key: 'sub2', label: '소분류 2' },
-  { key: 'sub3', label: '소분류 3' },
-  { key: 'sub4', label: '소분류 4' },
-  { key: 'sub5', label: '소분류 5' },
-  { key: 'sub6', label: '소분류 6' },
-  { key: 'sub7', label: '소분류 7' },
-  { key: 'sub8', label: '소분류 8' },
-  { key: 'sub9', label: '소분류 9' },
-];
-
-const topCategories = [
-  { key: 'cat1', label: '대분류1' },
-  { key: 'cat2', label: '대분류2' },
-  { key: 'cat3', label: '대분류3' },
-  { key: 'cat4', label: '대분류4' },
-  { key: 'cat5', label: '대분류5' },
-  { key: 'cat6', label: '대분류6' },
-  { key: 'cat7', label: '대분류7' },
-];
+type ListTab = string;
 
 export default function List() {
   const router = useRouter();
+  const { categories, fetchCategories } = useCategory();
   const params = useLocalSearchParams<{ main?: string; sub?: string }>();
-  const [mainCategory] = useState(params.main ?? '대분류1');
+  const [bigCategory, setBigCategory] = useState(params.main ?? '');
   const [activeSub, setActiveSub] = useState(
     params.sub === 'all' ? 'all' : (params.sub as string),
   );
-  const [tab, setTab] = useState<ListTab>(
-    activeSub === 'all' ? listItems[0].key : (activeSub as ListTab),
-  );
-  const itemsWithAll: TabItem<ListTab | 'all'>[] = useMemo(
-    () => [{ key: 'all' as const, label: '전체' }, ...listItems],
-    [],
-  );
+
   useEffect(() => {
     if (activeSub === 'all') {
       setTab('all' as ListTab);
@@ -90,17 +49,73 @@ export default function List() {
     }
   }, [activeSub]);
 
+  useEffect(() => {
+    if (params.main) {
+      setBigCategory(params.main);
+    }
+    if (params.sub) {
+      const subCategory = params.sub === 'all' ? 'all' : params.sub;
+      setActiveSub(subCategory);
+      setTab(subCategory);
+    }
+  }, [params.main, params.sub]);
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+  const bigCategories = useMemo(
+    () => categories.map((cat) => cat.category),
+    [categories],
+  );
+  const subCategoriesMap = useMemo(
+    () =>
+      categories.reduce(
+        (acc, current) => {
+          acc[current.category] = current.smallCategories;
+          return acc;
+        },
+        {} as Record<string, string[]>,
+      ),
+    [categories],
+  );
+  const listItems = useMemo(() => {
+    const subCats = subCategoriesMap[bigCategory] || [];
+    return subCats.map((sub) => ({ key: sub, label: sub }));
+  }, [subCategoriesMap, bigCategory]);
+  const [tab, setTab] = useState<ListTab>(listItems[0]?.key ?? 'all');
+  const itemsWithAll: TabItem<ListTab | 'all'>[] = useMemo(
+    () => [{ key: 'all' as const, label: '전체' }, ...listItems],
+    [listItems],
+  );
+
   const sortSheetRef = useRef<BottomSheetModal>(null);
 
   const [viewType, setViewType] = useState<'grid' | 'list'>('grid');
-  const [selectedSort, setSelectedSort] = useState<string>('ranking');
-  const [filteredProducts] = useState(mockRankingData);
+  const [selectedSort, setSelectedSort] = useState<string>('monthly_rank');
+  const [filteredProducts, setFilteredProducts] = useState<IProduct[]>([]);
   const [isTopModalVisible, setTopModalVisible] = useState(false);
 
   const sortOptions = [
-    { id: 'ranking', label: '랭킹순' },
-    { id: 'new', label: '최신순' },
+    { id: 'monthly_rank', label: '랭킹순' },
+    { id: 'review_desc', label: '리뷰순' },
+    { id: 'price_asc', label: '낮은 가격순' },
+    { id: 'price_desc', label: '높은 가격순' },
   ];
+
+  const { fetchProductList, productList } = useProduct();
+  useEffect(() => {
+    fetchProductList({
+      bigCategory: bigCategory,
+      smallCategory: tab,
+      sort: selectedSort as
+        | 'monthly_rank'
+        | 'price_asc'
+        | 'price_desc'
+        | 'review_desc',
+      page: 1,
+    });
+    setFilteredProducts(productList);
+  }, [bigCategory, tab, selectedSort]);
 
   const snapPoints = useMemo(() => ['50%'], []);
   const renderBackdrop = useCallback(
@@ -123,6 +138,18 @@ export default function List() {
     closeSortSheet();
   };
 
+  const handleBigCategoryChange = (cat: string) => {
+    if (cat !== bigCategory) {
+      setBigCategory(cat);
+      setActiveSub('all');
+      router.replace({
+        pathname: '/(tabs)/category/list',
+        params: { main: cat, sub: 'all' },
+      });
+    }
+    setTopModalVisible(false);
+  };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
       <Navigation
@@ -136,7 +163,7 @@ export default function List() {
             onPress={() => setTopModalVisible(true)}
             style={{ flexDirection: 'row', alignItems: 'center' }}
           >
-            <Text className='text-lg font-semibold mr-1'>{mainCategory} </Text>
+            <Text className='text-lg font-semibold mr-1'>{bigCategory} </Text>
             <MoreIcon />
           </Pressable>
         }
@@ -147,21 +174,24 @@ export default function List() {
         }
       />
 
-      <TabSwitcher
-        items={itemsWithAll}
-        activeKey={tab}
-        onChangeTab={(key) => {
-          setTab(key as ListTab);
-          setActiveSub(key as string);
-          router.replace({
-            pathname: '/(tabs)/category/list',
-            params: { main: mainCategory, sub: key },
-          });
-        }}
-      />
+      <View className='w-full border-y-[1px] border-gray-50 px-2'>
+        <TabSwitcher
+          items={itemsWithAll}
+          activeKey={tab}
+          onChangeTab={(key) => {
+            setTab(key as ListTab);
+            setBigCategory(bigCategory);
+            setActiveSub(key as string);
+            router.replace({
+              pathname: '/(tabs)/category/list',
+              params: { main: bigCategory, sub: tab },
+            });
+          }}
+        />
+      </View>
 
-      <View className='px-4 py-1 mb-2 flex-row justify-between items-center'>
-        <Text className='text-sm text-gray-900 font-semibold'>
+      <View className='px-4 py-3 pb-1 mb-2 flex-row justify-between items-center'>
+        <Text className='text-sm text-gray-900'>
           총 {filteredProducts.length}개
         </Text>
         <View className='flex-row items-center'>
@@ -190,7 +220,7 @@ export default function List() {
         <FlatList
           key='grid'
           data={filteredProducts}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.id.toString()}
           numColumns={2}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 8 }}
@@ -201,7 +231,7 @@ export default function List() {
           renderItem={({ item }) => (
             <View style={{ width: cardWidth }}>
               <ProductCard
-                item={item}
+                item={item as IProduct}
                 style={{ width: cardWidth }}
                 imageStyle={{ width: cardWidth, height: cardWidth }}
                 titleNumberOfLines={2}
@@ -213,10 +243,10 @@ export default function List() {
         <FlatList
           key='list'
           data={filteredProducts}
-          renderItem={({ item, index }) => (
-            <RankingItem item={item} index={index} onPress={() => {}} />
+          renderItem={({ item }) => (
+            <ProductListRow item={item} onPress={() => {}} />
           )}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.id.toString()}
           showsVerticalScrollIndicator={false}
           ItemSeparatorComponent={() => <View className='h-px bg-gray-200' />}
           contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 8 }}
@@ -254,7 +284,9 @@ export default function List() {
                   onPress={() => setTopModalVisible(true)}
                   style={{ flexDirection: 'row', alignItems: 'center' }}
                 >
-                  <Text className='text-lg font-semibold mr-1'>대분류1 </Text>
+                  <Text className='text-lg font-semibold mr-1'>
+                    {bigCategory}
+                  </Text>
                   <LessIcon />
                 </Pressable>
               }
@@ -267,10 +299,11 @@ export default function List() {
           </View>
 
           <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-            {topCategories.map((cat) => (
+            {bigCategories.map((cat) => (
               <Pressable
-                key={cat.key}
+                key={cat}
                 onPress={() => {
+                  handleBigCategoryChange(cat);
                   setTopModalVisible(false);
                 }}
                 style={{
@@ -279,7 +312,7 @@ export default function List() {
                   paddingVertical: 12,
                 }}
               >
-                <Text style={{ fontSize: 16, color: '#333' }}>{cat.label}</Text>
+                <Text style={{ fontSize: 16, color: '#333' }}>{cat}</Text>
               </Pressable>
             ))}
           </View>

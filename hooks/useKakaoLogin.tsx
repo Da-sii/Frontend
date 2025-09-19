@@ -1,4 +1,3 @@
-// hooks/useKakaoLogin.ts
 import { useMutation } from '@tanstack/react-query';
 import { Alert } from 'react-native';
 import {

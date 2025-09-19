@@ -1,16 +1,15 @@
 import colors from '@/constants/color';
-import { IRankingProduct } from '@/types/models/product';
+import { IProduct } from '@/types/models/product';
 import { Image, Pressable, Text, View } from 'react-native';
 
 interface Props {
-  item: IRankingProduct;
-  index: number;
+  item: IProduct;
   onPress?: () => void;
 }
 
 const ITEM_HEIGHT = 135;
 
-export default function RankingItem({ item, index, onPress }: Props) {
+export default function ProductListRow({ item, onPress }: Props) {
   return (
     <Pressable onPress={onPress}>
       <View
@@ -32,29 +31,6 @@ export default function RankingItem({ item, index, onPress }: Props) {
           }}
           resizeMode='contain'
         />
-
-        {index < 3 && (
-          <View
-            style={{
-              position: 'absolute',
-              top: 12,
-              left: 16,
-              width: 24,
-              height: 24,
-              borderRadius: 12,
-              backgroundColor:
-                Number(item.rankDiff) > 0
-                  ? colors.green[500]
-                  : colors.gray[300],
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            <Text style={{ color: '#fff', fontSize: 12, fontWeight: '600' }}>
-              {index + 1}
-            </Text>
-          </View>
-        )}
 
         <View style={{ flex: 1, marginLeft: 12 }}>
           <Text
@@ -94,27 +70,6 @@ export default function RankingItem({ item, index, onPress }: Props) {
               / {item.unit}
             </Text>
           </View>
-        </View>
-
-        <View style={{ alignItems: 'flex-end' }}>
-          <Text
-            style={{
-              fontSize: 12,
-              color:
-                Number(item.rankDiff) > 0
-                  ? colors.orange[500]
-                  : Number(item.rankDiff) < 0
-                    ? colors.red[500]
-                    : colors.gray[600],
-              marginTop: 2,
-            }}
-          >
-            {Number(item.rankDiff) > 0
-              ? 'NEW'
-              : Number(item.rankDiff) < 0
-                ? `▲ ${item.rankDiff}`
-                : `▼ ${Math.abs(Number(item.rankDiff))}`}
-          </Text>
         </View>
       </View>
     </Pressable>

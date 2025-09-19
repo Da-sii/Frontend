@@ -1,19 +1,30 @@
+import AddProductButton from '@/app/product/add';
 import GoRankingIcon from '@/assets/icons/ic_arrow_right.svg';
 import LogoIcon from '@/assets/icons/ic_logo_full.svg';
 import MagnifierIcon from '@/assets/icons/ic_magnifier.svg';
 import BannerCarousel from '@/components/page/home/BannerCarousel';
-import ProductCarousel from '@/components/page/home/ProductCarousel';
+import ProductRankingCarousel from '@/components/page/home/ProductRankingCarousel';
 import TagsView from '@/components/page/home/TagsView';
-import AddProductButton from '@/app/product/add';
-import { bannerData, categories, mockRankingData } from '@/mocks/data/home';
+import { useMain } from '@/hooks/useMain';
+import { useRanking } from '@/hooks/useRanking';
+
+import { bannerData } from '@/mocks/data/home';
 import { router } from 'expo-router';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Home() {
   const [focusedIndex, setFocusedIndex] = useState(0);
+  const { fetchMainScreen, mainScreenInfo } = useMain();
+
+  const { fetchRanking, rankingInfo } = useRanking();
+
+  useEffect(() => {
+    fetchMainScreen();
+    fetchRanking({ category: 'all', page: 1, period: 'daily' });
+  }, []);
 
   const onViewRef = React.useRef(({ viewableItems }: any) => {
     if (viewableItems.length > 0) {
@@ -48,7 +59,7 @@ export default function Home() {
         </View>
 
         <View className='px-4 mt-4'>
-          <TagsView categories={categories} />
+          <TagsView categories={mainScreenInfo?.topSmallCategories || []} />
         </View>
 
         <View className='px-4 pb-6'>
@@ -61,15 +72,7 @@ export default function Home() {
             />
           </View>
 
-          <ProductCarousel data={mockRankingData} />
-        </View>
-
-        <View className='px-4 pb-6'>
-          <Pressable onPress={() => router.push('/auth/login')}>
-            <Text className='text-base font-semibold mb-2'>
-              디버깅용 로그인 이동
-            </Text>
-          </Pressable>
+          <ProductRankingCarousel data={rankingInfo?.results || []} />
         </View>
 
         <AddProductButton />

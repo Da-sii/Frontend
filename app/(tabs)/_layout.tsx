@@ -13,8 +13,8 @@ export default function TabsLayout() {
         tabBarActiveTintColor: colors.gray[900],
         tabBarInactiveTintColor: colors.gray[400],
         tabBarStyle: {
-          paddingBottom: 0, // 하단 패딩 제거
-          marginBottom: 0, // 하단 마진 제거
+          paddingBottom: 0,
+          marginBottom: 0,
         },
       }}
     >
@@ -103,6 +103,10 @@ export default function TabsLayout() {
         options={{
           tabBarButton: () => null,
           tabBarItemStyle: { display: 'none' },
+          tabBarStyle: {
+            paddingBottom: 0,
+            marginBottom: 0,
+          },
         }}
       />
 
