@@ -1,7 +1,6 @@
 import MagnifierIcon from '@/assets/icons/ic_magnifier.svg';
 import CloseIcon from '@/assets/icons/ic_x.svg';
 import colors from '@/constants/color';
-import React from 'react';
 import { FlatList, Pressable, Text, TextInput, View } from 'react-native';
 
 interface SearchBarProps {

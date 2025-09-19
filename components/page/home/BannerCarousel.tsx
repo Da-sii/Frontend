@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import {
   Animated,
   Dimensions,
@@ -6,6 +6,7 @@ import {
   Image,
   Text,
   View,
+  ViewabilityConfig,
 } from 'react-native';
 
 const { width: screenWidth } = Dimensions.get('window');
@@ -16,7 +17,7 @@ const ITEM_SPACING = 1;
 
 interface BannerItem {
   id: string;
-  image: any;
+  image: string;
   description: string;
 }
 
@@ -24,7 +25,7 @@ interface BannerCarouselProps {
   data: BannerItem[];
   focusedIndex: number;
   onViewableItemsChanged: any;
-  viewabilityConfig: any;
+  viewabilityConfig: ViewabilityConfig;
 }
 
 export default function BannerCarousel({
@@ -73,7 +74,11 @@ export default function BannerCarousel({
         opacity: opacities[index],
       }}
     >
-      <Image source={item.image} resizeMode='cover' className='w-full h-full' />
+      <Image
+        source={{ uri: item.image }}
+        resizeMode='cover'
+        className='w-full h-full'
+      />
       <View className='absolute left-4 bottom-6'>
         <Text className='text-white text-lg font-bold'>{item.description}</Text>
       </View>

@@ -1,5 +1,5 @@
 import colors from '@/constants/color';
-import React from 'react';
+import { IProduct } from '@/types/models/product';
 import {
   Image,
   ImageStyle,
@@ -9,19 +9,8 @@ import {
   ViewStyle,
 } from 'react-native';
 
-export interface Product {
-  id: string;
-  image: any;
-  brand: string;
-  name: string;
-  rating: number;
-  reviewCount: string;
-  price: string;
-  weight: string;
-}
-
-interface ProductCardProps {
-  item: Product;
+interface Props {
+  item: IProduct;
   style?: ViewStyle;
   imageStyle?: ImageStyle;
   titleStyle?: TextStyle;
@@ -34,9 +23,8 @@ export default function ProductCard({
   style,
   imageStyle,
   titleStyle,
-  titleNumberOfLines = 2,
   infoContainerStyle,
-}: ProductCardProps) {
+}: Props) {
   return (
     <View
       style={[
@@ -45,7 +33,7 @@ export default function ProductCard({
       ]}
     >
       <Image
-        source={item.image}
+        source={{ uri: item.image }}
         style={[{ width: '100%', aspectRatio: 1 }, imageStyle]}
         resizeMode='cover'
       />
@@ -54,7 +42,7 @@ export default function ProductCard({
         <Text
           style={{ fontSize: 12, color: colors.gray[500], marginBottom: 4 }}
         >
-          {item.brand}
+          {item.company}
         </Text>
 
         <Text
@@ -83,7 +71,7 @@ export default function ProductCard({
           <Text
             style={{ fontSize: 12, color: colors.gray[400], marginLeft: 4 }}
           >
-            {item.rating} ({item.reviewCount})
+            {item.reviewAvg} ({item.reviewCount.toString()})
           </Text>
         </View>
 
@@ -96,7 +84,7 @@ export default function ProductCard({
           <Text
             style={{ fontSize: 12, color: colors.gray[400], marginLeft: 4 }}
           >
-            / {item.weight}
+            / {item.unit}
           </Text>
         </View>
       </View>
