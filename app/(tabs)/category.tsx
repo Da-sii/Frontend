@@ -65,7 +65,7 @@ export default function Category() {
     if (!selectedBigCategory) return;
     router.push({
       pathname: '/(tabs)/category/list',
-      params: { main: selectedBigCategory, sub: sub || 'all' },
+      params: { main: selectedBigCategory, sub: sub || '전체' },
     });
   };
 

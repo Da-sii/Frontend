@@ -17,14 +17,7 @@ import BottomSheet, {
 } from '@gorhom/bottom-sheet';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  Dimensions,
-  FlatList,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from 'react-native';
+import { Dimensions, FlatList, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const sortOptions = [
@@ -45,22 +38,25 @@ export default function Search() {
   };
   const { fetchSearchProducts, productList } = useProduct();
 
-  const [searchText, setSearchText] = useState('');
+  const [inputValue, setInputValue] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedSort, setSelectedSort] = useState('monthly_rank');
   const [products, setProducts] = useState<IProduct[]>([]);
 
-  const handleSearchSubmit = (text: string) => {
-    setSearchText(text);
+  const handleSearch = () => {
+    if (inputValue.trim()) {
+      setSearchQuery(inputValue);
+    }
   };
 
   useEffect(() => {
-    if (!searchText.trim()) {
+    if (!searchQuery.trim()) {
       setProducts([]);
       return;
     }
 
     fetchSearchProducts({
-      word: searchText,
+      word: searchQuery,
       sort: selectedSort as
         | 'monthly_rank'
         | 'price_asc'
@@ -68,7 +64,7 @@ export default function Search() {
         | 'review_desc',
       page: 1,
     });
-  }, [searchText, selectedSort]);
+  }, [searchQuery, selectedSort]);
 
   useEffect(() => {
     if (productList) {
@@ -77,19 +73,22 @@ export default function Search() {
   }, [productList]);
 
   const renderProductItem = ({ item }: { item: IProduct }) => (
-    <ProductListRow item={item} onPress={() => {}} />
+    <ProductListRow
+      item={item}
+      onPress={() => {
+        router.push({
+          pathname: '/product/[id]/productDetail',
+          params: { id: item.id },
+        });
+      }}
+    />
   );
 
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ['40%'], []);
-  // callbacks
-  //   const handleSheetChanges = useCallback((index: number) => {
-  //     console.log('handleSheetChanges', index);
-  //   }, []);
 
   const handleSortSelect = (sortId: string) => {
     setSelectedSort(sortId);
-    // onSortSelect?.(sortId);
     bottomSheetRef.current?.close();
   };
 
@@ -108,86 +107,95 @@ export default function Search() {
 
   return (
     <SafeAreaView className='bg-white flex-1'>
-      <ScrollView contentContainerStyle={{ paddingBottom: 16 }}>
-        {/* 고정 헤더 */}
-        <Navigation
-          title='검색 결과'
-          left={
-            <ArrowLeftIcon width={20} height={20} fill={colors.gray[900]} />
-          }
-          onLeftPress={() => router.back()}
-        />
+      <Navigation
+        title='검색 결과'
+        left={<ArrowLeftIcon width={20} height={20} fill={colors.gray[900]} />}
+        onLeftPress={() => router.back()}
+      />
 
-        <SearchBar
-          value={searchText}
-          onChangeText={handleSearchSubmit}
-          placeholder='성분, 제품명으로 검색해보세요!'
-        />
+      <SearchBar
+        value={inputValue}
+        onChangeText={setInputValue}
+        onSubmit={handleSearch}
+        placeholder='성분, 제품명으로 검색해보세요!'
+      />
 
-        <FlatList
-          ListHeaderComponent={
-            <View className='px-2 py-1 mb-2'>
-              <View className='flex-row justify-between items-center'>
-                <Text className='text-sm text-gray-900 font-semibold'>
-                  총 {products.length}개
-                </Text>
-                <View className='flex-row items-center'>
-                  <Pressable
-                    className='flex-row items-center mr-2'
-                    onPress={() => bottomSheetRef.current?.expand()}
-                  >
-                    <Text className='text-xs text-gray-900 mr-1'>
-                      {sortOptions.find((option) => option.id === selectedSort)
-                        ?.label || '랭킹순'}
-                    </Text>
-                    <SelectOptionsIcon
-                      width={10}
-                      height={10}
-                      fill={colors.gray[900]}
-                    />
-                  </Pressable>
-                  <Pressable onPress={toggleViewType}>
-                    {viewType === 'grid' ? (
-                      <ViewTypeIcon width={16} height={16} />
-                    ) : (
-                      <ListTypeIcon width={16} height={16} />
-                    )}
-                  </Pressable>
-                </View>
+      <FlatList
+        ListHeaderComponent={
+          <View className='py-1 mb-2'>
+            <View className='flex-row justify-between items-center'>
+              <Text className='text-sm text-gray-900 font-semibold'>
+                총 {products.length}개
+              </Text>
+              <View className='flex-row items-center'>
+                <Pressable
+                  className='flex-row items-center mr-2'
+                  onPress={() => bottomSheetRef.current?.expand()}
+                >
+                  <Text className='text-xs text-gray-900 mr-1'>
+                    {sortOptions.find((option) => option.id === selectedSort)
+                      ?.label || '랭킹순'}
+                  </Text>
+                  <SelectOptionsIcon
+                    width={10}
+                    height={10}
+                    fill={colors.gray[900]}
+                  />
+                </Pressable>
+                <Pressable onPress={toggleViewType}>
+                  {viewType === 'grid' ? (
+                    <ViewTypeIcon width={16} height={16} />
+                  ) : (
+                    <ListTypeIcon width={16} height={16} />
+                  )}
+                </Pressable>
               </View>
             </View>
-          }
-          key={viewType}
-          data={products}
-          numColumns={viewType === 'grid' ? 2 : 1}
-          keyExtractor={(item) => item.id.toString()}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            paddingHorizontal: viewType === 'grid' ? 12 : 16,
-            paddingTop: 8,
-          }}
-          renderItem={({ item }) =>
-            viewType === 'grid' ? (
-              <View
-                style={{
-                  width: cardWidth,
-                  marginHorizontal: 4,
-                  marginBottom: 16,
+          </View>
+        }
+        key={viewType}
+        data={products}
+        numColumns={viewType === 'grid' ? 2 : 1}
+        keyExtractor={(item) => item.id.toString()}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingHorizontal: 12,
+          paddingTop: 8,
+        }}
+        columnWrapperStyle={
+          viewType === 'grid'
+            ? {
+                justifyContent: 'space-between',
+                marginBottom: 16,
+              }
+            : undefined
+        }
+        renderItem={({ item }) =>
+          viewType === 'grid' ? (
+            <View style={{ width: cardWidth }}>
+              <ProductCard
+                item={item as IProduct}
+                style={{ width: cardWidth }}
+                imageStyle={{ width: cardWidth, height: cardWidth }}
+                titleNumberOfLines={2}
+                onPress={() => {
+                  router.push({
+                    pathname: '/product/[id]/productDetail',
+                    params: { id: item.id },
+                  });
                 }}
-              >
-                <ProductCard item={item} />
-              </View>
-            ) : (
-              renderProductItem({ item })
-            )
-          }
-          ItemSeparatorComponent={
-            viewType === 'list'
-              ? () => <View className='h-px bg-gray-200' />
-              : undefined
-          }
-        />
-      </ScrollView>
+              />
+            </View>
+          ) : (
+            renderProductItem({ item })
+          )
+        }
+        ItemSeparatorComponent={
+          viewType === 'list'
+            ? () => <View className='h-[0.5px] bg-gray-200 mx-4' />
+            : undefined
+        }
+      />
 
       <BottomSheet
         ref={bottomSheetRef}

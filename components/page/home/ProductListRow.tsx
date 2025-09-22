@@ -1,3 +1,4 @@
+import EmptyImage from '@/assets/images/img_empty_images.webp';
 import colors from '@/constants/color';
 import { IProduct } from '@/types/models/product';
 import { Image, Pressable, Text, View } from 'react-native';
@@ -10,6 +11,8 @@ interface Props {
 const ITEM_HEIGHT = 135;
 
 export default function ProductListRow({ item, onPress }: Props) {
+  const isValidImage = item.image !== null;
+
   return (
     <Pressable onPress={onPress}>
       <View
@@ -20,22 +23,32 @@ export default function ProductListRow({ item, onPress }: Props) {
           paddingHorizontal: 16,
           backgroundColor: colors.gray[0],
         }}
-        className='relative'
+        className='relative py-3'
       >
-        <Image
-          source={{ uri: item.image }}
-          style={{
-            width: 110,
-            height: '100%',
-            borderRadius: 8,
-          }}
-          resizeMode='contain'
-        />
+        <View className='h-full overflow-hidden rounded-2xl aspect-square bg-gray-box'>
+          {isValidImage ? (
+            <Image
+              source={{ uri: item.image }}
+              style={{
+                width: '100%',
+                height: '100%',
+              }}
+              resizeMode='cover'
+            />
+          ) : (
+            <Image
+              source={EmptyImage}
+              style={{
+                width: '100%',
+                height: '100%',
+              }}
+              resizeMode='cover'
+            />
+          )}
+        </View>
 
-        <View style={{ flex: 1, marginLeft: 12 }}>
-          <Text
-            style={{ fontSize: 12, color: colors.gray[300], marginBottom: 2 }}
-          >
+        <View className='flex-1 ml-3 space-y-1'>
+          <Text style={{ fontSize: 12, color: colors.gray[300] }}>
             {item.company}
           </Text>
           <Text
@@ -48,27 +61,17 @@ export default function ProductListRow({ item, onPress }: Props) {
             style={{ flexDirection: 'row', alignItems: 'center' }}
             className='mb-4'
           >
-            <Text style={{ color: colors.yellow.star, fontSize: 12 }}>★</Text>
-            <Text
-              style={{ fontSize: 12, color: colors.gray[500], marginLeft: 4 }}
-            >
-              {item.reviewAvg} ({item.reviewCount.toString()})
+            <Text className='text-yellow-star text-xs'>★</Text>
+            <Text className='text-gray-500 mr-1 text-xs'>
+              {item.reviewAvg || (0).toFixed(2)}
             </Text>
+            <Text className='text-xs text-gray-300'>({item.reviewCount})</Text>
           </View>
 
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Text
-              style={{
-                fontSize: 14,
-                fontWeight: '600',
-                color: colors.gray[900],
-              }}
-            >
-              {item.price}
-            </Text>
-            <Text style={{ fontSize: 12, color: colors.gray[300] }}>
-              / {item.unit}
-            </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
+            <Text className='mr-1 text-xs'>정가</Text>
+            <Text className='text-base text-gray-900 mr-1'>{item.price}원</Text>
+            <Text className='text-xs text-gray-300'>/ {item.unit}</Text>
           </View>
         </View>
       </View>

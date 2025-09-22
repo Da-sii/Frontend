@@ -7,6 +7,7 @@ import RankingItem from '@/components/page/home/RankingItem';
 import colors from '@/constants/color';
 import { IRankingProduct } from '@/types/models/product';
 
+import SkeletonRankingItem from '@/components/common/skeleton/ProductListItemSkeleton';
 import { useRanking } from '@/hooks/useRanking';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -29,14 +30,12 @@ export default function Ranking() {
   const params = useLocalSearchParams();
 
   const { fetchRanking, isLoading, rankingInfo } = useRanking();
-
   const initialFilter = params.category ? (params.category as string) : '전체';
   const [filter, setFilter] = useState<string>(initialFilter);
-  const [tab, setTab] = useState<'day' | 'month'>('day');
-  // const [data, setData] = useState<IRankingProduct[]>(mockRankingData);
+  const [tab, setTab] = useState<'daily' | 'monthly'>('daily');
 
   useEffect(() => {
-    const period = tab === 'day' ? 'daily' : 'monthly';
+    const period = tab === 'daily' ? 'daily' : 'monthly';
 
     const category = filter === '전체' ? '전체' : filter;
 
@@ -53,7 +52,7 @@ export default function Ranking() {
     }
   }, [params.category]);
 
-  const onChangeTab = (next: 'day' | 'month') => {
+  const onChangeTab = (next: 'daily' | 'monthly') => {
     setTab(next);
     // setData(next === 'day' ? mockRankingToday : mockRankingMonth);
   };
@@ -68,6 +67,7 @@ export default function Ranking() {
     <RankingItem
       item={item}
       index={index}
+      showDiff={tab === 'monthly'}
       onPress={() =>
         router.push({
           pathname: '/product/[id]/productDetail',
@@ -92,23 +92,23 @@ export default function Ranking() {
 
       <View className='flex-row w-full border-t-[0.5px] border-b-[0.5px] border-gray-200'>
         <Pressable
-          onPress={() => onChangeTab('day')}
+          onPress={() => onChangeTab('daily')}
           className='px-2 py-3 mx-2'
         >
           <Text
             style={{
               textAlign: 'center',
-              color: tab === 'day' ? colors.gray[900] : colors.gray[500],
+              color: tab === 'daily' ? colors.gray[900] : colors.gray[500],
             }}
           >
             현재 급상승 랭킹
           </Text>
         </Pressable>
-        <Pressable onPress={() => onChangeTab('month')} className='px-2 py-3'>
+        <Pressable onPress={() => onChangeTab('monthly')} className='px-2 py-3'>
           <Text
             style={{
               textAlign: 'center',
-              color: tab === 'month' ? colors.gray[900] : colors.gray[500],
+              color: tab === 'monthly' ? colors.gray[900] : colors.gray[500],
             }}
           >
             월간 랭킹
@@ -152,32 +152,56 @@ export default function Ranking() {
         </ScrollView>
 
         <View className='flex-row justify-between mx-4 items-center'>
-          {tab === 'day' ? (
-            <View className='flex-row items-center'>
-              <ResetIcon width={12} height={12} className='mr-1' />
-              <Text className='text-gray-200 text-xs'>초기화</Text>
-            </View>
+          {tab === 'daily' ? (
+            <Pressable
+              onPress={() =>
+                fetchRanking({
+                  period: 'daily',
+                  category: filter,
+                  page: 1,
+                })
+              }
+            >
+              <View className='flex-row items-center'>
+                <ResetIcon width={12} height={12} className='mr-1' />
+                <Text className='text-gray-200 text-xs'>초기화</Text>
+              </View>
+            </Pressable>
           ) : (
             <View />
           )}
           <View className='flex-row items-center'>
             <ListIcon width={12} height={12} className='mr-1' />
             <Text className='text-gray-200 text-xs'>
-              {tab === 'day' && 'MM.DD '}18:00 기준
+              {tab === 'daily' && 'MM.DD '}18:00 기준
             </Text>
           </View>
         </View>
       </View>
 
-      <FlatList
-        data={rankingInfo?.results}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
-        showsVerticalScrollIndicator={false}
-        ItemSeparatorComponent={() => (
-          <View className='h-[0.5px] bg-gray-200 mx-4' />
-        )}
-      />
+      {isLoading ? (
+        <FlatList
+          data={Array.from({ length: 10 })}
+          renderItem={() => (
+            <SkeletonRankingItem showDiff={tab === 'monthly'} />
+          )}
+          keyExtractor={(item, idx) => idx.toString()}
+          showsVerticalScrollIndicator={false}
+          ItemSeparatorComponent={() => (
+            <View className='h-[0.5px] bg-gray-200 mx-4' />
+          )}
+        />
+      ) : (
+        <FlatList
+          data={rankingInfo?.results}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id.toString()}
+          showsVerticalScrollIndicator={false}
+          ItemSeparatorComponent={() => (
+            <View className='h-[0.5px] bg-gray-200 mx-4' />
+          )}
+        />
+      )}
     </SafeAreaView>
   );
 }

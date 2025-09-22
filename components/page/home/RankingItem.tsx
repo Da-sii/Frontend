@@ -1,3 +1,4 @@
+import BarIcon from '@/assets/icons/ic_bar.svg';
 import IndexIcon from '@/assets/icons/ic_ranking_index.svg';
 import EmptyImage from '@/assets/images/img_empty_images.webp';
 import colors from '@/constants/color';
@@ -7,12 +8,18 @@ import { Image, Pressable, Text, View } from 'react-native';
 interface Props {
   item: IRankingProduct;
   index: number;
+  showDiff?: boolean;
   onPress?: () => void;
 }
 
 const ITEM_HEIGHT = 135;
 
-export default function RankingItem({ item, index, onPress }: Props) {
+export default function RankingItem({
+  item,
+  index,
+  onPress,
+  showDiff = false,
+}: Props) {
   const isValidImage = item.image !== null;
 
   return (
@@ -94,26 +101,27 @@ export default function RankingItem({ item, index, onPress }: Props) {
           </View>
         </View>
 
-        <View style={{ alignItems: 'flex-end' }}>
-          <Text
-            style={{
-              fontSize: 12,
-              color:
-                Number(item.rankDiff) > 0
-                  ? colors.orange[500]
-                  : Number(item.rankDiff) < 0
-                    ? colors.red[500]
-                    : colors.gray[600],
-              marginTop: 2,
-            }}
-          >
-            {Number(item.rankDiff) > 0
-              ? 'NEW'
-              : Number(item.rankDiff) < 0
-                ? `▲ ${item.rankDiff}`
-                : `▼ ${Math.abs(Number(item.rankDiff))}`}
-          </Text>
-        </View>
+        {showDiff && (
+          <View style={{ alignItems: 'flex-end' }} className='pr-2'>
+            {Number(item.rankDiff) === 0 ? (
+              <BarIcon />
+            ) : (
+              <Text
+                style={{
+                  fontSize: 12,
+                  color:
+                    Number(item.rankDiff) > 0
+                      ? colors.blue[500]
+                      : colors.red[500],
+                }}
+              >
+                {Number(item.rankDiff) > 0
+                  ? 'NEW'
+                  : `▲ ${Math.abs(Number(item.rankDiff))}`}
+              </Text>
+            )}
+          </View>
+        )}
       </View>
     </Pressable>
   );

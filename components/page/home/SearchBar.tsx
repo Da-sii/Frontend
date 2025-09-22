@@ -9,6 +9,7 @@ interface SearchBarProps {
   onChangeText: (text: string) => void;
   onFocus?: () => void;
   onBlur?: () => void;
+  onSubmit?: () => void;
   recentSearches?: string[];
   onRemoveRecentSearch?: (search: string) => void;
   onClearAllRecentSearches?: () => void;
@@ -18,6 +19,7 @@ export default function SearchBar({
   placeholder = '성분, 제품명으로 검색해보세요!',
   value,
   onChangeText,
+  onSubmit,
   onFocus,
   onBlur,
   recentSearches = ['체지방 감소', '단백질 쉐이크', '단백질 셰이크'],
@@ -41,12 +43,14 @@ export default function SearchBar({
           {value.length > 0 && (
             <Pressable
               className='ml-2 bg-gray-400 rounded-full p-1 mt-2'
-              onPress={() => onChangeText('')}
+              onPress={() => {
+                onChangeText('');
+              }}
             >
               <CloseIcon width={11} height={11} color={colors.gray[0]} />
             </Pressable>
           )}
-          <Pressable className='ml-2 mt-2'>
+          <Pressable className='ml-2 mt-2' onPress={onSubmit}>
             <MagnifierIcon width={20} height={20} color={colors.gray[400]} />
           </Pressable>
         </View>
