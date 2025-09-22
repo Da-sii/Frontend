@@ -114,10 +114,6 @@ export default function List() {
     page: 1,
   });
 
-  useEffect(() => {
-    setFilteredProducts(productList);
-  }, [productList]);
-
   const snapPoints = useMemo(() => ['50%'], []);
   const renderBackdrop = useCallback(
     (props: BottomSheetBackdropProps) => (
