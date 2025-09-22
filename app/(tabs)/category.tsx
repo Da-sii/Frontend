@@ -127,8 +127,6 @@ export default function Category() {
               <Pressable
                 className='py-3 px-4'
                 onPress={() => {
-                  console.log(item);
-                  console.log(selectedBigCategory);
                   goToList(item);
                 }}
               >

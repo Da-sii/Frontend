@@ -97,7 +97,7 @@ export default function ChangePassword() {
 
         <TouchableOpacity
           onPress={handleSubmit}
-          disabled={disabled}
+          disabled={disabled || isLoading}
           className={`mt-4 rounded-xl py-4 items-center transition-all duration-300  ${
             disabled ? 'bg-gray-200' : 'bg-green-500'
           }`}

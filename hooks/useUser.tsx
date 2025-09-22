@@ -18,9 +18,9 @@ export const useUser = () => {
       return data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 401) {
-        console.log('잘못된 핀번호입니다.');
+        // console.log('잘못된 핀번호입니다.');
       } else {
-        console.log('500');
+        // console.log('500');
       }
       return false;
     } finally {
@@ -35,9 +35,9 @@ export const useUser = () => {
       return data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 401) {
-        console.log('잘못된 핀번호입니다.');
+        // console.log('잘못된 핀번호입니다.');
       } else {
-        console.log('500');
+        // console.log('500');
       }
       return false;
     } finally {

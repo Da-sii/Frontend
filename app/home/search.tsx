@@ -8,7 +8,6 @@ import ProductCard from '@/components/page/home/ProductCard';
 import ProductListRow from '@/components/page/home/ProductListRow';
 import SearchBar from '@/components/page/home/SearchBar';
 import colors from '@/constants/color';
-import { useProduct } from '@/hooks/useProduct';
 import { IProduct } from '@/types/models/product';
 import BottomSheet, {
   BottomSheetBackdrop,
@@ -27,6 +26,7 @@ const sortOptions = [
   { id: 'price_desc', label: '높은 가격순' },
 ];
 
+import { useSearchProductsQuery } from '@/hooks/useProductQueries';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const RECENT_SEARCHES_KEY = '@recent_searches';
@@ -41,12 +41,20 @@ export default function Search() {
   const toggleViewType = () => {
     setViewType((prev) => (prev === 'grid' ? 'list' : 'grid'));
   };
-  const { fetchSearchProducts, productList } = useProduct();
 
   const [inputValue, setInputValue] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSort, setSelectedSort] = useState('monthly_rank');
-  const [products, setProducts] = useState<IProduct[]>([]);
+
+  const { data: searchData } = useSearchProductsQuery({
+    word: searchQuery,
+    sort: selectedSort as
+      | 'monthly_rank'
+      | 'price_asc'
+      | 'price_desc'
+      | 'review_desc',
+    page: 1,
+  });
 
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
 
@@ -115,29 +123,6 @@ export default function Search() {
     }
   };
 
-  useEffect(() => {
-    if (!searchQuery.trim()) {
-      setProducts([]);
-      return;
-    }
-
-    fetchSearchProducts({
-      word: searchQuery,
-      sort: selectedSort as
-        | 'monthly_rank'
-        | 'price_asc'
-        | 'price_desc'
-        | 'review_desc',
-      page: 1,
-    });
-  }, [searchQuery, selectedSort]);
-
-  useEffect(() => {
-    if (productList) {
-      setProducts(productList);
-    }
-  }, [productList]);
-
   const renderProductItem = ({ item }: { item: IProduct }) => (
     <ProductListRow
       item={item}
@@ -194,7 +179,7 @@ export default function Search() {
           <View className='py-1 mb-2'>
             <View className='flex-row justify-between items-center'>
               <Text className='text-sm text-gray-900 font-semibold'>
-                총 {products.length}개
+                총 {searchData?.results.length}개
               </Text>
               <View className='flex-row items-center'>
                 <Pressable
@@ -223,12 +208,12 @@ export default function Search() {
           </View>
         }
         key={viewType}
-        data={products}
+        data={searchData?.results}
         numColumns={viewType === 'grid' ? 2 : 1}
         keyExtractor={(item) => item.id.toString()}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
-          paddingHorizontal: 12,
+          paddingHorizontal: 20,
           paddingTop: 8,
         }}
         columnWrapperStyle={
@@ -261,7 +246,7 @@ export default function Search() {
         }
         ItemSeparatorComponent={
           viewType === 'list'
-            ? () => <View className='h-[0.5px] bg-gray-200 mx-4' />
+            ? () => <View className='h-[0.5px] bg-gray-200 mx-2' />
             : undefined
         }
       />

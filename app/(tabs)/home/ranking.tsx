@@ -8,53 +8,53 @@ import colors from '@/constants/color';
 import { IRankingProduct } from '@/types/models/product';
 
 import SkeletonRankingItem from '@/components/common/skeleton/ProductListItemSkeleton';
-import { useRanking } from '@/hooks/useRanking';
+import { useCategory } from '@/hooks/useCategory';
+import { useFetchRankingQuery } from '@/hooks/useProductQueries';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { FlatList, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-const categories = [
-  '전체',
-  '소분류 1',
-  '소분류 2',
-  '소분류 3',
-  '소분류 4',
-  '소분류 5',
-  '소분류 6',
-  '소분류 7',
-];
 
 export default function Ranking() {
   const router = useRouter();
   const params = useLocalSearchParams();
 
-  const { fetchRanking, isLoading, rankingInfo } = useRanking();
+  const { categories, fetchCategories } = useCategory();
   const initialFilter = params.category ? (params.category as string) : '전체';
   const [filter, setFilter] = useState<string>(initialFilter);
   const [tab, setTab] = useState<'daily' | 'monthly'>('daily');
 
+  const { data: rankingInfo, isLoading } = useFetchRankingQuery({
+    period: tab === 'daily' ? 'daily' : 'monthly',
+    category: filter === '전체' ? '전체' : filter,
+    page: 1,
+  });
+
+  const allSmallCategories = useMemo(() => {
+    if (!categories) return [];
+    return categories.flatMap((category) => category.smallCategories);
+  }, [categories]);
+
   useEffect(() => {
-    const period = tab === 'daily' ? 'daily' : 'monthly';
-
-    const category = filter === '전체' ? '전체' : filter;
-
-    fetchRanking({
-      period,
-      category,
-      page: 1,
-    });
-  }, [tab, filter]);
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
-    if (params.category && categories.includes(params.category as string)) {
+    if (
+      params.category &&
+      allSmallCategories.includes(params.category as string)
+    ) {
       setFilter(params.category as string);
     }
   }, [params.category]);
 
+  const handleReset = () => {
+    setFilter('전체');
+    setTab('daily');
+  };
+
   const onChangeTab = (next: 'daily' | 'monthly') => {
     setTab(next);
-    // setData(next === 'day' ? mockRankingToday : mockRankingMonth);
   };
 
   const renderItem = ({
@@ -124,7 +124,7 @@ export default function Ranking() {
           className='mb-4'
         >
           <View className='flex-row'>
-            {categories.map((cat) => {
+            {allSmallCategories.map((cat) => {
               const selected = filter === cat;
               return (
                 <Pressable
@@ -153,15 +153,7 @@ export default function Ranking() {
 
         <View className='flex-row justify-between mx-4 items-center'>
           {tab === 'daily' ? (
-            <Pressable
-              onPress={() =>
-                fetchRanking({
-                  period: 'daily',
-                  category: filter,
-                  page: 1,
-                })
-              }
-            >
+            <Pressable onPress={handleReset}>
               <View className='flex-row items-center'>
                 <ResetIcon width={12} height={12} className='mr-1' />
                 <Text className='text-gray-200 text-xs'>초기화</Text>

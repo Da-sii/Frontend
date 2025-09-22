@@ -28,8 +28,6 @@ export async function fetchProductReviews(
   const { data } = await axiosInstance.get<ReviewsDTO>(
     `/review/product/${productId}/reviews/`,
   );
-
-  console.log(data);
   // 객체 → 배열로 변환 + images 정규화
   const arr: ProductReview[] = Object.entries(data.reviews ?? {}).map(
     ([nickname, v]) => ({

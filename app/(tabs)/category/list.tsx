@@ -16,7 +16,7 @@ import ProductCard from '@/components/page/home/ProductCard';
 import ProductListRow from '@/components/page/home/ProductListRow';
 import colors from '@/constants/color';
 import { useCategory } from '@/hooks/useCategory';
-import { useProduct } from '@/hooks/useProduct';
+import { useFetchProductsQuery } from '@/hooks/useProductQueries';
 import { IProduct } from '@/types/models/product';
 import {
   BottomSheetBackdrop,
@@ -94,7 +94,6 @@ export default function List() {
 
   const [viewType, setViewType] = useState<'grid' | 'list'>('grid');
   const [selectedSort, setSelectedSort] = useState<string>('monthly_rank');
-  const [filteredProducts, setFilteredProducts] = useState<IProduct[]>([]);
   const [isTopModalVisible, setTopModalVisible] = useState(false);
 
   const sortOptions = [
@@ -104,24 +103,16 @@ export default function List() {
     { id: 'price_desc', label: '높은 가격순' },
   ];
 
-  const { fetchProductList, isLoading, productList } = useProduct();
-  useEffect(() => {
-    fetchProductList({
-      bigCategory: bigCategory,
-      smallCategory: tab,
-      sort: selectedSort as
-        | 'monthly_rank'
-        | 'price_asc'
-        | 'price_desc'
-        | 'review_desc',
-      page: 1,
-    });
-    setFilteredProducts(productList);
-  }, [bigCategory, tab, selectedSort]);
-
-  useEffect(() => {
-    setFilteredProducts(productList);
-  }, [productList]);
+  const { data: productList, isLoading } = useFetchProductsQuery({
+    bigCategory: bigCategory,
+    smallCategory: tab,
+    sort: selectedSort as
+      | 'monthly_rank'
+      | 'price_asc'
+      | 'price_desc'
+      | 'review_desc',
+    page: 1,
+  });
 
   const snapPoints = useMemo(() => ['50%'], []);
   const renderBackdrop = useCallback(
@@ -198,7 +189,7 @@ export default function List() {
 
       <View className='px-4 py-3 pb-1 mb-2 flex-row justify-between items-center'>
         <Text className='text-sm text-gray-900'>
-          총 {filteredProducts.length}개
+          총 {productList?.results.length}개
         </Text>
         <View className='flex-row items-center'>
           <Pressable
@@ -242,13 +233,13 @@ export default function List() {
             keyExtractor={(item, idx) => idx.toString()}
             showsVerticalScrollIndicator={false}
             ItemSeparatorComponent={() => (
-              <View className='h-[0.5px] bg-gray-200 mx-4' />
+              <View className='h-[0.5px] bg-gray-200 mx-2' />
             )}
           />
         ) : (
           <FlatList
             key='grid'
-            data={filteredProducts}
+            data={productList?.results}
             keyExtractor={(item) => item.id.toString()}
             numColumns={2}
             showsVerticalScrollIndicator={false}
@@ -288,17 +279,19 @@ export default function List() {
       ) : (
         <FlatList
           key='list'
-          data={filteredProducts}
+          data={productList?.results}
           renderItem={({ item }) => (
-            <ProductListRow
-              item={item}
-              onPress={() => {
-                router.push({
-                  pathname: '/product/[id]/productDetail',
-                  params: { id: item.id },
-                });
-              }}
-            />
+            <View className='px-4'>
+              <ProductListRow
+                item={item}
+                onPress={() => {
+                  router.push({
+                    pathname: '/product/[id]/productDetail',
+                    params: { id: item.id },
+                  });
+                }}
+              />
+            </View>
           )}
           keyExtractor={(item) => item.id.toString()}
           showsVerticalScrollIndicator={false}

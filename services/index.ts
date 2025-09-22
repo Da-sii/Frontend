@@ -21,7 +21,6 @@ axiosInstance.interceptors.request.use(
       console.log('[AXIOS] →', url, 'params=', config.params);
     }
     const accessToken = await getAccessToken();
-    console.log('accessToken', accessToken);
     if (accessToken) config.headers.Authorization = `Bearer ${accessToken}`;
 
     return config;

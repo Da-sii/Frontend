@@ -19,7 +19,7 @@ export default function ProductListRow({ item, onPress }: Props) {
           flexDirection: 'row',
           alignItems: 'center',
           height: ITEM_HEIGHT,
-          paddingHorizontal: 16,
+
           backgroundColor: colors.gray[0],
         }}
         className='relative py-3'
