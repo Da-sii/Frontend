@@ -4,6 +4,8 @@ import { LongButton } from '@/components/common/buttons/LongButton';
 import Navigation from '@/components/layout/Navigation';
 import ReviewStar from '@/components/page/product/productDetail/ReviewStar';
 import colors from '@/constants/color';
+import { useReviewImageUpload } from '@/hooks/product/review/image/useReviewImageUpload';
+import useCreateReview from '@/hooks/product/review/useCreateReview';
 import { mockProductData } from '@/mocks/data/productDetail';
 import * as ImagePicker from 'expo-image-picker';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
@@ -21,8 +23,6 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import useCreateReview from '@/hooks/product/review/useCreateReview';
-import { useReviewImageUpload } from '@/hooks/product/review/image/useReviewImageUpload';
 
 type Picked = {
   uri: string;
@@ -80,7 +80,7 @@ export default function ReviewWritePage() {
 
       router.push(`/product/${id}/review/success`);
     } catch (e) {
-      console.log('리뷰업로드실패: ', e);
+      // console.log('리뷰업로드실패: ', e);
     }
   };
 

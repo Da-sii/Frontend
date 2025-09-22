@@ -10,5 +10,5 @@ export interface IProduct {
   reviewAvg: string;
 }
 export interface IRankingProduct extends IProduct {
-  rankDiff: string;
+  rankDiff?: string;
 }

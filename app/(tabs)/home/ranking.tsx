@@ -5,82 +5,69 @@ import ResetIcon from '@/assets/icons/ic_refresh.svg';
 import Navigation from '@/components/layout/Navigation';
 import RankingItem from '@/components/page/home/RankingItem';
 import colors from '@/constants/color';
+import { IRankingProduct } from '@/types/models/product';
 
-import { mockRankingData } from '@/mocks/data/home';
+import SkeletonRankingItem from '@/components/common/skeleton/ProductListItemSkeleton';
+import { useCategory } from '@/hooks/useCategory';
+import { useFetchRankingQuery } from '@/hooks/useProductQueries';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
-import {
-  Dimensions,
-  FlatList,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { useEffect, useMemo, useState } from 'react';
+import { FlatList, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-
-const categories = [
-  '전체',
-  '체지방 감소',
-  '에너지 소모/기초대사량 증가',
-  '에너지 소모/기초대사량 감소',
-  '에너지 소모/기초대사량 일정',
-  '에너지 소모/기초대사량 몰라',
-];
-
-const { width } = Dimensions.get('window');
-
-interface RankingItem {
-  id: string;
-  image: any;
-  brand: string;
-  name: string;
-  rating: number;
-  reviewCount: string;
-  price: string;
-  weight: string;
-  change: number;
-  isNew?: boolean;
-}
 
 export default function Ranking() {
   const router = useRouter();
   const params = useLocalSearchParams();
 
+  const { categories, fetchCategories } = useCategory();
   const initialFilter = params.category ? (params.category as string) : '전체';
-
   const [filter, setFilter] = useState<string>(initialFilter);
-  const [tab, setTab] = useState<'day' | 'month'>('day');
-  const [data, setData] = useState(mockRankingData);
+  const [tab, setTab] = useState<'daily' | 'monthly'>('daily');
+
+  const { data: rankingInfo, isLoading } = useFetchRankingQuery({
+    period: tab === 'daily' ? 'daily' : 'monthly',
+    category: filter === '전체' ? '전체' : filter,
+    page: 1,
+  });
+
+  const allSmallCategories = useMemo(() => {
+    if (!categories) return [];
+    return categories.flatMap((category) => category.smallCategories);
+  }, [categories]);
 
   useEffect(() => {
-    if (params.category && categories.includes(params.category as string)) {
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    if (
+      params.category &&
+      allSmallCategories.includes(params.category as string)
+    ) {
       setFilter(params.category as string);
     }
   }, [params.category]);
 
-  const onChangeTab = (next: 'day' | 'month') => {
-    setTab(next);
-    // setData(next === 'day' ? mockRankingToday : mockRankingMonth);
+  const handleReset = () => {
+    setFilter('전체');
+    setTab('daily');
   };
 
-  const onFilter = (category: string) => {
-    setFilter(category);
-    // 실제 필터링 로직 필요 시 구현
+  const onChangeTab = (next: 'daily' | 'monthly') => {
+    setTab(next);
   };
 
   const renderItem = ({
     item,
     index,
   }: {
-    item: RankingItem;
+    item: IRankingProduct;
     index: number;
   }) => (
     <RankingItem
       item={item}
       index={index}
+      showDiff={tab === 'monthly'}
       onPress={() =>
         router.push({
           pathname: '/product/[id]/productDetail',
@@ -105,25 +92,23 @@ export default function Ranking() {
 
       <View className='flex-row w-full border-t-[0.5px] border-b-[0.5px] border-gray-200'>
         <Pressable
-          onPress={() => onChangeTab('day')}
+          onPress={() => onChangeTab('daily')}
           className='px-2 py-3 mx-2'
         >
           <Text
             style={{
               textAlign: 'center',
-              color: tab === 'day' ? colors.gray[900] : colors.gray[500],
-              fontWeight: tab === 'day' ? '600' : '400',
+              color: tab === 'daily' ? colors.gray[900] : colors.gray[500],
             }}
           >
             현재 급상승 랭킹
           </Text>
         </Pressable>
-        <Pressable onPress={() => onChangeTab('month')} className='px-2 py-3'>
+        <Pressable onPress={() => onChangeTab('monthly')} className='px-2 py-3'>
           <Text
             style={{
               textAlign: 'center',
-              color: tab === 'month' ? colors.gray[900] : colors.gray[500],
-              fontWeight: tab === 'month' ? '600' : '400',
+              color: tab === 'monthly' ? colors.gray[900] : colors.gray[500],
             }}
           >
             월간 랭킹
@@ -139,15 +124,15 @@ export default function Ranking() {
           className='mb-4'
         >
           <View className='flex-row'>
-            {categories.map((cat) => {
+            {allSmallCategories.map((cat) => {
               const selected = filter === cat;
               return (
                 <Pressable
                   key={cat}
-                  onPress={() => onFilter(cat)}
+                  onPress={() => setFilter(cat)}
                   style={{
                     borderWidth: 1,
-                    borderColor: selected ? '#22C55E' : '#D1D5DB',
+                    borderColor: selected ? '#50D88F' : '#D1D5DB',
                   }}
                   className={`mr-2 rounded-full px-3 py-1 ${
                     selected ? 'bg-green-500' : 'bg-white'
@@ -167,42 +152,48 @@ export default function Ranking() {
         </ScrollView>
 
         <View className='flex-row justify-between mx-4 items-center'>
-          {tab === 'day' ? (
-            <View className='flex-row items-center'>
-              <ResetIcon width={12} height={12} className='mr-1' />
-              <Text className='text-gray-200 text-xs'>초기화</Text>
-            </View>
+          {tab === 'daily' ? (
+            <Pressable onPress={handleReset}>
+              <View className='flex-row items-center'>
+                <ResetIcon width={12} height={12} className='mr-1' />
+                <Text className='text-gray-200 text-xs'>초기화</Text>
+              </View>
+            </Pressable>
           ) : (
             <View />
           )}
           <View className='flex-row items-center'>
             <ListIcon width={12} height={12} className='mr-1' />
             <Text className='text-gray-200 text-xs'>
-              {tab === 'day' && 'MM.DD '}18:00 기준
+              {tab === 'daily' && 'MM.DD '}18:00 기준
             </Text>
           </View>
         </View>
       </View>
 
-      <FlatList
-        data={data}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        showsVerticalScrollIndicator={false}
-        ItemSeparatorComponent={() => <View className='h-px bg-gray-200' />}
-      />
+      {isLoading ? (
+        <FlatList
+          data={Array.from({ length: 10 })}
+          renderItem={() => (
+            <SkeletonRankingItem showDiff={tab === 'monthly'} />
+          )}
+          keyExtractor={(item, idx) => idx.toString()}
+          showsVerticalScrollIndicator={false}
+          ItemSeparatorComponent={() => (
+            <View className='h-[0.5px] bg-gray-200 mx-4' />
+          )}
+        />
+      ) : (
+        <FlatList
+          data={rankingInfo?.results}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id.toString()}
+          showsVerticalScrollIndicator={false}
+          ItemSeparatorComponent={() => (
+            <View className='h-[0.5px] bg-gray-200 mx-4' />
+          )}
+        />
+      )}
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  contentContainer: {
-    flex: 1,
-    padding: 36,
-    alignItems: 'center',
-  },
-});

@@ -8,13 +8,15 @@ import CheckIcon from '@/assets/icons/ic_check.svg';
 import ViewTypeIcon from '@/assets/icons/ic_grid.svg';
 import ListTypeIcon from '@/assets/icons/ic_list.svg';
 import SearchIcon from '@/assets/icons/ic_magnifier.svg';
+import SkeletonProductGridItem from '@/components/common/skeleton/ProductGridItemSkeleton';
+import SkeletonRankingItem from '@/components/common/skeleton/ProductListItemSkeleton';
 import Navigation from '@/components/layout/Navigation';
 import TabSwitcher, { TabItem } from '@/components/page/category/TabSwitcher';
 import ProductCard from '@/components/page/home/ProductCard';
 import ProductListRow from '@/components/page/home/ProductListRow';
 import colors from '@/constants/color';
 import { useCategory } from '@/hooks/useCategory';
-import { useProduct } from '@/hooks/useProduct';
+import { useFetchProductsQuery } from '@/hooks/useProductQueries';
 import { IProduct } from '@/types/models/product';
 import {
   BottomSheetBackdrop,
@@ -38,12 +40,12 @@ export default function List() {
   const params = useLocalSearchParams<{ main?: string; sub?: string }>();
   const [bigCategory, setBigCategory] = useState(params.main ?? '');
   const [activeSub, setActiveSub] = useState(
-    params.sub === 'all' ? 'all' : (params.sub as string),
+    params.sub === '전체' ? '전체' : (params.sub as string),
   );
 
   useEffect(() => {
-    if (activeSub === 'all') {
-      setTab('all' as ListTab);
+    if (activeSub === '전체') {
+      setTab('전체' as ListTab);
     } else if (listItems.find((i) => i.key === activeSub)) {
       setTab(activeSub as ListTab);
     }
@@ -54,7 +56,7 @@ export default function List() {
       setBigCategory(params.main);
     }
     if (params.sub) {
-      const subCategory = params.sub === 'all' ? 'all' : params.sub;
+      const subCategory = params.sub === '전체' ? '전체' : params.sub;
       setActiveSub(subCategory);
       setTab(subCategory);
     }
@@ -82,9 +84,9 @@ export default function List() {
     const subCats = subCategoriesMap[bigCategory] || [];
     return subCats.map((sub) => ({ key: sub, label: sub }));
   }, [subCategoriesMap, bigCategory]);
-  const [tab, setTab] = useState<ListTab>(listItems[0]?.key ?? 'all');
+  const [tab, setTab] = useState<ListTab>(listItems[0]?.key ?? '전체');
   const itemsWithAll: TabItem<ListTab | 'all'>[] = useMemo(
-    () => [{ key: 'all' as const, label: '전체' }, ...listItems],
+    () => [{ key: '전체' as const, label: '전체' }, ...listItems],
     [listItems],
   );
 
@@ -92,7 +94,6 @@ export default function List() {
 
   const [viewType, setViewType] = useState<'grid' | 'list'>('grid');
   const [selectedSort, setSelectedSort] = useState<string>('monthly_rank');
-  const [filteredProducts, setFilteredProducts] = useState<IProduct[]>([]);
   const [isTopModalVisible, setTopModalVisible] = useState(false);
 
   const sortOptions = [
@@ -102,20 +103,16 @@ export default function List() {
     { id: 'price_desc', label: '높은 가격순' },
   ];
 
-  const { fetchProductList, productList } = useProduct();
-  useEffect(() => {
-    fetchProductList({
-      bigCategory: bigCategory,
-      smallCategory: tab,
-      sort: selectedSort as
-        | 'monthly_rank'
-        | 'price_asc'
-        | 'price_desc'
-        | 'review_desc',
-      page: 1,
-    });
-    setFilteredProducts(productList);
-  }, [bigCategory, tab, selectedSort]);
+  const { data: productList, isLoading } = useFetchProductsQuery({
+    bigCategory: bigCategory,
+    smallCategory: tab,
+    sort: selectedSort as
+      | 'monthly_rank'
+      | 'price_asc'
+      | 'price_desc'
+      | 'review_desc',
+    page: 1,
+  });
 
   const snapPoints = useMemo(() => ['50%'], []);
   const renderBackdrop = useCallback(
@@ -141,10 +138,10 @@ export default function List() {
   const handleBigCategoryChange = (cat: string) => {
     if (cat !== bigCategory) {
       setBigCategory(cat);
-      setActiveSub('all');
+      setActiveSub('전체');
       router.replace({
         pathname: '/(tabs)/category/list',
-        params: { main: cat, sub: 'all' },
+        params: { main: cat, sub: '전체' },
       });
     }
     setTopModalVisible(false);
@@ -184,7 +181,7 @@ export default function List() {
             setActiveSub(key as string);
             router.replace({
               pathname: '/(tabs)/category/list',
-              params: { main: bigCategory, sub: tab },
+              params: { main: bigCategory, sub: key },
             });
           }}
         />
@@ -192,7 +189,7 @@ export default function List() {
 
       <View className='px-4 py-3 pb-1 mb-2 flex-row justify-between items-center'>
         <Text className='text-sm text-gray-900'>
-          총 {filteredProducts.length}개
+          총 {productList?.results.length}개
         </Text>
         <View className='flex-row items-center'>
           <Pressable
@@ -217,39 +214,90 @@ export default function List() {
       </View>
 
       {viewType === 'grid' ? (
-        <FlatList
-          key='grid'
-          data={filteredProducts}
-          keyExtractor={(item) => item.id.toString()}
-          numColumns={2}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 8 }}
-          columnWrapperStyle={{
-            justifyContent: 'space-between',
-            marginBottom: 16,
-          }}
-          renderItem={({ item }) => (
-            <View style={{ width: cardWidth }}>
-              <ProductCard
-                item={item as IProduct}
+        isLoading ? (
+          <FlatList
+            key='grid'
+            numColumns={2}
+            data={Array.from({ length: 10 })}
+            contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 8 }}
+            columnWrapperStyle={{
+              justifyContent: 'space-between',
+              marginBottom: 16,
+            }}
+            renderItem={() => (
+              <SkeletonProductGridItem
                 style={{ width: cardWidth }}
                 imageStyle={{ width: cardWidth, height: cardWidth }}
-                titleNumberOfLines={2}
               />
-            </View>
+            )}
+            keyExtractor={(item, idx) => idx.toString()}
+            showsVerticalScrollIndicator={false}
+            ItemSeparatorComponent={() => (
+              <View className='h-[0.5px] bg-gray-200 mx-2' />
+            )}
+          />
+        ) : (
+          <FlatList
+            key='grid'
+            data={productList?.results}
+            keyExtractor={(item) => item.id.toString()}
+            numColumns={2}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 8 }}
+            columnWrapperStyle={{
+              justifyContent: 'space-between',
+              marginBottom: 16,
+            }}
+            renderItem={({ item }) => (
+              <View style={{ width: cardWidth }}>
+                <ProductCard
+                  onPress={() => {
+                    router.push({
+                      pathname: '/product/[id]/productDetail',
+                      params: { id: item.id },
+                    });
+                  }}
+                  item={item as IProduct}
+                  style={{ width: cardWidth }}
+                  imageStyle={{ width: cardWidth, height: cardWidth }}
+                  titleNumberOfLines={2}
+                />
+              </View>
+            )}
+          />
+        )
+      ) : isLoading ? (
+        <FlatList
+          data={Array.from({ length: 10 })}
+          renderItem={() => <SkeletonRankingItem />}
+          keyExtractor={(item, idx) => idx.toString()}
+          showsVerticalScrollIndicator={false}
+          ItemSeparatorComponent={() => (
+            <View className='h-[0.5px] bg-gray-200 mx-4' />
           )}
         />
       ) : (
         <FlatList
           key='list'
-          data={filteredProducts}
+          data={productList?.results}
           renderItem={({ item }) => (
-            <ProductListRow item={item} onPress={() => {}} />
+            <View className='px-4'>
+              <ProductListRow
+                item={item}
+                onPress={() => {
+                  router.push({
+                    pathname: '/product/[id]/productDetail',
+                    params: { id: item.id },
+                  });
+                }}
+              />
+            </View>
           )}
           keyExtractor={(item) => item.id.toString()}
           showsVerticalScrollIndicator={false}
-          ItemSeparatorComponent={() => <View className='h-px bg-gray-200' />}
-          contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 8 }}
+          ItemSeparatorComponent={() => (
+            <View className='h-[0.5px] bg-gray-200 mx-4' />
+          )}
         />
       )}
 
@@ -308,8 +356,9 @@ export default function List() {
                 }}
                 style={{
                   width: '50%',
-                  alignItems: 'center',
+                  alignItems: 'flex-start',
                   paddingVertical: 12,
+                  paddingLeft: 30,
                 }}
               >
                 <Text style={{ fontSize: 16, color: '#333' }}>{cat}</Text>

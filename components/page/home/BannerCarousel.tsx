@@ -11,9 +11,9 @@ import {
 
 const { width: screenWidth } = Dimensions.get('window');
 
-const SIDE_PREVIEW = 32;
+const SIDE_PREVIEW = 30;
 const ITEM_WIDTH = screenWidth - SIDE_PREVIEW * 2;
-const ITEM_SPACING = 1;
+const ITEM_SPACING = -10;
 
 interface BannerItem {
   id: string;
@@ -34,21 +34,20 @@ export default function BannerCarousel({
   onViewableItemsChanged,
   viewabilityConfig,
 }: BannerCarouselProps) {
-  // 포커스된 카드 애니메이션 값
-  const scales = useRef(data.map(() => new Animated.Value(0.8))).current;
-  const opacities = useRef(data.map(() => new Animated.Value(0.5))).current;
+  const scales = useRef(data.map(() => new Animated.Value(0.9))).current;
+  const opacities = useRef(data.map(() => new Animated.Value(0.7))).current;
 
   useEffect(() => {
     scales.forEach((scale, i) => {
       Animated.timing(scale, {
-        toValue: i === focusedIndex ? 1 : 0.8,
+        toValue: i === focusedIndex ? 1 : 0.9,
         duration: 100,
         useNativeDriver: true,
       }).start();
     });
     opacities.forEach((opacity, i) => {
       Animated.timing(opacity, {
-        toValue: i === focusedIndex ? 1 : 0.6,
+        toValue: i === focusedIndex ? 1 : 0.7,
         duration: 100,
         useNativeDriver: true,
       }).start();
@@ -90,19 +89,29 @@ export default function BannerCarousel({
     </Animated.View>
   );
 
+  const spacerWidth = (screenWidth - ITEM_WIDTH) / 2 - 15;
+
   return (
     <FlatList
       data={data}
       renderItem={renderBannerItem}
       horizontal
       showsHorizontalScrollIndicator={false}
-      pagingEnabled={false}
       snapToInterval={ITEM_WIDTH + ITEM_SPACING}
-      decelerationRate='fast'
       snapToAlignment='center'
-      contentContainerStyle={{
-        paddingHorizontal: SIDE_PREVIEW,
-      }}
+      decelerationRate='fast'
+      disableIntervalMomentum={true}
+      // --- 변경된 부분 ---
+      // 1. contentContainerStyle에서 paddingHorizontal 제거
+      contentContainerStyle={
+        {
+          // paddingHorizontal: SIDE_PREVIEW, // 이 줄을 제거합니다.
+        }
+      }
+      // 2. 리스트 시작 부분에 스페이서 추가
+      ListHeaderComponent={<View style={{ width: spacerWidth }} />}
+      // 3. 리스트 끝 부분에 스페이서 추가
+      ListFooterComponent={<View style={{ width: spacerWidth }} />}
       keyExtractor={(item) => item.id}
       onViewableItemsChanged={onViewableItemsChanged}
       viewabilityConfig={viewabilityConfig}

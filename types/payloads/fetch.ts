@@ -16,3 +16,13 @@ export interface SearchProductsPayload {
   page?: number;
   sort?: 'monthly_rank' | 'price_asc' | 'price_desc' | 'review_desc';
 }
+
+export interface UpdateNicknamePayload {
+  nickname: string;
+}
+
+export interface UpdatePasswordPayload {
+  current_password: string;
+  new_password1: string;
+  new_password2: string;
+}

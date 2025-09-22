@@ -65,7 +65,7 @@ export default function Category() {
     if (!selectedBigCategory) return;
     router.push({
       pathname: '/(tabs)/category/list',
-      params: { main: selectedBigCategory, sub: sub || 'all' },
+      params: { main: selectedBigCategory, sub: sub || '전체' },
     });
   };
 
@@ -127,8 +127,6 @@ export default function Category() {
               <Pressable
                 className='py-3 px-4'
                 onPress={() => {
-                  console.log(item);
-                  console.log(selectedBigCategory);
                   goToList(item);
                 }}
               >

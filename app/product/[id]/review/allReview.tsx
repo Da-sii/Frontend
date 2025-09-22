@@ -7,16 +7,16 @@ import PhotoCard from '@/components/page/product/productDetail/PhotoCard';
 import ReviewItems from '@/components/page/product/productDetail/reviewItem';
 import colors from '@/constants/color';
 import { mockProductData } from '@/mocks/data/productDetail';
+import { ProductRatingStatsDTO } from '@/services/product/review/getProductRatingStats';
+import { ProductReview } from '@/services/product/review/getReviewList';
 import BottomSheet from '@gorhom/bottom-sheet';
 import { PortalProvider } from '@gorhom/portal'; // ← 설치했다면 사용
+import { useQueryClient } from '@tanstack/react-query';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useMemo, useRef, useState } from 'react';
 import { FlatList, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
-import { useQueryClient } from '@tanstack/react-query';
-import { ProductReview } from '@/services/product/review/getReviewList';
-import { ProductRatingStatsDTO } from '@/services/product/review/getProductRatingStats';
 const SORT_OPTIONS: {
   key: 'new' | 'rating_high' | 'rating_row';
   label: string;
@@ -42,7 +42,7 @@ export default function allReview() {
     idNum,
   ]);
   const cachedDetail = qc.getQueryData<any>(['product', 'detail', idNum]);
-  console.log(cachedReviews);
+
   const router = useRouter();
   const product = mockProductData.find((item) => item.id === id);
   if (!product) return <Text>제품을 찾을 수 없습니다.</Text>;
