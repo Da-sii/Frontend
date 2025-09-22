@@ -2,7 +2,7 @@ import DefaultModal from '@/components/common/modals/DefaultModal';
 import Navigation from '@/components/layout/Navigation';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect, useRouter } from 'expo-router';
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
   Pressable,
   ScrollView,
@@ -23,7 +23,6 @@ export default function Mypage() {
   const [isLogin, setIsLogin] = useState(false);
 
   const handleOAuthPasswordPress = () => {
-    // setShowPasswordModal(true);
     router.replace('/mypage/password');
   };
 

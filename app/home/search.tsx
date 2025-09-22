@@ -27,6 +27,11 @@ const sortOptions = [
   { id: 'price_desc', label: '높은 가격순' },
 ];
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const RECENT_SEARCHES_KEY = '@recent_searches';
+const MAX_RECENT_SEARCHES = 10;
+
 const screenWidth = Dimensions.get('window').width;
 const cardWidth = (screenWidth - 16 * 2 - 8 * 2) / 2;
 
@@ -43,9 +48,70 @@ export default function Search() {
   const [selectedSort, setSelectedSort] = useState('monthly_rank');
   const [products, setProducts] = useState<IProduct[]>([]);
 
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
+
+  useEffect(() => {
+    const loadRecentSearches = async () => {
+      try {
+        const storedSearches = await AsyncStorage.getItem(RECENT_SEARCHES_KEY);
+        if (storedSearches) {
+          setRecentSearches(JSON.parse(storedSearches));
+        }
+      } catch (error) {
+        console.error('Failed to load recent searches.', error);
+      }
+    };
+    loadRecentSearches();
+  }, []);
+
+  const addRecentSearch = async (searchTerm: string) => {
+    if (!searchTerm.trim()) return;
+
+    try {
+      // 기존 목록에서 중복 제거
+      const newSearches = [
+        searchTerm,
+        ...recentSearches.filter((s) => s !== searchTerm),
+      ];
+      // 최대 10개로 제한
+      const limitedSearches = newSearches.slice(0, MAX_RECENT_SEARCHES);
+
+      await AsyncStorage.setItem(
+        RECENT_SEARCHES_KEY,
+        JSON.stringify(limitedSearches),
+      );
+      setRecentSearches(limitedSearches);
+    } catch (error) {
+      console.error('Failed to save recent search.', error);
+    }
+  };
+
+  const removeRecentSearch = async (searchTerm: string) => {
+    try {
+      const newSearches = recentSearches.filter((s) => s !== searchTerm);
+      await AsyncStorage.setItem(
+        RECENT_SEARCHES_KEY,
+        JSON.stringify(newSearches),
+      );
+      setRecentSearches(newSearches);
+    } catch (error) {
+      console.error('Failed to remove recent search.', error);
+    }
+  };
+
+  const clearAllRecentSearches = async () => {
+    try {
+      await AsyncStorage.removeItem(RECENT_SEARCHES_KEY);
+      setRecentSearches([]);
+    } catch (error) {
+      console.error('Failed to clear recent searches.', error);
+    }
+  };
+
   const handleSearch = () => {
     if (inputValue.trim()) {
       setSearchQuery(inputValue);
+      addRecentSearch(inputValue);
     }
   };
 
@@ -118,6 +184,9 @@ export default function Search() {
         onChangeText={setInputValue}
         onSubmit={handleSearch}
         placeholder='성분, 제품명으로 검색해보세요!'
+        recentSearches={recentSearches}
+        onRemoveRecentSearch={removeRecentSearch}
+        onClearAllRecentSearches={clearAllRecentSearches}
       />
 
       <FlatList

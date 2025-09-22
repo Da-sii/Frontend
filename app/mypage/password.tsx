@@ -1,7 +1,8 @@
 import TextInput from '@/components/common/Inputs/TextInput';
+import { useUser } from '@/hooks/useUser';
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -13,20 +14,16 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ChangePassword() {
   const router = useRouter();
+  const { updatePassword, isLoading } = useUser();
 
   const [newPwd, setNewPwd] = useState('');
   const [confirmPwd, setConfirmPwd] = useState('');
   const [currentPwd, setCurrentPwd] = useState('');
 
-  const [showNew, setShowNew] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [showCurrent, setShowCurrent] = useState(false);
-
   const [validNew, setValidNew] = useState(false);
   const [matchConfirm, setMatchConfirm] = useState(false);
 
   useEffect(() => {
-    // 8~20자, 영문, 숫자, 특수문자 포함 체크
     const regex = new RegExp(
       '^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-={}\\[\\]:\\";\'<>?,./]).{8,20}$',
     );
@@ -38,8 +35,11 @@ export default function ChangePassword() {
 
   const handleSubmit = () => {
     if (!disabled) {
-      // TODO: 실제 비밀번호 변경 API 호출
-      console.log('비밀번호 변경 요청', { currentPwd, newPwd });
+      updatePassword({
+        current_password: currentPwd,
+        new_password1: newPwd,
+        new_password2: confirmPwd,
+      });
       router.replace('/mypage/completion?action=password');
     }
   };

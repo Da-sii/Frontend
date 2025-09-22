@@ -1,4 +1,3 @@
-import EmptyImage from '@/assets/images/img_empty_images.webp';
 import colors from '@/constants/color';
 import { IProduct } from '@/types/models/product';
 import {
@@ -46,14 +45,14 @@ export default function ProductCard({
             resizeMode='cover'
           />
         ) : (
-          <Image
-            source={EmptyImage}
-            style={[
-              { width: '100%', aspectRatio: 1, borderRadius: 8 },
-              imageStyle,
-            ]}
-            resizeMode='cover'
-          />
+          <View
+            className='w-full h-full bg-white items-center justify-center border border-gray-100 rounded-lg'
+            style={[{ aspectRatio: 1 }, imageStyle]}
+          >
+            <Text className='text-gray-500 text-xs'>
+              상품 이미지를 준비중입니다
+            </Text>
+          </View>
         )}
 
         <View style={[{ padding: 8 }, infoContainerStyle]}>

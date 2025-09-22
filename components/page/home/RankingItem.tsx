@@ -1,6 +1,5 @@
 import BarIcon from '@/assets/icons/ic_bar.svg';
 import IndexIcon from '@/assets/icons/ic_ranking_index.svg';
-import EmptyImage from '@/assets/images/img_empty_images.webp';
 import colors from '@/constants/color';
 import { IRankingProduct } from '@/types/models/product';
 import { Image, Pressable, Text, View } from 'react-native';
@@ -32,9 +31,9 @@ export default function RankingItem({
           paddingHorizontal: 16,
           backgroundColor: colors.gray[0],
         }}
-        className='relative py-3'
+        className='relative py-3 '
       >
-        <View className='h-full overflow-hidden rounded-2xl aspect-square bg-gray-box'>
+        <View className='h-full overflow-hidden rounded-xl aspect-square bg-gray-box '>
           {isValidImage ? (
             <Image
               source={{ uri: item.image }}
@@ -45,14 +44,10 @@ export default function RankingItem({
               resizeMode='cover'
             />
           ) : (
-            <Image
-              source={EmptyImage}
-              style={{
-                width: '100%',
-                height: '100%',
-              }}
-              resizeMode='cover'
-            />
+            <View className='w-full h-full bg-white items-center justify-center border border-gray-100 rounded-xl'>
+              <Text className='text-gray-500 text-xs'>상품 이미지를</Text>
+              <Text className='text-gray-500 text-xs'>준비중입니다</Text>
+            </View>
           )}
         </View>
 

@@ -363,8 +363,9 @@ export default function List() {
                 }}
                 style={{
                   width: '50%',
-                  alignItems: 'center',
+                  alignItems: 'flex-start',
                   paddingVertical: 12,
+                  paddingLeft: 30,
                 }}
               >
                 <Text style={{ fontSize: 16, color: '#333' }}>{cat}</Text>
