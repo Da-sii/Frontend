@@ -32,9 +32,7 @@ export default function MyReviews() {
       <View className='flex-row px-4 pb-4'>
         <TouchableOpacity
           className='p-1 px-4 border border-gray-200 rounded-full items-center'
-          onPress={() => {
-            console.log('수정:', item.nickname);
-          }}
+          onPress={() => {}}
         >
           <Text className='text-xs'>수정</Text>
         </TouchableOpacity>

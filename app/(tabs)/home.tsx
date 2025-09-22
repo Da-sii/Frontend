@@ -6,7 +6,6 @@ import BannerCarousel from '@/components/page/home/BannerCarousel';
 import ProductRankingCarousel from '@/components/page/home/ProductRankingCarousel';
 import TagsView from '@/components/page/home/TagsView';
 import { useMain } from '@/hooks/useMain';
-import { useRanking } from '@/hooks/useRanking';
 
 import { bannerData } from '@/mocks/data/home';
 import { router } from 'expo-router';
@@ -19,11 +18,8 @@ export default function Home() {
   const [focusedIndex, setFocusedIndex] = useState(0);
   const { fetchMainScreen, mainScreenInfo } = useMain();
 
-  const { fetchRanking, rankingInfo } = useRanking();
-
   useEffect(() => {
     fetchMainScreen();
-    fetchRanking({ category: 'all', page: 1, period: 'daily' });
   }, []);
 
   const onViewRef = React.useRef(({ viewableItems }: any) => {
@@ -58,21 +54,21 @@ export default function Home() {
           />
         </View>
 
-        <View className='px-4 mt-4'>
+        <View className='px-6 mb-2 mt-4'>
           <TagsView categories={mainScreenInfo?.topSmallCategories || []} />
         </View>
 
-        <View className='px-4 pb-6'>
+        <View className='px-6'>
           <View className='flex-row justify-between items-center'>
-            <Text className='text-base font-semibold mb-2'>
-              현재 급상승 랭킹
-            </Text>
+            <Text className='text-base font-semibold'>현재 급상승 랭킹</Text>
             <GoRankingIcon
               onPress={() => router.push('/(tabs)/home/ranking')}
             />
           </View>
 
-          <ProductRankingCarousel data={rankingInfo?.results || []} />
+          <ProductRankingCarousel
+            data={mainScreenInfo?.topProductsToday || []}
+          />
         </View>
 
         <AddProductButton />

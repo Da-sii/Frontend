@@ -1,4 +1,3 @@
-import { useFocusEffect } from 'expo-router';
 import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
 import ArrowRightIcon from '@/assets/icons/ic_arrow_right.svg';
 import HomeIcon from '@/assets/icons/ic_home.svg';
@@ -13,16 +12,21 @@ import ReviewCard from '@/components/page/product/productDetail/ReviewCard';
 import ReviewItems from '@/components/page/product/productDetail/reviewItem';
 import CustomTabs from '@/components/page/product/productDetail/tab';
 import colors from '@/constants/color';
+import { useProductReviews } from '@/hooks/product/review/useGetProductReview';
+import { useProductRatingStats } from '@/hooks/product/review/useProductRatingStats';
+import { useProductDetail } from '@/hooks/product/useProductDetail';
 import { mockProductData } from '@/mocks/data/productDetail';
 import { PortalProvider } from '@gorhom/portal'; // ← 설치했다면 사용
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { useMemo, useState, useCallback } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import {
+  Stack,
+  useFocusEffect,
+  useLocalSearchParams,
+  useRouter,
+} from 'expo-router';
+import { useCallback, useMemo, useState } from 'react';
 import { FlatList, Image, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useProductDetail } from '@/hooks/product/useProductDetail';
-import { useProductReviews } from '@/hooks/product/review/useGetProductReview';
-import { useQueryClient } from '@tanstack/react-query';
-import { useProductRatingStats } from '@/hooks/product/review/useProductRatingStats';
 const tabs = [
   { key: 'ingredient', label: '성분 정보' },
   { key: 'review', label: '리뷰' },

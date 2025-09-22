@@ -8,11 +8,9 @@ export const useSignup = (opts?: {
   useMutation<SignUpResponse, unknown, SignUpRequest>({
     mutationFn: signUp,
     onSuccess: (data) => {
-      console.log('회원가입 성공:', data);
       opts?.onSuccess?.(data);
     },
     onError: (err: any) => {
-      console.log('회원가입 실패:', err.response?.status, err.response?.data);
       let msg = '회원가입 중 오류가 발생했어요.';
 
       // 서버 응답이 { email: ["..."], password: ["..."] } 형태

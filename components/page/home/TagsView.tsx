@@ -22,7 +22,7 @@ export default function TagsView({
 
   return (
     <View>
-      <Text className='text-base font-semibold mb-4'>{title}</Text>
+      <Text className='text-base font-semibold mb-3'>{title}</Text>
       <View className='flex-row flex-wrap gap-2 mb-3'>
         {categories.map((cat: TopSmallCategory) => (
           <Pressable key={cat.smallCategory} onPress={() => handlePress(cat)}>
@@ -30,7 +30,7 @@ export default function TagsView({
               key={cat.smallCategory}
               className='px-3 py-1 bg-white border-[0.5px] border-gray-100 text-gray-700 rounded-full'
             >
-              <Text className='text-xs'>{cat.smallCategory}</Text>
+              <Text className='text-sm'>{cat.smallCategory}</Text>
             </View>
           </Pressable>
         ))}
