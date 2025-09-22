@@ -2,7 +2,6 @@
 import ReviewItems from '@/components/page/product/productDetail/reviewItem'; // 실제 경로로 수정
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
-import React from 'react';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 
 interface Review {
@@ -102,7 +101,7 @@ export default function MyReviews() {
         <TouchableOpacity
           className='p-1 px-4 border border-gray-200 rounded-full items-center'
           onPress={() => {
-            console.log('수정:', item.id);
+            // console.log('수정:', item.id);
           }}
         >
           <Text className='text-xs'>수정</Text>
@@ -110,7 +109,7 @@ export default function MyReviews() {
         <TouchableOpacity
           className='p-1 px-4 border border-gray-200 rounded-full ml-2 items-center'
           onPress={() => {
-            console.log('삭제:', item.id);
+            // console.log('삭제:', item.id);
           }}
         >
           <Text className='text-xs'>삭제</Text>
