@@ -5,55 +5,47 @@ import ResetIcon from '@/assets/icons/ic_refresh.svg';
 import Navigation from '@/components/layout/Navigation';
 import RankingItem from '@/components/page/home/RankingItem';
 import colors from '@/constants/color';
+import { IRankingProduct } from '@/types/models/product';
 
-import { mockRankingData } from '@/mocks/data/home';
+import { useRanking } from '@/hooks/useRanking';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
-import {
-  Dimensions,
-  FlatList,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { useEffect, useState } from 'react';
+import { FlatList, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
 
 const categories = [
   '전체',
-  '체지방 감소',
-  '에너지 소모/기초대사량 증가',
-  '에너지 소모/기초대사량 감소',
-  '에너지 소모/기초대사량 일정',
-  '에너지 소모/기초대사량 몰라',
+  '소분류 1',
+  '소분류 2',
+  '소분류 3',
+  '소분류 4',
+  '소분류 5',
+  '소분류 6',
+  '소분류 7',
 ];
-
-const { width } = Dimensions.get('window');
-
-interface RankingItem {
-  id: string;
-  image: any;
-  brand: string;
-  name: string;
-  rating: number;
-  reviewCount: string;
-  price: string;
-  weight: string;
-  change: number;
-  isNew?: boolean;
-}
 
 export default function Ranking() {
   const router = useRouter();
   const params = useLocalSearchParams();
 
-  const initialFilter = params.category ? (params.category as string) : '전체';
+  const { fetchRanking, isLoading, rankingInfo } = useRanking();
 
+  const initialFilter = params.category ? (params.category as string) : '전체';
   const [filter, setFilter] = useState<string>(initialFilter);
   const [tab, setTab] = useState<'day' | 'month'>('day');
-  const [data, setData] = useState(mockRankingData);
+  // const [data, setData] = useState<IRankingProduct[]>(mockRankingData);
+
+  useEffect(() => {
+    const period = tab === 'day' ? 'daily' : 'monthly';
+
+    const category = filter === '전체' ? '전체' : filter;
+
+    fetchRanking({
+      period,
+      category,
+      page: 1,
+    });
+  }, [tab, filter]);
 
   useEffect(() => {
     if (params.category && categories.includes(params.category as string)) {
@@ -66,16 +58,11 @@ export default function Ranking() {
     // setData(next === 'day' ? mockRankingToday : mockRankingMonth);
   };
 
-  const onFilter = (category: string) => {
-    setFilter(category);
-    // 실제 필터링 로직 필요 시 구현
-  };
-
   const renderItem = ({
     item,
     index,
   }: {
-    item: RankingItem;
+    item: IRankingProduct;
     index: number;
   }) => (
     <RankingItem
@@ -112,7 +99,6 @@ export default function Ranking() {
             style={{
               textAlign: 'center',
               color: tab === 'day' ? colors.gray[900] : colors.gray[500],
-              fontWeight: tab === 'day' ? '600' : '400',
             }}
           >
             현재 급상승 랭킹
@@ -123,7 +109,6 @@ export default function Ranking() {
             style={{
               textAlign: 'center',
               color: tab === 'month' ? colors.gray[900] : colors.gray[500],
-              fontWeight: tab === 'month' ? '600' : '400',
             }}
           >
             월간 랭킹
@@ -144,10 +129,10 @@ export default function Ranking() {
               return (
                 <Pressable
                   key={cat}
-                  onPress={() => onFilter(cat)}
+                  onPress={() => setFilter(cat)}
                   style={{
                     borderWidth: 1,
-                    borderColor: selected ? '#22C55E' : '#D1D5DB',
+                    borderColor: selected ? '#50D88F' : '#D1D5DB',
                   }}
                   className={`mr-2 rounded-full px-3 py-1 ${
                     selected ? 'bg-green-500' : 'bg-white'
@@ -185,24 +170,14 @@ export default function Ranking() {
       </View>
 
       <FlatList
-        data={data}
+        data={rankingInfo?.results}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id.toString()}
         showsVerticalScrollIndicator={false}
-        ItemSeparatorComponent={() => <View className='h-px bg-gray-200' />}
+        ItemSeparatorComponent={() => (
+          <View className='h-[0.5px] bg-gray-200 mx-4' />
+        )}
       />
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  contentContainer: {
-    flex: 1,
-    padding: 36,
-    alignItems: 'center',
-  },
-});

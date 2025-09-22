@@ -117,6 +117,10 @@ export default function List() {
     setFilteredProducts(productList);
   }, [bigCategory, tab, selectedSort]);
 
+  useEffect(() => {
+    setFilteredProducts(productList);
+  }, [productList]);
+
   const snapPoints = useMemo(() => ['50%'], []);
   const renderBackdrop = useCallback(
     (props: BottomSheetBackdropProps) => (
@@ -184,7 +188,7 @@ export default function List() {
             setActiveSub(key as string);
             router.replace({
               pathname: '/(tabs)/category/list',
-              params: { main: bigCategory, sub: tab },
+              params: { main: bigCategory, sub: key },
             });
           }}
         />

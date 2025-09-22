@@ -1,3 +1,4 @@
+import EmptyImage from '@/assets/images/img_empty_images.webp';
 import colors from '@/constants/color';
 import { IProduct } from '@/types/models/product';
 import {
@@ -25,6 +26,8 @@ export default function ProductCard({
   titleStyle,
   infoContainerStyle,
 }: Props) {
+  const isValidImage = item.image !== '';
+
   return (
     <View
       style={[
@@ -32,11 +35,22 @@ export default function ProductCard({
         style,
       ]}
     >
-      <Image
-        source={{ uri: item.image }}
-        style={[{ width: '100%', aspectRatio: 1 }, imageStyle]}
-        resizeMode='cover'
-      />
+      {!isValidImage ? (
+        <Image
+          source={{ uri: item.image }}
+          style={[{ width: '100%', aspectRatio: 1 }, imageStyle]}
+          resizeMode='cover'
+        />
+      ) : (
+        <Image
+          source={EmptyImage}
+          style={[
+            { width: '100%', aspectRatio: 1, borderRadius: 8 },
+            imageStyle,
+          ]}
+          resizeMode='cover'
+        />
+      )}
 
       <View style={[{ padding: 8 }, infoContainerStyle]}>
         <Text
