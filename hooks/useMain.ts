@@ -1,5 +1,6 @@
 import { mainAPI } from '@/services/home';
 import { MainScreenInfo } from '@/types/models/main';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useState } from 'react';
 
@@ -33,4 +34,11 @@ export const useMain = () => {
     setIsLoading,
     mainScreenInfo,
   };
+};
+
+export const useFetchMainScreenQuery = () => {
+  return useQuery({
+    queryKey: ['mainScreen'],
+    queryFn: () => mainAPI.getMainScreen(),
+  });
 };
