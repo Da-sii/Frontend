@@ -1,3 +1,4 @@
+import { mainAPI } from '@/services/home';
 import { productAPI } from '@/services/product';
 import { rankingAPI } from '@/services/ranking';
 import {
@@ -27,5 +28,12 @@ export const useFetchRankingQuery = (payload: GetRankingPayload) => {
   return useQuery({
     queryKey: ['ranking', payload],
     queryFn: () => rankingAPI.getRanking(payload),
+  });
+};
+
+export const useFetchMainScreenQuery = () => {
+  return useQuery({
+    queryKey: ['mainScreen'],
+    queryFn: () => mainAPI.getMainScreen(),
   });
 };
