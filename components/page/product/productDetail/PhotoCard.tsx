@@ -1,6 +1,8 @@
 // src/components/common/PhotoCard.tsx
 import React from 'react';
 import { FlatList, Image, Pressable, Text } from 'react-native';
+import { toCdnUrl } from '@/utils/cdn';
+
 interface PhotoCardProps {
   images: string[]; // 이미지 URL 배열
   maxPreview?: number; // 몇 장만 미리보기 (기본 6장)
@@ -17,6 +19,7 @@ export default function PhotoCard({
   const preview = images.slice(0, maxPreview);
   const remain = images.length - preview.length;
 
+  const uri = toCdnUrl(images[0]);
   return (
     <FlatList
       data={preview}
@@ -39,7 +42,7 @@ export default function PhotoCard({
             }
           >
             <Image
-              source={{ uri: item }}
+              source={{ uri: toCdnUrl(item) }}
               className='w-full h-full'
               resizeMode='cover'
             />

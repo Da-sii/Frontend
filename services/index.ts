@@ -16,11 +16,12 @@ export const axiosInstance = axios.create({
 // ---- 요청 로깅 + accessToken 주입
 axiosInstance.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
+    const accessToken = await getAccessToken();
     if (__DEV__) {
       const url = (config.baseURL || '') + (config.url || '');
       console.log('[AXIOS] →', url, 'params=', config.params);
     }
-    const accessToken = await getAccessToken();
+
     if (accessToken) config.headers.Authorization = `Bearer ${accessToken}`;
 
     return config;
@@ -48,6 +49,40 @@ async function refreshViaCookie() {
 
 axiosInstance.interceptors.response.use(
   (res) => {
+    if (__DEV__) {
+      const url = (res.config.baseURL || '') + (res.config.url || '');
+      console.log(
+        '[AXIOS RES] ←',
+        res.status,
+        url,
+        'params=',
+        res.config.params,
+        'data=',
+        res.data,
+      );
+    }
+    return res;
+  },
+  (err) => {
+    if (__DEV__) {
+      const cfg = err.config || {};
+      const url = (cfg.baseURL || '') + (cfg.url || '');
+      console.log(
+        '[AXIOS ERR] ←',
+        err.response?.status,
+        url,
+        'params=',
+        cfg.params,
+        'data=',
+        err.response?.data,
+      );
+    }
+    return Promise.reject(err);
+  },
+);
+
+axiosInstance.interceptors.response.use(
+  (res) => {
     if (__DEV__) console.log('[AXIOS] ←', res.config.url, res.status);
     return res;
   },
@@ -58,6 +93,7 @@ axiosInstance.interceptors.response.use(
     };
 
     if (status === 401 && !original?._retry) {
+      // if (!original?._retry) {
       original._retry = true;
 
       if (isRefreshing) {

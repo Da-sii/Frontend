@@ -6,49 +6,46 @@ import BottomSheetLayout from '@/components/page/product/productDetail/BottomSee
 import PhotoCard from '@/components/page/product/productDetail/PhotoCard';
 import ReviewItems from '@/components/page/product/productDetail/reviewItem';
 import colors from '@/constants/color';
+import { useProductReviewsInfinite } from '@/hooks/product/review/useGetProductReview';
 import { mockProductData } from '@/mocks/data/productDetail';
 import { ProductRatingStatsDTO } from '@/services/product/review/getProductRatingStats';
-import { ProductReview } from '@/services/product/review/getReviewList';
 import BottomSheet from '@gorhom/bottom-sheet';
-import { PortalProvider } from '@gorhom/portal'; // ← 설치했다면 사용
+import { PortalProvider } from '@gorhom/portal';
 import { useQueryClient } from '@tanstack/react-query';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useMemo, useRef, useState } from 'react';
 import { FlatList, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
+
 const SORT_OPTIONS: {
-  key: 'new' | 'rating_high' | 'rating_row';
+  key: 'time' | 'high' | 'low';
   label: string;
 }[] = [
-  { key: 'rating_high', label: '별점 높은순' },
-  { key: 'rating_row', label: '별점 낮은순' },
-  { key: 'new', label: '최신순' },
+  { key: 'high', label: '별점 높은순' },
+  { key: 'low', label: '별점 낮은순' },
+  { key: 'time', label: '최신순' },
 ];
 
 export default function allReview() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const idNum = Number(id);
   const qc = useQueryClient();
-
-  const cachedReviews = qc.getQueryData<ProductReview[]>([
-    'product',
-    'reviews',
-    idNum,
-  ]);
+  const [sort, setSort] = useState<'time' | 'high' | 'low'>('high');
   const cachedRatingStats = qc.getQueryData<ProductRatingStatsDTO>([
     'product',
     'ratingStats',
     idNum,
   ]);
-  const cachedDetail = qc.getQueryData<any>(['product', 'detail', idNum]);
+  // const cachedDetail = qc.getQueryData<any>(['product', 'detail', idNum]);
+
+  const { items, hasNextPage, isFetchingNextPage, fetchNextPage } =
+    useProductReviewsInfinite(idNum, sort);
 
   const router = useRouter();
   const product = mockProductData.find((item) => item.id === id);
   if (!product) return <Text>제품을 찾을 수 없습니다.</Text>;
-  const [sort, setSort] = useState<'new' | 'rating_high' | 'rating_row'>(
-    'rating_high',
-  );
+
   // ===== BottomSheet =====
   const sheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => [197], []);
@@ -63,6 +60,9 @@ export default function allReview() {
     [product.review?.reviewList],
   );
 
+  const onEndReached = () => {
+    if (hasNextPage && !isFetchingNextPage) fetchNextPage();
+  };
   // const listData = product.review?.reviewList;
 
   return (
@@ -78,8 +78,11 @@ export default function allReview() {
         />
 
         <FlatList
-          data={cachedReviews}
-          keyExtractor={(_, index) => String(index)}
+          key={sort}
+          data={items ?? []}
+          keyExtractor={(it, i) => String(it?.review_id ?? `p-${i}`)}
+          onEndReached={onEndReached}
+          onEndReachedThreshold={0.4}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 24 }}
           /* 상단 고정 영역 */
@@ -140,7 +143,7 @@ export default function allReview() {
                       <Pressable
                         key={opt.key}
                         onPress={() => {
-                          setSort(opt.key);
+                          setSort(opt.key as 'time' | 'high' | 'low');
                           closeSheet();
                         }}
                         hitSlop={8}
@@ -181,10 +184,10 @@ export default function allReview() {
             <View key={index}>
               <ReviewItems
                 reviewItem={{
-                  id: item.nickname ?? '',
-                  name: item.nickname ?? '',
+                  id: item.review_id ?? '',
+                  name: item.user_nickname ?? '',
                   date: item.date ?? '-',
-                  isEdited: false,
+                  isEdited: item.updated,
                   content: item.review ?? '',
                   rating: item.rate ?? 0,
                   images: item.images ?? [],
@@ -194,7 +197,21 @@ export default function allReview() {
               <View className='w-[200%] h-[1px] left-[-50%] bg-gray-50' />
             </View>
           )}
-          ListFooterComponent={<View style={{ height: 24 }} />}
+          ListFooterComponent={
+            <View
+              style={{
+                height: 56,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              {isFetchingNextPage ? (
+                <Text>불러오는 중…</Text>
+              ) : !hasNextPage ? (
+                <Text>-</Text>
+              ) : null}
+            </View>
+          }
         />
       </PortalProvider>
     </SafeAreaView>

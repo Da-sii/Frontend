@@ -10,9 +10,8 @@ export const useSignin = () => {
     mutationFn: signIn,
     onSuccess: async (data) => {
       //   console.log('로그인 성공:', data);
-      
 
-      await setTokens(data.access, data.refresh);
+      await setTokens(data.access);
       //   Alert.alert('로그인 성공', `${data.user.nickname}님 환영합니다!`);
 
       router.replace('/home');

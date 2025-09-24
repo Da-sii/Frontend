@@ -15,7 +15,7 @@ export const useKakaoLogin = () => {
       return res;
     },
     onSuccess: async (data) => {
-      await setTokens(data.access, data.refresh);
+      await setTokens(data.access);
       router.replace('/home');
     },
     onError: (err: any) => {

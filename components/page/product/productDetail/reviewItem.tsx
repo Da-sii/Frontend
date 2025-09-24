@@ -4,6 +4,7 @@ import BottomSheetLayout from '@/components/page/product/productDetail/BottomSee
 import BottomSheet from '@gorhom/bottom-sheet';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { toCdnUrl } from '@/utils/cdn';
 import {
   FlatList,
   Image,
@@ -17,7 +18,7 @@ import Svg, { Path } from 'react-native-svg';
 import ReviewStar from './ReviewStar';
 
 interface reviewItem {
-  id: string;
+  id: number;
   name: string;
   date: string;
   isEdited: boolean;
@@ -212,7 +213,7 @@ export default function ReviewItems({
               style={{ width: THUMB, height: THUMB }}
             >
               <Image
-                source={{ uri: item }}
+                source={{ uri: toCdnUrl(item) }}
                 resizeMode='cover'
                 style={{ width: '100%', height: '100%' }}
               />

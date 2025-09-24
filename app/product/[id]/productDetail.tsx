@@ -12,7 +12,7 @@ import ReviewCard from '@/components/page/product/productDetail/ReviewCard';
 import ReviewItems from '@/components/page/product/productDetail/reviewItem';
 import CustomTabs from '@/components/page/product/productDetail/tab';
 import colors from '@/constants/color';
-import { useProductReviews } from '@/hooks/product/review/useGetProductReview';
+import { useProductReviewsPreview } from '@/hooks/product/review/useGetProductReview';
 import { useProductRatingStats } from '@/hooks/product/review/useProductRatingStats';
 import { useProductDetail } from '@/hooks/product/useProductDetail';
 import { mockProductData } from '@/mocks/data/productDetail';
@@ -27,6 +27,7 @@ import {
 import { useCallback, useMemo, useState } from 'react';
 import { FlatList, Image, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
 const tabs = [
   { key: 'ingredient', label: '성분 정보' },
   { key: 'review', label: '리뷰' },
@@ -40,7 +41,9 @@ export default function ProductDetail() {
     data: reviews = [],
     isLoading: isReviewsLoading,
     refetch: refetchReviews,
-  } = useProductReviews(id);
+  } = useProductReviewsPreview(id, 'time');
+
+  console.log('reviews', reviews);
   const {
     data: ratingStats,
     isLoading: isRatingStatsLoading,
@@ -61,19 +64,21 @@ export default function ProductDetail() {
   useFocusEffect(
     useCallback(() => {
       // 1) 관련 쿼리 무효화
-      qc.invalidateQueries({ queryKey: ['product', 'reviews', idNum] });
+      // qc.invalidateQueries({
+      //   queryKey: ['product', 'reviews', idNum, 'time'],
+      // });
       qc.invalidateQueries({ queryKey: ['product', 'ratingStats', idNum] });
       qc.invalidateQueries({ queryKey: ['product', 'detail', idNum] }); // 평균/카운트가 detail에 있을 경우
 
       // 2) 바로 재조회 (선호에 따라 invalidate만으로도 충분)
-      refetchReviews();
+      // refetchReviews();
       refetchRatingStats();
-    }, [qc, idNum, refetchReviews, refetchRatingStats]),
+    }, [qc, idNum, refetchRatingStats]),
   );
 
   // 리뷰 탭에서 상단 사진 그리드에 쓸 사진 모음(예: 상품/리뷰 이미지 합치기 원하면 여기서 처리)
   const reviewPhotos = useMemo(
-    () => reviews.flatMap((r) => r.images),
+    () => reviews.flatMap((r) => (Array.isArray(r.images) ? r.images : [])),
     [reviews],
   );
 
@@ -288,10 +293,10 @@ export default function ProductDetail() {
                   <View key={index}>
                     <ReviewItems
                       reviewItem={{
-                        id: item.nickname ?? '',
-                        name: item.nickname ?? '',
+                        id: item.review_id ?? '',
+                        name: item.user_nickname ?? '',
                         date: item.date ?? '-',
-                        isEdited: false,
+                        isEdited: item.updated,
                         content: item.review ?? '',
                         rating: item.rate ?? 0,
                         images: item.images ?? [],

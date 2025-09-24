@@ -11,7 +11,7 @@ type Props = {
   onAuthCode: (code: string) => void;
 };
 
-const H = Dimensions.get('window').height;
+const H = Dimensions.get('window').height - 100;
 export default function KakaoLoginWebView({
   visible,
   onClose,
