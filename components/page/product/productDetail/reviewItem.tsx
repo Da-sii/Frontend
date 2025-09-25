@@ -1,10 +1,4 @@
-import MoreIcon from '@/assets/icons/product/productDetail/ic_more_line.svg';
-import { LongButton } from '@/components/common/buttons/LongButton';
-import BottomSheetLayout from '@/components/page/product/productDetail/BottomSeetLayout';
-import BottomSheet from '@gorhom/bottom-sheet';
-import { useRouter } from 'expo-router';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { toCdnUrl } from '@/utils/cdn';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import {
   FlatList,
   Image,
@@ -15,10 +9,22 @@ import {
   View,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
+import { useRouter } from 'expo-router';
+import BottomSheet from '@gorhom/bottom-sheet';
+import { useQueryClient } from '@tanstack/react-query';
+
+import MoreIcon from '@/assets/icons/product/productDetail/ic_more_line.svg';
+
+import { LongButton } from '@/components/common/buttons/LongButton';
+import BottomSheetLayout from '@/components/page/product/productDetail/BottomSeetLayout';
+
+import { toCdnUrl } from '@/utils/cdn';
+
 import ReviewStar from './ReviewStar';
 
 interface reviewItem {
   id: number;
+  reviewId?: number;
   name: string;
   date: string;
   isEdited: boolean;
@@ -32,9 +38,11 @@ interface reviewItemProups {
   onMorePress?: () => void;
   isPhoto?: boolean;
   isMore?: boolean;
-  isMyReview?: boolean;
   id?: string;
+  isMyReview?: boolean;
 }
+
+type SheetView = 'menu' | 'report';
 
 const REASONS = [
   '제품과 관련 없는 이미지 / 내용',
@@ -44,22 +52,22 @@ const REASONS = [
   '개인 정보 노출',
 ];
 
-type SheetView = 'menu' | 'report';
-
 export default function ReviewItems({
   reviewItem,
   isPhoto = true,
   isMore = true,
   id,
-  isMyReview = false,
+  isMyReview,
 }: reviewItemProups) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
   const [measured, setMeasured] = useState(false);
   const [needsClamp, setNeedsClamp] = useState(false);
   const [sheetView, setSheetView] = useState<SheetView>('menu');
   const [selected, setSelected] = useState<number | null>(null);
 
+  const photoViewerKey = (token: string) => ['photoViewer', token] as const;
   const MAX_LINES = 5;
   const MAX_HEIGHT = 100;
 
@@ -126,7 +134,7 @@ export default function ReviewItems({
             </Text>
           )}
           <Text className='mb-[5px]'>{reviewItem.name}</Text>
-          {!isMyReview && (
+          {isMyReview && (
             <View className='flex-row items-center'>
               <ReviewStar height={12} reviewRank={reviewItem.rating} />
               <Text className='border-l ml-1 pl-1 border-[#E4E6E7] text-c3 font-bold text-gray-300'>
@@ -136,7 +144,7 @@ export default function ReviewItems({
             </View>
           )}
         </View>
-        {!isMyReview && (
+        {isMyReview && (
           <Pressable onPress={openSheet} hitSlop={8} className='my-auto'>
             <MoreIcon className='my-auto' />
           </Pressable>
@@ -198,16 +206,18 @@ export default function ReviewItems({
           renderItem={({ item, index }: { item: string; index: number }) => (
             <Pressable
               onPress={() => {
+                const images = imageUris.map(toCdnUrl);
+                const token = `${Date.now()}-${Math.random()}`;
+                queryClient.setQueryData(photoViewerKey(token), images);
+
                 router.push({
-                  pathname: '/product/[id]/review/[reviewId]/photoViewer',
+                  pathname: '/product/[id]/review/photo/photoViewer',
                   params: {
                     id: String(id),
-                    reviewId: reviewItem.id,
+                    token,
                     index: String(index),
                   },
                 });
-                // TODO: 이미지 뷰어 열기 등
-                // router.push({ pathname: '/viewer', params: { start: index } })
               }}
               className='rounded-[12px] overflow-hidden'
               style={{ width: THUMB, height: THUMB }}

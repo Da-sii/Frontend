@@ -185,6 +185,7 @@ export default function allReview() {
               <ReviewItems
                 reviewItem={{
                   id: item.review_id ?? '',
+                  reviewId: item.review_id ?? '',
                   name: item.user_nickname ?? '',
                   date: item.date ?? '-',
                   isEdited: item.updated,

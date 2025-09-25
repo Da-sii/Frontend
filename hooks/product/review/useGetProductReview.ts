@@ -8,6 +8,15 @@ import {
 type NumLike = number | undefined;
 const PAGE_SIZE = 21;
 
+export const productReviewsInfiniteKey = (
+  productId: number,
+  sort: 'time' | 'high' | 'low',
+) => ['product', 'reviews', 'infinite', productId, sort] as const;
+export const productReviewsPreviewKey = (
+  productId: number,
+  sort: 'time' | 'high' | 'low',
+  limit: number,
+) => ['product', 'reviews', 'preview', productId, sort, limit] as const;
 /**
  * 무한스크롤 리뷰 훅
  * - 초기 cursor=0
@@ -23,7 +32,7 @@ export function useProductReviewsInfinite(
   const enabled = Number.isFinite(idNum); //idNum이 유효한 숫자일 때만 쿼리 실행 가능하도록
 
   const q = useInfiniteQuery<ProductReview[], Error>({
-    queryKey: ['product', 'reviews', 'infinite', idNum, sort],
+    queryKey: productReviewsInfiniteKey(idNum!, sort),
     enabled, // idNum이 유효한 숫자일 때만 쿼리 실행 가능하도록
     initialPageParam: 0, // 첫 페이지 커서 = 0
     queryFn: async ({ pageParam = 0 }) => {
@@ -91,7 +100,7 @@ export function useProductReviewsPreview(
   const idNum = typeof productId === 'string' ? Number(productId) : productId;
 
   return useQuery<ProductReview[], Error>({
-    queryKey: ['product', 'reviews', 'preview', idNum, sort, 3], // ← sort 포함!
+    queryKey: productReviewsPreviewKey(idNum!, sort, 3), // ← sort 포함!
     queryFn: async () => {
       const firstPage = await fetchProductReviews(idNum!, 0, sort);
       return firstPage.slice(0, 3);
