@@ -1,7 +1,5 @@
-// app/product/photo-reviews.tsx (예시)
-import { mockProductData } from '@/mocks/data/productDetail';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   ActivityIndicator,
   Dimensions,
@@ -11,55 +9,67 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-// import Navigation from '@/components/layout/Navigation';  // 너네 컴포넌트 쓰면 교체
+import { toCdnUrl } from '@/utils/cdn';
+import { useGetReviewImageList } from '@/hooks/product/review/image/useGetReviewImageList';
 import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
 import Navigation from '@/components/layout/Navigation';
 import colors from '@/constants/color';
-const PAGE_SIZE = 10;
+
 const COLS = 3;
-const GAP = 3; // 고정 간격
+const GAP = 3;
 
 const SCREEN_W = Dimensions.get('window').width;
 const ITEM_W = (SCREEN_W - GAP * (COLS - 1)) / COLS;
 
-type Photo = { id: string; uri: string; reviewId: string; imageIndex: number };
+type Photo = {
+  id: string; // 고유 키(화면용)
+  uri: string; // CDN 변환된 URL
+  imageIndex: number; // 전체 리스트 내 인덱스(옵션)
+  reviewId: number; // ← 추가: 이 이미지가 속한 리뷰 ID
+  indexInReview: number; // ← 추가: 같은 리뷰 안에서의 순번(0부터)
+  rawPath: string; // ← 원본 경로(파싱용)
+};
 
-export default function allPhoto() {
+const parseReviewId = (path: string) => {
+  const m = path.match(/^(\d+)\/(\d+)\//);
+  return m ? Number(m[2]) : -1;
+};
+
+export default function allList() {
   const router = useRouter();
-  const [page, setPage] = useState(1); // 현재 페이지
-  const [photoList, setPhotoList] = useState<Photo[]>([]); // 현재 화면에 뿌리는 데이터
-  const [loading, setLoading] = useState(false);
-  const [end, setEnd] = useState(false); // 마지막 페이지 여부
   const { id } = useLocalSearchParams<{ id: string }>();
+  const productId = Number(id);
 
-  // onEndReached가 연속 호출되는 걸 한 번 더 막기 위한 플래그
-  const reachedRef = useRef(false);
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    refetch,
+  } = useGetReviewImageList(productId, 0);
 
   const allPhotos: Photo[] = useMemo(() => {
-    if (!id) return [];
-    const product = mockProductData.find((p) => p.id === String(id));
-    const reviewList = product?.review?.reviewList ?? [];
+    if (!data) return [];
+    const perReviewCount: Record<number, number> = {};
+    const items = data.pages.flatMap((page) => page.image_urls ?? []);
 
-    // review 단위로 평탄화하면서 reviewId / imageIndex 달기
-    const flat: Photo[] = [];
-    reviewList.forEach((rev, rIdx) => {
-      (rev.images ?? []).forEach((img: string, i: number) => {
-        flat.push({
-          id: `${rIdx}-${i}`,
-          uri: img,
-          reviewId: String(rev.id ?? rIdx), // mock에 id 없으면 인덱스 사용
-          imageIndex: i,
-        });
-      });
+    return items.map((it, i) => {
+      const raw = it.url; // DTO: {id, url}
+      const reviewId = parseReviewId(raw);
+      const cur = perReviewCount[reviewId] ?? 0;
+      perReviewCount[reviewId] = cur + 1;
+
+      return {
+        id: `img-${it.id}-${i}`,
+        uri: toCdnUrl(raw),
+        imageIndex: i,
+        reviewId,
+        indexInReview: cur,
+        rawPath: raw,
+      };
     });
-
-    // (선택) 중복 제거
-    // const uniq = Array.from(new Map(flat.map(p => [p.uri + p.reviewId, p])).values());
-    // return uniq;
-
-    return flat;
-  }, [id]);
+  }, [data]);
 
   const renderItem = useCallback(
     ({ item, index }: { item: Photo; index: number }) => (
@@ -68,8 +78,9 @@ export default function allPhoto() {
           router.push({
             pathname: '/product/[id]/review/[reviewId]/photoReviewDetail', // 뷰어 라우트
             params: {
-              id: String(id),
+              id: Number(id),
               reviewId: item.reviewId,
+              url: String(item.uri),
               index: String(item.imageIndex), // 리뷰 내 시작 인덱스
             },
           })
@@ -93,42 +104,6 @@ export default function allPhoto() {
     [id, router],
   );
 
-  const loadMore = useCallback(() => {
-    if (loading || end || reachedRef.current) return;
-    reachedRef.current = true; // onEndReached 중복 방어
-    setLoading(true);
-
-    const start = (page - 1) * PAGE_SIZE;
-    const endIndex = start + PAGE_SIZE;
-    const next = allPhotos.slice(start, endIndex);
-
-    if (next.length === 0) {
-      setEnd(true);
-      setLoading(false);
-      reachedRef.current = false;
-      return;
-    }
-
-    setPhotoList((prev) => [...prev, ...next]);
-    setPage((p) => p + 1);
-    setLoading(false);
-    reachedRef.current = false;
-  }, [allPhotos, page, loading, end]);
-
-  // id 바뀌면 페이지네이션 초기화 후 첫 로드
-  useEffect(() => {
-    setPage(1);
-    setPhotoList([]);
-    setEnd(false);
-  }, [id]);
-
-  useEffect(() => {
-    if (!end && photoList.length === 0) {
-      // 초기 진입/리셋 시 첫 페이지 로드
-      loadMore();
-    }
-  }, [end, photoList.length, loadMore]);
-
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       <Stack.Screen options={{ headerShown: false }} />
@@ -139,11 +114,13 @@ export default function allPhoto() {
       />
       <View style={{ flex: 1 }}>
         <FlatList
-          data={photoList}
+          data={allPhotos}
           keyExtractor={(it, i) => `${it.id}-${i}`}
           renderItem={renderItem}
           numColumns={COLS}
-          onEndReached={loadMore}
+          onEndReached={() => {
+            if (hasNextPage) fetchNextPage();
+          }}
           onEndReachedThreshold={0.6}
           showsVerticalScrollIndicator={false}
           removeClippedSubviews
@@ -156,7 +133,7 @@ export default function allPhoto() {
             index,
           })}
           ListFooterComponent={
-            loading ? (
+            isLoading || isFetchingNextPage ? (
               <ActivityIndicator style={{ marginVertical: 16 }} />
             ) : (
               <View style={{ height: 16 }} />
