@@ -134,7 +134,7 @@ export default function ReviewItems({
             </Text>
           )}
           <Text className='mb-[5px]'>{reviewItem.name}</Text>
-          {isMyReview && (
+          {!isMyReview && (
             <View className='flex-row items-center'>
               <ReviewStar height={12} reviewRank={reviewItem.rating} />
               <Text className='border-l ml-1 pl-1 border-[#E4E6E7] text-c3 font-bold text-gray-300'>
@@ -144,7 +144,7 @@ export default function ReviewItems({
             </View>
           )}
         </View>
-        {isMyReview && (
+        {!isMyReview && (
           <Pressable onPress={openSheet} hitSlop={8} className='my-auto'>
             <MoreIcon className='my-auto' />
           </Pressable>
@@ -211,7 +211,7 @@ export default function ReviewItems({
                 queryClient.setQueryData(photoViewerKey(token), images);
 
                 router.push({
-                  pathname: '/product/[id]/review/photo/photoViewer',
+                  pathname: '/product/[id]/review/photo/viewer',
                   params: {
                     id: String(id),
                     token,

@@ -32,12 +32,12 @@ export default function allReview() {
   const idNum = Number(id);
   const qc = useQueryClient();
   const [sort, setSort] = useState<'time' | 'high' | 'low'>('high');
+
   const cachedRatingStats = qc.getQueryData<ProductRatingStatsDTO>([
     'product',
     'ratingStats',
     idNum,
   ]);
-  // const cachedDetail = qc.getQueryData<any>(['product', 'detail', idNum]);
 
   const { items, hasNextPage, isFetchingNextPage, fetchNextPage } =
     useProductReviewsInfinite(idNum, sort);
@@ -56,9 +56,11 @@ export default function allReview() {
 
   // 리뷰 탭에서 상단 사진 그리드에 쓸 사진 모음(예: 상품/리뷰 이미지 합치기 원하면 여기서 처리)
   const reviewPhotos = useMemo(
-    () => product.review?.reviewList?.flatMap((r) => r.images ?? []) ?? [],
+    () => items.flatMap((r) => r.images ?? []) ?? [],
     [product.review?.reviewList],
   );
+
+  console.log('reviewPhotos', reviewPhotos);
 
   const onEndReached = () => {
     if (hasNextPage && !isFetchingNextPage) fetchNextPage();
@@ -108,7 +110,7 @@ export default function allReview() {
                     images={reviewPhotos}
                     maxPreview={6}
                     onPressMore={() =>
-                      router.push(`/product/${id}/review/allPhoto`)
+                      router.push(`/product/${id}/review/photo/allList`)
                     }
                   />
                 </View>

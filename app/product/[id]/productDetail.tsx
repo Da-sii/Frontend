@@ -41,7 +41,7 @@ export default function ProductDetail() {
     data: reviews = [],
     isLoading: isReviewsLoading,
     refetch: refetchReviews,
-  } = useProductReviewsPreview(id, 'time');
+  } = useProductReviewsPreview(idNum, 'time');
 
   console.log('reviews', reviews);
   const {
@@ -273,7 +273,7 @@ export default function ProductDetail() {
                           maxPreview={6}
                           onPressPhoto={(idx) => console.log('사진 클릭', idx)}
                           onPressMore={() =>
-                            router.push(`/product/${id}/review/allPhoto`)
+                            router.push(`/product/${id}/review/photo/allList`)
                           }
                         />
                       </View>

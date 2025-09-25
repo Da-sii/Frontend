@@ -19,7 +19,6 @@ export default function PhotoCard({
   const preview = images.slice(0, maxPreview);
   const remain = images.length - preview.length;
 
-  const uri = toCdnUrl(images[0]);
   return (
     <FlatList
       data={preview}
