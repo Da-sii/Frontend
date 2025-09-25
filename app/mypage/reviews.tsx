@@ -8,9 +8,6 @@ import { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 
 import { Stack, useRouter } from 'expo-router';
-import DefaultModal from '@/components/common/modals/DefaultModal';
-import { useState } from 'react';
-import { useDeleteReview } from '@/hooks/my/useDeleteMyReview';
 import {
   ActivityIndicator,
   FlatList,
@@ -23,7 +20,6 @@ import { useCallback } from 'react';
 
 export default function MyReviews() {
   const router = useRouter();
-  const [showDeleteCheckModal, setShowDeleteCheckModal] = useState(false);
   const {
     data: myReviews,
     fetchNextPage,
@@ -33,10 +29,8 @@ export default function MyReviews() {
     refetch,
     isRefetching,
   } = useGetMyReview(0);
-  
-  const [showDeleteCheckModal, setShowDeleteCheckModal] = useState(false);
-  const { mutate: deleteReview } = useDeleteReview();
 
+  const [showDeleteCheckModal, setShowDeleteCheckModal] = useState(false);
   const { mutate: deleteReview } = useDeleteReview();
 
   const keyExtractor = useCallback((item: MyReview, idx: number) => {
@@ -63,6 +57,7 @@ export default function MyReviews() {
       : [];
 
     console.log('images', images);
+
     return (
       <View className='border-b border-gray-100'>
         <ReviewItems

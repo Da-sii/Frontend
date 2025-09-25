@@ -110,9 +110,8 @@ export default function ReviewItems({
   const GAP = 12; // 카드 간격(px)
 
   // reviewItem.images가 string[]/object[] 혼용일 수 있으니 URL로 정규화
-  const imageUris: string[] = (reviewItem.images ?? [])
+  const imageKeys: string[] = (reviewItem.images ?? [])
     .map((it: any) => (typeof it === 'string' ? it : (it?.url ?? '')))
-    .map((it: string) => toCdnUrl(it))
     .filter(Boolean);
 
   return (
@@ -190,10 +189,10 @@ export default function ReviewItems({
       </View>
 
       {/* 이미지: 가로 스크롤 썸네일 리스트 */}
-      {imageUris.length > 0 && isPhoto && (
+      {imageKeys.length > 0 && isPhoto && (
         <FlatList
           className='mt-3'
-          data={imageUris}
+          data={imageKeys}
           horizontal
           showsHorizontalScrollIndicator={false}
           keyExtractor={(_: any, idx: number) => `img-${idx}`}
@@ -209,7 +208,7 @@ export default function ReviewItems({
           renderItem={({ item, index }: { item: string; index: number }) => (
             <Pressable
               onPress={() => {
-                const images = imageUris.map(toCdnUrl);
+                const images = imageKeys.map(toCdnUrl);
                 const token = `${Date.now()}-${Math.random()}`;
                 queryClient.setQueryData(photoViewerKey(token), images);
 
