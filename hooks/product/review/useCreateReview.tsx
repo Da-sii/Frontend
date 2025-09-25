@@ -15,7 +15,7 @@ export default function useCreateReview(productId: number) {
       // 리뷰 목록/상품 상세 등 관련 캐시 무효화
       qc.invalidateQueries({ queryKey: ['product', 'reviews', productId] });
       qc.invalidateQueries({ queryKey: ['product', 'detail', productId] });
-      Alert.alert('리뷰 작성 완료', '소중한 리뷰가 등록되었어요!');
+      // Alert.alert('리뷰 작성 완료', '소중한 리뷰가 등록되었어요!');
     },
     onError: (err: any) => {
       const status = err?.response?.status;

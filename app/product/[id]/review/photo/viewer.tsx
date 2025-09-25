@@ -3,23 +3,29 @@ import Navigation from '@/components/layout/Navigation';
 import { Stack, useRouter } from 'expo-router';
 import { Dimensions, FlatList, Image, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
 import { useLocalSearchParams } from 'expo-router';
-
-import { mockProductData } from '@/mocks/data/productDetail';
+import { useQueryClient } from '@tanstack/react-query';
+import { useEffect } from 'react';
 export default function photoViewer() {
-  const { id, reviewId, index } = useLocalSearchParams<{
-    id: string;
-    reviewId: string;
+  const { token, index } = useLocalSearchParams<{
+    token?: string;
     index?: string;
   }>();
-  const router = useRouter();
 
-  const product = mockProductData.find((p) => p.id === id);
-  const review = product?.review?.reviewList.find((r) => r.id === reviewId);
-  const images = review?.images ?? [];
+  const router = useRouter();
   const SCREEN_W = Dimensions.get('window').width;
-  const startIndex = index ? parseInt(index) : 0;
+  const startIndex = index ? Number(index) : 0;
+  const photoViewerKey = (token: string) => ['photoViewer', token] as const;
+
+  const qc = useQueryClient();
+  const images =
+    (token ? qc.getQueryData<string[]>(photoViewerKey(token)) : []) ?? [];
+
+  useEffect(() => {
+    return () => {
+      if (token) qc.removeQueries({ queryKey: photoViewerKey(token) });
+    };
+  }, [qc, token]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>

@@ -2,7 +2,7 @@
 import React, { useMemo, useRef, useCallback } from 'react';
 import { Modalize } from 'react-native-modalize';
 import WebView, { WebViewNavigation } from 'react-native-webview';
-import { View } from 'react-native';
+import { View, Dimensions } from 'react-native';
 
 type Props = {
   visible: boolean;
@@ -11,6 +11,7 @@ type Props = {
   onAuthCode: (code: string) => void;
 };
 
+const H = Dimensions.get('window').height - 100;
 export default function KakaoLoginWebView({
   visible,
   onClose,
@@ -70,7 +71,21 @@ export default function KakaoLoginWebView({
   }, [visible]);
 
   return (
-    <Modalize ref={modalRef} onClosed={onClose} adjustToContentHeight>
+    <Modalize
+      ref={modalRef}
+      onClosed={onClose}
+      panGestureEnabled={false} // ✅ 바텀시트 팬 제스처/스크롤 비활성화
+      withHandle={false}
+      adjustToContentHeight={false}
+      modalHeight={H} // 거의 풀스크린
+      scrollViewProps={{
+        scrollEnabled: false,
+        keyboardShouldPersistTaps: 'always',
+      }}
+      closeOnOverlayTap
+      overlayStyle={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+      modalStyle={{ height: H }}
+    >
       <View style={{ height: 700 }}>
         <WebView
           source={{ uri: authUrl }}
@@ -78,6 +93,11 @@ export default function KakaoLoginWebView({
           onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
           javaScriptEnabled
           originWhitelist={['*']}
+          // ✅ 제스처/줌이 꼬일 때 안정화 옵션
+          allowsBackForwardNavigationGestures
+          allowsInlineMediaPlayback
+          // android에서 포커스 문제 있을 때 도움됨
+          setSupportMultipleWindows={false}
         />
       </View>
     </Modalize>

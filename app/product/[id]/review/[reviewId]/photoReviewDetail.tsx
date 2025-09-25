@@ -3,7 +3,6 @@ import { ReviewButton } from '@/components/common/buttons/ReviewButton';
 import Navigation from '@/components/layout/Navigation';
 import ReviewItems from '@/components/page/product/productDetail/reviewItem';
 import colors from '@/constants/color';
-import { mockProductData } from '@/mocks/data/productDetail';
 import { PortalProvider } from '@gorhom/portal';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useMemo, useRef, useState } from 'react';
@@ -17,28 +16,35 @@ import {
   Text,
   View,
 } from 'react-native';
+import { useGetPhotoReviewDetail } from '@/hooks/product/review/image/useGetPhotoReviewDetail';
 import { SafeAreaView } from 'react-native-safe-area-context';
 export default function PhotoReviewDetail() {
   const router = useRouter();
+
   const { id, reviewId, index } = useLocalSearchParams<{
     id: string;
     reviewId: string;
     index?: string;
   }>();
+  const reviewIdNum = Number(reviewId);
+  const idNum = Number(id);
+
+  const { data: reviewDetail } = useGetPhotoReviewDetail(reviewIdNum);
+
   const startIndex = Math.max(0, Number(index ?? 0));
   const SCREEN_W = Dimensions.get('window').width;
+  const [currentIndex, setCurrentIndex] = useState(startIndex);
 
   // 리뷰/이미지 확보
-  const { review, images } = useMemo(() => {
-    const product = mockProductData.find((p) => p.id === String(id));
-    const reviews = product?.review?.reviewList ?? [];
-    const r = reviews.find(
-      (rv: any, i: number) => String(rv.id ?? i) === String(reviewId),
-    );
-    const imgs: string[] = r?.images ?? [];
-    return { review: r, images: imgs };
-  }, [id, reviewId]);
-  const [currentIndex, setCurrentIndex] = useState(startIndex);
+  // const { review, images } = useMemo(() => {
+  //   const product = mockProductData.find((p) => p.id === String(id));
+  //   const reviews = product?.review?.reviewList ?? [];
+  //   const r = reviews.find(
+  //     (rv: any, i: number) => String(rv.id ?? i) === String(reviewId),
+  //   );
+  //   const imgs: string[] = r?.images ?? [];
+  //   return { review: r, images: imgs };
+  // }, [id, reviewId]);
 
   // 별점 간단 렌더러 (정수/반개 처리 생략 버전)
   const StarRow = ({ score = 0 }: { score?: number }) => {
@@ -82,7 +88,7 @@ export default function PhotoReviewDetail() {
           >
             <FlatList
               ref={listRef}
-              data={images}
+              data={reviewDetail?.url ? [reviewDetail.url] : []}
               horizontal
               pagingEnabled
               initialScrollIndex={startIndex}
@@ -141,14 +147,27 @@ export default function PhotoReviewDetail() {
                 className='text-white text-c3 font-bold'
                 style={{ color: 'white', fontSize: 12 }}
               >
-                {currentIndex + 1} / {images.length}
+                {currentIndex + 1} / {reviewDetail?.url ? 1 : 0}
               </Text>
             </View>
           </View>
 
           {/* 리뷰 메타 + 본문 */}
-          {review && (
-            <ReviewItems reviewItem={review} isPhoto={false} isMore={false} />
+          {reviewDetail && (
+            <ReviewItems
+              reviewItem={{
+                id: idNum,
+                reviewId: reviewIdNum,
+                name: reviewDetail.nickname ?? '',
+                date: reviewDetail.date ?? '-',
+                isEdited: true,
+                content: reviewDetail.review ?? '',
+                rating: reviewDetail.rate ?? 0,
+                images: reviewDetail.url ? [reviewDetail.url] : [],
+              }}
+              isPhoto={false}
+              isMore={false}
+            />
           )}
           <View className='items-center'>
             <ReviewButton
@@ -158,10 +177,11 @@ export default function PhotoReviewDetail() {
                   params: { id: String(id) },
                 })
               }
-              count={
-                mockProductData.find((p) => p.id === String(id))?.review
-                  ?.reviewList?.length ?? 0
-              }
+              // count={
+              //   mockProductData.find((p) => p.id === String(id))?.review
+              //     ?.reviewList?.length ?? 0
+              // }
+              count={0}
             />
           </View>
         </ScrollView>
