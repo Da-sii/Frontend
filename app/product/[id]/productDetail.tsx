@@ -1,3 +1,15 @@
+import { PortalProvider } from '@gorhom/portal';
+import { useQueryClient } from '@tanstack/react-query';
+import {
+  Stack,
+  useFocusEffect,
+  useLocalSearchParams,
+  useRouter,
+} from 'expo-router';
+import { useCallback, useMemo, useState } from 'react';
+import { FlatList, Image, Pressable, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
 import ArrowRightIcon from '@/assets/icons/ic_arrow_right.svg';
 import HomeIcon from '@/assets/icons/ic_home.svg';
@@ -12,21 +24,10 @@ import ReviewCard from '@/components/page/product/productDetail/ReviewCard';
 import ReviewItems from '@/components/page/product/productDetail/reviewItem';
 import CustomTabs from '@/components/page/product/productDetail/tab';
 import colors from '@/constants/color';
+import { useGetReviewImageList } from '@/hooks/product/review/image/useGetReviewImageList';
 import { useProductReviewsPreview } from '@/hooks/product/review/useGetProductReview';
 import { useProductRatingStats } from '@/hooks/product/review/useProductRatingStats';
 import { useProductDetail } from '@/hooks/product/useProductDetail';
-import { mockProductData } from '@/mocks/data/productDetail';
-import { PortalProvider } from '@gorhom/portal'; // ← 설치했다면 사용
-import { useQueryClient } from '@tanstack/react-query';
-import {
-  Stack,
-  useFocusEffect,
-  useLocalSearchParams,
-  useRouter,
-} from 'expo-router';
-import { useCallback, useMemo, useState } from 'react';
-import { FlatList, Image, Pressable, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 const tabs = [
   { key: 'ingredient', label: '성분 정보' },
@@ -36,57 +37,41 @@ const tabs = [
 export default function ProductDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const idNum = Number(id);
-  const { data, isLoading, isError, error } = useProductDetail(id);
-  const {
-    data: reviews = [],
-    isLoading: isReviewsLoading,
-    refetch: refetchReviews,
-  } = useProductReviewsPreview(idNum, 'time');
+  const { data } = useProductDetail(id);
+  const { data: reviews = [] } = useProductReviewsPreview(idNum, 'time');
+  const { data: ratingStats, refetch: refetchRatingStats } =
+    useProductRatingStats(id);
+  const { data: reviewImageList } = useGetReviewImageList(idNum, 0);
 
-  console.log('reviews', reviews);
-  const {
-    data: ratingStats,
-    isLoading: isRatingStatsLoading,
-    refetch: refetchRatingStats,
-  } = useProductRatingStats(id);
   const qc = useQueryClient();
-
   const router = useRouter();
-  const product = mockProductData.find((item) => item.id === id);
 
   const [activeTab, setActiveTab] = useState<'ingredient' | 'review'>(
     'ingredient',
   );
-
-  if (!product) return <Text>제품을 찾을 수 없습니다.</Text>;
+  const listData = activeTab === 'review' ? reviews : [];
+  const reviewPhotos = useMemo(
+    () => reviews.flatMap((r) => (Array.isArray(r.images) ? r.images : [])),
+    [reviews],
+  );
+  const previewPhotos = reviewPhotos;
 
   // 화면이 다시 포커스될 때마다 최신화
   useFocusEffect(
     useCallback(() => {
       // 1) 관련 쿼리 무효화
-      // qc.invalidateQueries({
-      //   queryKey: ['product', 'reviews', idNum, 'time'],
-      // });
+      qc.invalidateQueries({
+        queryKey: ['product', 'reviews', idNum, 'time'],
+      });
       qc.invalidateQueries({ queryKey: ['product', 'ratingStats', idNum] });
       qc.invalidateQueries({ queryKey: ['product', 'detail', idNum] }); // 평균/카운트가 detail에 있을 경우
-
       // 2) 바로 재조회 (선호에 따라 invalidate만으로도 충분)
       // refetchReviews();
       refetchRatingStats();
     }, [qc, idNum, refetchRatingStats]),
   );
 
-  // 리뷰 탭에서 상단 사진 그리드에 쓸 사진 모음(예: 상품/리뷰 이미지 합치기 원하면 여기서 처리)
-  const reviewPhotos = useMemo(
-    () => reviews.flatMap((r) => (Array.isArray(r.images) ? r.images : [])),
-    [reviews],
-  );
-
-  // 탭에 따라 리스트 데이터 스위치: ingredient면 빈 배열(아이템 없음), review면 리뷰 리스트
-  const listData = activeTab === 'review' ? reviews : [];
-
-  const imageUrl =
-    typeof product.image === 'string' ? product.image : (product.image as any); // 로컬 require면 params로 넘기지 말고 빈 문자열
+  if (!data) return <Text>제품을 찾을 수 없습니다.</Text>;
 
   return (
     <SafeAreaView className='flex-1 bg-white'>
@@ -114,15 +99,15 @@ export default function ProductDetail() {
             <View>
               {/* 상품 이미지 */}
               <View className='h-[390px] w-full'>
-                {product.image ? (
-                  typeof product.image === 'string' ? (
+                {data?.images.length > 0 ? (
+                  typeof data.images === 'string' ? (
                     <Image
-                      source={{ uri: product.image }}
+                      source={{ uri: data.images }}
                       className='w-full h-full'
                     />
                   ) : (
                     <Image
-                      source={product.image as any}
+                      source={data.images as any}
                       className='w-full h-full'
                     />
                   )
@@ -143,8 +128,7 @@ export default function ProductDetail() {
                   <View className='flex-row items-center'>
                     <StarIcon />
                     <Text className='text-c1 font-normal text-gray-400 ml-[3px]'>
-                      {ratingStats?.average_rating ?? 0} (
-                      {ratingStats?.total_reviews ?? 0})
+                      {data?.reviewAvg ?? 0} ({data?.reviewCount ?? 0})
                     </Text>
                   </View>
                 </View>
@@ -206,17 +190,18 @@ export default function ProductDetail() {
                       <Pressable
                         onPress={() => {
                           qc.setQueryData(
-                            ['product', 'detail', Number(id)],
-                            data,
-                          );
-                          qc.setQueryData(
-                            ['product', 'reviews', Number(id)],
-                            reviews,
-                          );
-                          qc.setQueryData(
                             ['product', 'ratingStats', Number(id)],
                             ratingStats,
                           );
+                          qc.setQueryData(['product', 'photo-preview', idNum], {
+                            previewPhotos,
+                            total_photo:
+                              reviewImageList?.pages[0]?.total_images ?? 0,
+                          });
+                          qc.setQueryData(['product', 'detail', idNum], {
+                            reviewAvg: data?.reviewAvg,
+                            reviewCount: data?.reviewCount,
+                          });
                           router.push(`/product/${id}/review/allReview`);
                         }}
                       >
@@ -235,7 +220,10 @@ export default function ProductDetail() {
                           id: String(id), // 제품아이디
                           name: data?.name ?? '', // 제품명
                           brand: data?.company ?? '', // 회사명
-                          image: typeof imageUrl === 'string' ? imageUrl : '', // URL만 보내기
+                          image:
+                            typeof data?.images === 'string'
+                              ? data?.images
+                              : '', // URL만 보내기
                         },
                       })
                     }
@@ -256,7 +244,7 @@ export default function ProductDetail() {
                   ) : (
                     <View className='mt-[16px]'>
                       <ReviewCard
-                        reviewRank={ratingStats?.average_rating || 0}
+                        reviewRank={data?.reviewAvg || 0}
                         distribution={{
                           5: ratingStats?.percentages[5] || 0,
                           4: ratingStats?.percentages[4] || 0,
@@ -274,6 +262,9 @@ export default function ProductDetail() {
                           onPressPhoto={(idx) => console.log('사진 클릭', idx)}
                           onPressMore={() =>
                             router.push(`/product/${id}/review/photo/allList`)
+                          }
+                          total_photo={
+                            reviewImageList?.pages[0]?.total_images ?? 0
                           }
                         />
                       </View>

@@ -17,6 +17,7 @@ import { useMemo, useRef, useState } from 'react';
 import { FlatList, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
+import { ProductDetail } from '@/services/product/getProductDetail';
 
 const SORT_OPTIONS: {
   key: 'time' | 'high' | 'low';
@@ -33,11 +34,20 @@ export default function allReview() {
   const qc = useQueryClient();
   const [sort, setSort] = useState<'time' | 'high' | 'low'>('high');
 
-  const cachedRatingStats = qc.getQueryData<ProductRatingStatsDTO>([
-    'product',
-    'ratingStats',
-    idNum,
-  ]);
+  // const cachedRatingStats = qc.getQueryData<ProductRatingStatsDTO>([
+  //   'product',
+  //   'ratingStats',
+  //   idNum,
+  // ]);
+  const cachedRatingStats = qc.getQueryData<{
+    reviewAvg: number;
+    reviewCount: number;
+  }>(['product', 'detail', idNum]);
+
+  const cachedPhotoPreview = qc.getQueryData<{
+    previewPhotos: string[];
+    total_photo: number;
+  }>(['product', 'photo-preview', idNum]);
 
   const { items, hasNextPage, isFetchingNextPage, fetchNextPage } =
     useProductReviewsInfinite(idNum, sort);
@@ -94,11 +104,11 @@ export default function allReview() {
               <View className='flex-row items-center justify-between mb-[15px]'>
                 <View className='flex-row items-center'>
                   <Text className='text-b-md font-extrabold text-gray-700 mr-[8px]'>
-                    리뷰 {cachedRatingStats?.total_reviews ?? 0}개
+                    리뷰 {cachedRatingStats?.reviewCount ?? 0}개
                   </Text>
                   <StarIcon width={20} height={20} />
                   <Text className='text-b-md font-extrabold text-gray-700 ml-[2px]'>
-                    ({cachedRatingStats?.average_rating ?? 0})
+                    ({cachedRatingStats?.reviewAvg ?? 0})
                   </Text>
                 </View>
               </View>
@@ -107,7 +117,8 @@ export default function allReview() {
               <View>
                 <View className='pb-5'>
                   <PhotoCard
-                    images={reviewPhotos}
+                    images={cachedPhotoPreview?.previewPhotos ?? []}
+                    total_photo={cachedPhotoPreview?.total_photo ?? 0}
                     maxPreview={6}
                     onPressMore={() =>
                       router.push(`/product/${id}/review/photo/allList`)

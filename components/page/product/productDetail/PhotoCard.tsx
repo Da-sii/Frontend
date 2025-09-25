@@ -8,6 +8,7 @@ interface PhotoCardProps {
   maxPreview?: number; // 몇 장만 미리보기 (기본 6장)
   onPressPhoto?: (index: number) => void; // 개별 사진 눌렀을 때
   onPressMore?: () => void; // "+더보기" 눌렀을 때
+  total_photo?: number;
 }
 
 export default function PhotoCard({
@@ -15,6 +16,7 @@ export default function PhotoCard({
   maxPreview = 6,
   onPressPhoto,
   onPressMore,
+  total_photo,
 }: PhotoCardProps) {
   const preview = images.slice(0, maxPreview);
   const remain = images.length - preview.length;
@@ -52,7 +54,7 @@ export default function PhotoCard({
                 onPress={onPressMore}
               >
                 <Text className='text-white font-extrabold text-b-sm'>
-                  +{remain}
+                  +{total_photo ? total_photo - 5 : 0}
                 </Text>
                 <Text className='text-white font-extrabold text-b-sm mt-[7px]'>
                   사진 더보기
