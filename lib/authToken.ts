@@ -23,7 +23,7 @@ export async function getRefreshToken() {
   return memRT;
 }
 
-export async function setTokens(at: string, rt?: string) {
+export async function setTokens(at: string) {
   memAT = at;
   await SecureStore.setItemAsync(KEYS.ACCESS_TOKEN, at);
   // if (rt) {
