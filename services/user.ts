@@ -3,6 +3,7 @@ import {
   UpdatePasswordPayload,
 } from '@/types/payloads/fetch';
 import {
+  MypageResponse,
   UpdateNicknameResponse,
   UpdatePasswordResponse,
 } from '@/types/responses/product';
@@ -26,6 +27,11 @@ export const userAPI = {
       '/auth/password/',
       payload,
     );
+    return data;
+  },
+
+  getMypage: async (): Promise<MypageResponse> => {
+    const { data } = await axiosInstance.get<MypageResponse>('/auth/mypage/');
     return data;
   },
 };

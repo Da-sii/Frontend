@@ -3,6 +3,7 @@ import GoRankingIcon from '@/assets/icons/ic_arrow_right.svg';
 import LogoIcon from '@/assets/icons/ic_logo_full.svg';
 import MagnifierIcon from '@/assets/icons/ic_magnifier.svg';
 import BannerCarousel from '@/components/page/home/BannerCarousel';
+import HomeFooter from '@/components/page/home/HomeFooter';
 import ProductRankingCarousel from '@/components/page/home/ProductRankingCarousel';
 import TagsView from '@/components/page/home/TagsView';
 import { useFetchMainScreenQuery } from '@/hooks/useProductQueries';
@@ -19,11 +20,20 @@ export default function Home() {
 
   const { data: mainScreenInfo, isLoading } = useFetchMainScreenQuery();
 
-  const onViewRef = React.useRef(({ viewableItems }: any) => {
-    if (viewableItems.length > 0) {
-      setFocusedIndex(viewableItems[0].index);
-    }
-  });
+  type ViewableItem = { index: number | null };
+  type OnViewableItemsChangedProps = { viewableItems: ViewableItem[] };
+
+  const onViewRef = React.useRef(
+    ({ viewableItems }: OnViewableItemsChangedProps) => {
+      if (
+        viewableItems.length > 0 &&
+        viewableItems[0].index !== null &&
+        viewableItems[0].index !== undefined
+      ) {
+        setFocusedIndex(viewableItems[0].index);
+      }
+    },
+  );
 
   const viewConfigRef = React.useRef({ viewAreaCoveragePercentThreshold: 50 });
 
@@ -71,6 +81,8 @@ export default function Home() {
             isLoading={isLoading}
           />
         </View>
+
+        <HomeFooter />
 
         <AddProductButton />
       </ScrollView>
