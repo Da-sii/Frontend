@@ -23,6 +23,7 @@ export type MyReview = {
   images: ReviewImagesDTO[]; // url만 뽑아 정규화
   product_info: ProductInfoDTO;
 };
+
 export async function getMyReviewList(review_id: number): Promise<MyReview[]> {
   const { data } = await axiosInstance.get<MyReviewListDTO>(
     `/review/myReviews/${review_id}/`,

@@ -35,9 +35,6 @@ export default function MyReviews() {
   const { mutate: deleteReview } = useDeleteReview({
     onSuccessInvalidateKeys: () => [
       ['my', 'reviews'], // ← 실제 키와 일치시키기
-      // 필요하면 다른 관련 키도 함께
-      // ['review-image-list'],
-      // ['product', 'rating-stats'],
     ],
   });
 
@@ -84,7 +81,30 @@ export default function MyReviews() {
         <View className='flex-row px-4 pb-4'>
           <TouchableOpacity
             className='p-1 px-4 border border-gray-200 rounded-full items-center'
-            onPress={() => {}}
+            onPress={() => {
+              if (item.review_id == null) return;
+
+              router.push({
+                pathname: '/product/[id]/review/write', // ReviewWritePage 경로
+                params: {
+                  mode: 'edit',
+                  reviewId: String(item.review_id),
+                  id: String(item.product_info?.id ?? ''), // 제품 id
+                  name: item.product_info?.name ?? '',
+                  brand: item.product_info?.company ?? '',
+                  image: item.product_info?.image ?? '',
+                  initRate: String(item.rate ?? 0),
+                  initReview: item.review ?? '',
+                  initImages: JSON.stringify(
+                    (Array.isArray(item.images) ? item.images : [])
+                      .map((img: any) =>
+                        typeof img === 'string' ? img : img?.url,
+                      )
+                      .filter(Boolean),
+                  ),
+                },
+              });
+            }}
           >
             <Text className='text-xs'>수정</Text>
           </TouchableOpacity>
@@ -109,7 +129,7 @@ export default function MyReviews() {
           secondMessage='정말 삭제하시겠습니까?'
           onConfirm={() => {
             if (targetReviewId == null) return;
-            deleteReview(targetReviewId); 
+            deleteReview(targetReviewId);
             setTargetReviewId(null);
           }}
           onCancel={() => setTargetReviewId(null)}
