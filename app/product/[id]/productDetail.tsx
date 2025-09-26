@@ -312,7 +312,7 @@ function IngredientSection({ product }: { product: any }) {
   return (
     <View className='p-5'>
       <View className='flex-row mb-[10px]'>
-        <Text className='text-b-lg font-bold mb-2'>기능성 원료 </Text>
+        <Text className='text-b-lg font-bold'>기능성 원료 </Text>
         <Text className='text-b-lg font-extrabold text-green-500'>
           {product?.ingredientsCount ?? 0}개
         </Text>

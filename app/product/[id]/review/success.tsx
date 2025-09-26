@@ -38,7 +38,7 @@ export default function sucess() {
             onPress={() => {
               router.push(`/product/${id}/review/write`);
             }}
-            buttonName='리뷰 작성'
+            buttonName='리뷰쓰기'
           />
           <ProductCard
             brand={product?.brand || ''}
@@ -47,7 +47,7 @@ export default function sucess() {
             onPress={() => {
               router.push(`/product/${id}/review/write`);
             }}
-            buttonName='리뷰 작성'
+            buttonName='리뷰쓰기'
           />
           <ProductCard
             brand={product?.brand || ''}
@@ -56,7 +56,7 @@ export default function sucess() {
             onPress={() => {
               router.push(`/product/${id}/review/write`);
             }}
-            buttonName='리뷰 작성'
+            buttonName='리뷰쓰기'
           />
         </View>
       </View>

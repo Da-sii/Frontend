@@ -1,122 +1,152 @@
 // app/mypage/review.tsx
 import ReviewItems from '@/components/page/product/productDetail/reviewItem'; // 실제 경로로 수정
+import { useGetMyReview } from '@/hooks/my/useGetMyReview';
+import { useDeleteReview } from '@/hooks/my/useDeleteMyReview';
+import DefaultModal from '@/components/common/modals/DefaultModal';
+import { useState } from 'react';
+
 import { Ionicons } from '@expo/vector-icons';
+
 import { Stack, useRouter } from 'expo-router';
-import { FlatList, Text, TouchableOpacity, View } from 'react-native';
-
-interface Review {
-  id: string;
-  productImage: string;
-  productName: string;
-  rating: number;
-  date: string;
-  modified: boolean;
-  content: string;
-  photos: string[];
-}
-
-const mockReviews: Review[] = [
-  {
-    id: '1',
-    productImage: '@/assets/images/product/product1.png',
-    productName: '아모레서피',
-    rating: 4,
-    date: '2025.08.28',
-    modified: true,
-    content: '반짝거리는 창문 너머 햇살이 날 비춰 … 예쁜 날엔 널 만나러 갈게',
-    photos: [
-      '@/assets/images/product/product1.png',
-      '@/assets/images/product/product1.png',
-      '@/assets/images/product/product1.png',
-    ],
-  },
-  {
-    id: '2',
-    productImage: '@/assets/images/product/product1.png',
-    productName: '아모레서피',
-    rating: 4,
-    date: '2025.08.28',
-    modified: true,
-    content: '반짝거리는 창문 너머 햇살이 날 비춰 … 예쁜 날엔 널 만나러 갈게',
-    photos: [
-      '@/assets/images/product/product1.png',
-      '@/assets/images/product/product1.png',
-      '@/assets/images/product/product1.png',
-    ],
-  },
-  {
-    id: '3',
-    productImage: '@/assets/images/product/product1.png',
-    productName: '아모레서피',
-    rating: 4,
-    date: '2025.08.28',
-    modified: true,
-    content: '반짝거리는 창문 너머 햇살이 날 비춰 … 예쁜 날엔 널 만나러 갈게',
-    photos: [
-      '@/assets/images/product/product1.png',
-      '@/assets/images/product/product1.png',
-      '@/assets/images/product/product1.png',
-    ],
-  },
-  {
-    id: '4',
-    productImage: '@/assets/images/product/product1.png',
-    productName: '아모레서피',
-    rating: 4,
-    date: '2025.08.28',
-    modified: true,
-    content: '반짝거리는 창문 너머 햇살이 날 비춰 … 예쁜 날엔 널 만나러 갈게',
-    photos: [
-      '@/assets/images/product/product1.png',
-      '@/assets/images/product/product1.png',
-      '@/assets/images/product/product1.png',
-    ],
-  },
-];
+import {
+  ActivityIndicator,
+  FlatList,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { MyReview } from '@/services/my/getReviewList';
+import { useCallback } from 'react';
 
 export default function MyReviews() {
   const router = useRouter();
+  const {
+    data: myReviews,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    refetch,
+    isRefetching,
+  } = useGetMyReview(0);
 
-  const convertToReviewItem = (review: Review) => ({
-    id: review.id,
-    name: review.productName,
-    date: review.date,
-    isEdited: review.modified,
-    content: review.content,
-    rating: review.rating,
-    images: review.photos,
+  const [showDeleteCheckModal, setShowDeleteCheckModal] = useState(false);
+  const [targetReviewId, setTargetReviewId] = useState<number | null>(null);
+  const { mutate: deleteReview } = useDeleteReview({
+    onSuccessInvalidateKeys: () => [
+      ['my', 'reviews'], // ← 실제 키와 일치시키기
+    ],
   });
 
-  const renderItem = ({ item }: { item: Review }) => (
-    <View className='border-b border-gray-100'>
-      <ReviewItems
-        reviewItem={convertToReviewItem(item)}
-        isPhoto={true}
-        isMore={true}
-        isMyReview={true}
-        id={item.id}
-      />
+  const keyExtractor = useCallback((item: MyReview, idx: number) => {
+    // review_id가 있으면 그걸로만
+    if (item.review_id != null) return String(item.review_id);
+    // 없으면 안전한 고유키
+    return `${item.nickname}-${item.date}-${idx}`;
+  }, []);
 
-      <View className='flex-row px-4 pb-4'>
-        <TouchableOpacity
-          className='p-1 px-4 border border-gray-200 rounded-full items-center'
-          onPress={() => {
-            // console.log('수정:', item.id);
+  const loadMore = useCallback(() => {
+    if (!hasNextPage || isFetchingNextPage) return;
+    fetchNextPage();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  const flatReviews = myReviews?.pages?.flat() ?? [];
+  console.log('flatReviews', flatReviews);
+
+  const renderItem = ({ item }: { item: MyReview }) => {
+    const images: string[] = Array.isArray(item.images)
+      ? item.images.map((img: any) =>
+          typeof img === 'string' ? img : img?.url,
+        )
+      : [];
+
+    const canDelete = item.review_id != null;
+
+    return (
+      <View className='border-b border-gray-100'>
+        <ReviewItems
+          reviewItem={{
+            id: item.review_id ?? 0,
+            company: item.product_info.company ?? '',
+            name: item.product_info.name ?? '',
+            date: item.date ?? '-',
+            isEdited: false,
+            content: item.review ?? '',
+            rating: item.rate ?? 0,
+            images,
           }}
-        >
-          <Text className='text-xs'>수정</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          className='p-1 px-4 border border-gray-200 rounded-full ml-2 items-center'
-          onPress={() => {
-            // console.log('삭제:', item.id);
+          isMyReview={true}
+        />
+
+        <View className='flex-row px-4 pb-4'>
+          <TouchableOpacity
+            className='p-1 px-4 border border-gray-200 rounded-full items-center'
+            onPress={() => {
+              if (item.review_id == null) return;
+
+              router.push({
+                pathname: '/product/[id]/review/write', // ReviewWritePage 경로
+                params: {
+                  mode: 'edit',
+                  reviewId: String(item.review_id),
+                  id: String(item.product_info?.id ?? ''), // 제품 id
+                  name: item.product_info?.name ?? '',
+                  brand: item.product_info?.company ?? '',
+                  image: item.product_info?.image ?? '',
+                  initRate: String(item.rate ?? 0),
+                  initReview: item.review ?? '',
+                  initImages: JSON.stringify(
+                    (Array.isArray(item.images) ? item.images : [])
+                      .map((img: any) =>
+                        typeof img === 'string' ? img : img?.url,
+                      )
+                      .filter(Boolean),
+                  ),
+                },
+              });
+            }}
+          >
+            <Text className='text-xs'>수정</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            className={`p-1 px-4 border rounded-full ml-2 items-center ${
+              canDelete ? 'border-gray-200' : 'border-gray-100 opacity-50'
+            }`}
+            disabled={!canDelete}
+            onPress={() => {
+              console.log('삭제:', item.nickname);
+              setShowDeleteCheckModal(true);
+              setTargetReviewId(item.review_id!);
+            }}
+          >
+            <Text className='text-xs'>삭제</Text>
+          </TouchableOpacity>
+        </View>
+        <DefaultModal
+          visible={targetReviewId !== null}
+          title='리뷰를 삭제하시겠습니까?'
+          message='소중하게 남겨주신 리뷰는 삭제 후 복구 불가합니다.'
+          secondMessage='정말 삭제하시겠습니까?'
+          onConfirm={() => {
+            if (targetReviewId == null) return;
+            deleteReview(targetReviewId);
+            setTargetReviewId(null);
           }}
-        >
-          <Text className='text-xs'>삭제</Text>
-        </TouchableOpacity>
+          onCancel={() => setTargetReviewId(null)}
+          confirmText='확인'
+          cancelText='취소'
+        />
       </View>
-    </View>
-  );
+    );
+  };
+
+  if (isLoading) {
+    return (
+      <View className='flex-1 items-center justify-center bg-white'>
+        <ActivityIndicator />
+      </View>
+    );
+  }
 
   return (
     <View className='flex-1 bg-white px-4'>
@@ -134,11 +164,11 @@ export default function MyReviews() {
       />
 
       <FlatList
-        data={mockReviews}
-        keyExtractor={(item) => item.id}
+        data={flatReviews}
+        keyExtractor={keyExtractor}
         ListHeaderComponent={
           <Text className='px-4 pt-4 pb-2 text-base font-medium'>
-            {mockReviews.length}개의 리뷰를 작성했어요!
+            {flatReviews.length ?? 0}개의 리뷰를 작성했어요!
           </Text>
         }
         renderItem={renderItem}
@@ -146,6 +176,17 @@ export default function MyReviews() {
         ItemSeparatorComponent={() => (
           <View className='h-[0.5px] bg-gray-100' />
         )}
+        onEndReached={loadMore}
+        onEndReachedThreshold={0.3}
+        ListFooterComponent={
+          isFetchingNextPage ? (
+            <View className='py-4'>
+              <ActivityIndicator />
+            </View>
+          ) : null
+        }
+        refreshing={isRefetching}
+        onRefresh={refetch}
       />
     </View>
   );

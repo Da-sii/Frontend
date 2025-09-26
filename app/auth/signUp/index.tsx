@@ -134,7 +134,7 @@ export default function Index() {
                 menu={1}
                 value={password}
                 onChangeText={setPassword}
-                placeholder='비밀번호를 입력해주세요..'
+                placeholder='비밀번호를 입력해주세요.'
                 firstMessage='8-20자 이내'
                 secondMessage='영문, 숫자, 특수문자 포함'
                 validateFirst={isLen8to20}
@@ -147,7 +147,7 @@ export default function Index() {
                 menu={1}
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
-                placeholder='비밀번호를 입력해주세요..'
+                placeholder='비밀번호를 다시 입력해주세요.'
                 firstMessage='비밀번호 일치'
                 validateFirst={(t) => isSamePassword(password, t)}
                 secureTextEntry={true}
@@ -203,7 +203,7 @@ export default function Index() {
                       >
                         <Path
                           d='M16.5 4.5L6.5 15L1.5 9'
-                          stroke={checked ? '#181A1B' : '#C9CDD2'}
+                          stroke={checked ? '#50D88F' : '#C9CDD2'}
                           strokeWidth={1.5}
                           strokeLinecap='round'
                           strokeLinejoin='round'

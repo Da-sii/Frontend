@@ -5,7 +5,7 @@ export type ProductImage = { url: string };
 
 export type ProductIngredient = {
   ingredientName: string;
-  englishIngredient: string;
+  englishName: string;
   amount: string;
   minRecommended: string;
   maxRecommended: string;

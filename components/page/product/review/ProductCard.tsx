@@ -20,7 +20,7 @@ export default function ProductCard({
   return (
     <View className='w-full p-5 border border-gray-100 bg-white rounded-[12px]'>
       <View className='flex-row mb-5'>
-        <View className=' w-[14%] aspect-square mr-[10px] border-gray-100 border rounded-[10px]'>
+        <View className=' w-[57px] aspect-square mr-[10px] border-gray-100 border rounded-[10px]'>
           {image ? (
             typeof image === 'string' ? (
               <Image source={{ uri: image }} className='w-full h-full' />
@@ -34,25 +34,25 @@ export default function ProductCard({
           )}
         </View>
 
-        <View className='gap-y-[7px] flex-1'>
+        <View className='py-[9px] flex-1 '>
           <Text
-            className='text-c2 text-gray-500'
+            className='text-c2 text-gray-500 mb-[5px]'
             ellipsizeMode='tail'
             numberOfLines={1}
           >
-            {brand}
+            {brand}dd
           </Text>
           <Text
             className='text-b-sm font-bold'
             ellipsizeMode='tail'
             numberOfLines={1}
           >
-            {name}
+            {name}dd
           </Text>
         </View>
       </View>
 
-      <LongButton label={buttonName} onPress={onPress} />
+      <LongButton label={buttonName} onPress={onPress} height='h-[46px]' />
     </View>
   );
 }
