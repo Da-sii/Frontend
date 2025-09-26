@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 import { TextField } from './TextField';
 
@@ -11,6 +11,7 @@ type TextInputProps = {
   disabled?: boolean;
   errorMessage?: string;
   conditionMessage?: string;
+  maxLength?: number;
 };
 
 export default function TextInput({
@@ -22,6 +23,7 @@ export default function TextInput({
   disabled = false,
   errorMessage,
   conditionMessage,
+  maxLength,
 }: TextInputProps) {
   const [showError, setShowError] = useState(false);
 
@@ -41,6 +43,7 @@ export default function TextInput({
         onChangeText={onChangeText}
         secureTextEntry={secureTextEntry}
         disabled={disabled}
+        maxLength={maxLength}
       />
 
       {conditionMessage && !showError ? (

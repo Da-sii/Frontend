@@ -1,4 +1,5 @@
 import IndexIcon from '@/assets/icons/ic_ranking_index.svg';
+import ProductGridItemSkeleton from '@/components/common/skeleton/ProductGridItemSkeleton';
 import colors from '@/constants/color';
 import { IRankingProduct } from '@/types/models/product';
 import { useRouter } from 'expo-router';
@@ -16,9 +17,10 @@ const cardWidth = screenWidth / 3;
 
 interface Props {
   data: IRankingProduct[];
+  isLoading: boolean;
 }
 
-export default function ProductRankingCarousel({ data }: Props) {
+export default function ProductRankingCarousel({ data, isLoading }: Props) {
   const router = useRouter();
 
   const renderRankingItem = ({
@@ -98,6 +100,25 @@ export default function ProductRankingCarousel({ data }: Props) {
       </View>
     </Pressable>
   );
+
+  if (isLoading) {
+    return (
+      <FlatList
+        data={Array.from({ length: 5 })}
+        renderItem={() => (
+          <View className='mr-2'>
+            <ProductGridItemSkeleton
+              style={{ width: cardWidth }}
+              imageStyle={{ width: cardWidth, height: cardWidth }}
+            />
+          </View>
+        )}
+        keyExtractor={(_, index) => `skeleton-${index}`}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+      />
+    );
+  }
 
   return (
     <FlatList
