@@ -1,6 +1,11 @@
 // features/review/useDeleteReview.ts
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  QueryFilters,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { deleteReview } from '@/services/my/deleteReview';
+import { Alert } from 'react-native';
 
 type Opts = {
   // 목록 재조회가 필요한 경우 사용 (예: 상세 페이지에서 해당 상품 리뷰 쿼리키를 쓰는 경우)
@@ -14,13 +19,32 @@ export function useDeleteReview(opts?: Opts) {
 
   return useMutation({
     mutationFn: (reviewId: number) => deleteReview(reviewId),
-    onSuccess: async (res) => {
-      // 캐시 무효화 (상품 상세에서 리뷰 쿼리키: ['product','reviews', productId] 를 쓰고 있으니 그 키 기준으로)
-      const productId = Number(res?.product_id);
-      const keys =
-        opts?.onSuccessInvalidateKeys?.(productId) ??
-        ([['product', 'reviews', productId]] as (readonly unknown[])[]);
+    onMutate: async (reviewId: number) => {
+      const key = ['my', 'reviews']; // 실제 키에 맞게
+      await qc.cancelQueries({ queryKey: key });
+      const prev = qc.getQueriesData<any>(
+        key as QueryFilters<readonly unknown[]>,
+      );
+      console.log('prev', prev);
+      return { prev };
+    },
 
+    onSuccess: async (res) => {
+      const raw = (res as any)?.product_id;
+      const productId = Number.isFinite(Number(raw)) ? Number(raw) : null;
+
+      const defaultKeys: (readonly unknown[])[] = [
+        // 제품 상세 리뷰(인피니트)
+        ['product', 'reviews', productId],
+        // 내 리뷰 목록
+        ['my', 'reviews'],
+        // 리뷰 이미지 스냅샷/모아보기
+        ['review-image-list', productId],
+        // 평점/통계
+        ['product', 'rating-stats', productId],
+      ];
+
+      const keys = opts?.onSuccessInvalidateKeys?.(productId!) ?? defaultKeys;
       await Promise.all(keys.map((k) => qc.invalidateQueries({ queryKey: k })));
       opts?.onSuccess?.(res);
     },

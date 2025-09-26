@@ -31,14 +31,21 @@ export default function MyReviews() {
   } = useGetMyReview(0);
 
   const [showDeleteCheckModal, setShowDeleteCheckModal] = useState(false);
-  const { mutate: deleteReview } = useDeleteReview();
+  const [targetReviewId, setTargetReviewId] = useState<number | null>(null);
+  const { mutate: deleteReview } = useDeleteReview({
+    onSuccessInvalidateKeys: () => [
+      ['my', 'reviews'], // ← 실제 키와 일치시키기
+      // 필요하면 다른 관련 키도 함께
+      // ['review-image-list'],
+      // ['product', 'rating-stats'],
+    ],
+  });
 
   const keyExtractor = useCallback((item: MyReview, idx: number) => {
-    return String(
-      item.review_id ??
-        item.review_id ??
-        `${item.nickname}-${item.date}-${idx}`,
-    );
+    // review_id가 있으면 그걸로만
+    if (item.review_id != null) return String(item.review_id);
+    // 없으면 안전한 고유키
+    return `${item.nickname}-${item.date}-${idx}`;
   }, []);
 
   const loadMore = useCallback(() => {
@@ -56,7 +63,7 @@ export default function MyReviews() {
         )
       : [];
 
-    console.log('images', images);
+    const canDelete = item.review_id != null;
 
     return (
       <View className='border-b border-gray-100'>
@@ -82,26 +89,30 @@ export default function MyReviews() {
             <Text className='text-xs'>수정</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            className='p-1 px-4 border border-gray-200 rounded-full ml-2 items-center'
+            className={`p-1 px-4 border rounded-full ml-2 items-center ${
+              canDelete ? 'border-gray-200' : 'border-gray-100 opacity-50'
+            }`}
+            disabled={!canDelete}
             onPress={() => {
               console.log('삭제:', item.nickname);
               setShowDeleteCheckModal(true);
+              setTargetReviewId(item.review_id!);
             }}
           >
             <Text className='text-xs'>삭제</Text>
           </TouchableOpacity>
         </View>
         <DefaultModal
-          visible={showDeleteCheckModal}
+          visible={targetReviewId !== null}
           title='리뷰를 삭제하시겠습니까?'
           message='소중하게 남겨주신 리뷰는 삭제 후 복구 불가합니다.'
           secondMessage='정말 삭제하시겠습니까?'
           onConfirm={() => {
-            // deleteReview(); 리뷰아이디 필요
+            if (targetReviewId == null) return;
+            deleteReview(targetReviewId); 
+            setTargetReviewId(null);
           }}
-          onCancel={() => {
-            setShowDeleteCheckModal(false);
-          }}
+          onCancel={() => setTargetReviewId(null)}
           confirmText='확인'
           cancelText='취소'
         />
