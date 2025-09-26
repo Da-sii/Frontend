@@ -28,6 +28,7 @@ import { Keyboard, TouchableWithoutFeedback } from 'react-native';
 import useEditMyReview from '@/hooks/my/useEditMyReview';
 import { useDeleteReviewImage } from '@/hooks/product/review/image/useDeleteReviewImage';
 
+
 type Picked = {
   uri: string;
   width: number;

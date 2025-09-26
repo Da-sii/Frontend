@@ -1,4 +1,5 @@
 import { userAPI } from '@/services/user';
+import { IUser } from '@/types/models/user';
 import {
   UpdateNicknamePayload,
   UpdatePasswordPayload,
@@ -9,6 +10,18 @@ import { useState } from 'react';
 
 export const useUser = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [mypageInfo, setMypageInfo] = useState<IUser>();
+
+  const fetchMypage = async () => {
+    setIsLoading(true);
+    try {
+      const data = await userAPI.getMypage();
+      setMypageInfo(data.user_info);
+      return true;
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const updateNickname = async (payload: UpdateNicknamePayload) => {
     setIsLoading(true);
@@ -46,6 +59,8 @@ export const useUser = () => {
   };
 
   return {
+    fetchMypage,
+    mypageInfo,
     updateNickname,
     updatePassword,
     isLoading,

@@ -116,6 +116,20 @@ export default function Search() {
     }
   };
 
+  useEffect(() => {
+    const loadRecentSearches = async () => {
+      try {
+        const storedSearches = await AsyncStorage.getItem(RECENT_SEARCHES_KEY);
+        if (storedSearches) {
+          setRecentSearches(JSON.parse(storedSearches));
+        }
+      } catch (error) {
+        console.error('Failed to load recent searches.', error);
+      }
+    };
+    loadRecentSearches();
+  }, []);
+
   const handleSearch = () => {
     if (inputValue.trim()) {
       setSearchQuery(inputValue);

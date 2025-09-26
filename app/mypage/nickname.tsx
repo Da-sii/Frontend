@@ -1,10 +1,12 @@
+
+import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
 import { LongButton } from '@/components/common/buttons/LongButton';
-import TextInput from '@/components/common/Inputs/TextInput';
+import { TextField } from '@/components/common/Inputs/TextField';
+import Navigation from '@/components/layout/Navigation';
 import { useUser } from '@/hooks/useUser';
-import { Ionicons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ChangeNickname() {
@@ -13,6 +15,15 @@ export default function ChangeNickname() {
 
   const [nickname, setNickname] = useState('');
   const [isNicknameValid, setIsNicknameValid] = useState(false);
+
+  const isLen8to20 = (text: string) => {
+    return text.length >= 8 && text.length <= 20;
+  };
+
+  const hasNicknameComposition = (text: string) => {
+    const regex = /^[ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z0-9]+$/;
+    return regex.test(text);
+  };
 
   useEffect(() => {
     const validateNickname = () => {
@@ -34,23 +45,39 @@ export default function ChangeNickname() {
     <SafeAreaView className='flex-1 bg-white'>
       <Stack.Screen
         options={{
-          headerTitle: '닉네임 변경',
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => router.back()} className=''>
-              <Ionicons name='chevron-back' size={24} color='#333' />
-            </TouchableOpacity>
-          ),
-          headerTitleAlign: 'center',
-          headerShadowVisible: false,
+          headerShown: false,
         }}
       />
 
-      <View className='px-5'>
-        <TextInput
-          title='닉네임'
+      <Navigation
+        left={<ArrowLeftIcon width={20} height={20} />}
+        onLeftPress={() => router.back()}
+        title='닉네임 변경'
+      />
+
+      <View className='px-5 py-3 pb-5'>
+        <View>
+          <Text className='mb-3 font-semibold'>닉네임</Text>
+        </View>
+        <TextField
+          menu={1}
           value={nickname}
           onChangeText={setNickname}
-          conditionMessage='2자 이상 10자 ✓ 이하 한글, 영문, 숫자만 ✓'
+          secureTextEntry={false}
+          placeholder='닉네임을 입력해주세요'
+          firstMessage='2-10자 이내'
+          secondMessage='영문, 숫자, 특수문자 포함'
+          validateFirst={isLen8to20}
+          validateSecond={hasNicknameComposition}
+          maxLength={20}
+        />
+      </View>
+
+      <View className='px-5'>
+        <LongButton
+          label='수정 완료'
+          onPress={handleUpdateNickname}
+          disabled={isLoading || !isNicknameValid}
         />
       </View>
 

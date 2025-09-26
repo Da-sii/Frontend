@@ -18,6 +18,11 @@ import MoreIcon from '@/assets/icons/product/productDetail/ic_more_line.svg';
 import { LongButton } from '@/components/common/buttons/LongButton';
 import BottomSheetLayout from '@/components/page/product/productDetail/BottomSeetLayout';
 
+
+import { toCdnUrl } from '@/utils/cdn';
+
+import ReviewStar from './ReviewStar';
+
 import ReviewStar from './ReviewStar';
 import { toCdnUrl } from '@/utils/cdn';
 interface reviewItem {
@@ -208,7 +213,7 @@ export default function ReviewItems({
           renderItem={({ item, index }: { item: string; index: number }) => (
             <Pressable
               onPress={() => {
-                const images = imageKeys.map(toCdnUrl);
+                const images = imageUris.map(toCdnUrl);
                 const token = `${Date.now()}-${Math.random()}`;
                 queryClient.setQueryData(photoViewerKey(token), images);
 

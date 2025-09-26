@@ -1,15 +1,12 @@
-import TextInput from '@/components/common/Inputs/TextInput';
+
+import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
+import { LongButton } from '@/components/common/buttons/LongButton';
+import { TextField } from '@/components/common/Inputs/TextField';
+import Navigation from '@/components/layout/Navigation';
 import { useUser } from '@/hooks/useUser';
-import { Ionicons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import {
-  KeyboardAvoidingView,
-  Platform,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { KeyboardAvoidingView, Platform, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ChangePassword() {
@@ -33,6 +30,17 @@ export default function ChangePassword() {
 
   const disabled = !(validNew && matchConfirm && currentPwd.length > 0);
 
+  const isLen8to20 = (text: string) => {
+    return text.length >= 8 && text.length <= 20;
+  };
+
+  const hasPasswordComposition = (text: string) => {
+    const regex = new RegExp(
+      '^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-={}\\[\\]:\\";\'<>?,./]).{8,20}$',
+    );
+    return regex.test(text);
+  };
+
   const handleSubmit = () => {
     if (!disabled) {
       updatePassword({
@@ -48,66 +56,81 @@ export default function ChangePassword() {
     <SafeAreaView className='flex-1 bg-white px-2'>
       <Stack.Screen
         options={{
-          headerTitle: '비밀번호 변경',
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => router.back()} className='px-4'>
-              <Ionicons name='chevron-back' size={24} color='#333' />
-            </TouchableOpacity>
-          ),
-          headerTitleAlign: 'center',
-          headerShadowVisible: false,
+          headerShown: false,
         }}
+      />
+
+      <Navigation
+        left={<ArrowLeftIcon width={20} height={20} />}
+        onLeftPress={() => router.push('/mypage')}
+        title='비밀번호 변경'
       />
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        className='flex-1 px-4'
+        className='flex-1 px-4 py-3'
       >
         <View className='mb-2'>
-          <TextInput
-            title='새로운 비밀번호를 입력해주세요'
-            value={newPwd}
-            onChangeText={setNewPwd}
-            secureTextEntry={true}
-            placeholder='새로운 비밀번호를 입력해주세요'
-            conditionMessage='8-20자 이내 ✓ 영문, 숫자, 특수문자 포함 ✓'
-          />
+          <View>
+            <Text className='mb-3 font-semibold'>
+              새로운 비밀번호를 입력해주세요
+            </Text>
+          </View>
+
+          <View className='mb-3'>
+            <TextField
+              menu={1}
+              value={newPwd}
+              onChangeText={setNewPwd}
+              secureTextEntry={true}
+              placeholder='새로운 비밀번호를 입력해주세요'
+              firstMessage='8-20자 이내'
+              secondMessage='영문, 숫자, 특수문자 포함'
+              validateFirst={isLen8to20}
+              validateSecond={hasPasswordComposition}
+              maxLength={20}
+            />
+          </View>
+
+          <View className='mb-3'>
+            <TextField
+              menu={1}
+              value={confirmPwd}
+              onChangeText={setConfirmPwd}
+              secureTextEntry={true}
+              placeholder='새로운 비밀번호를 다시 입력해주세요'
+              firstMessage='비밀번호 일치'
+              validateFirst={isLen8to20}
+              maxLength={20}
+            />
+          </View>
         </View>
 
-        <View className='mb-8'>
-          <TextInput
-            value={confirmPwd}
-            onChangeText={setConfirmPwd}
-            secureTextEntry={true}
-            placeholder='새로운 비밀번호를 다시 입력해주세요'
-            conditionMessage='비밀번호 일치 ✓'
-          />
-        </View>
+        <View className='mb-6'>
+          <View>
+            <Text className='mb-3 font-semibold'>
+              현재 비밀번호를 입력해주세요
+            </Text>
+          </View>
 
-        <View className='mb-2'>
-          <TextInput
-            title='현재 비밀번호를 입력해주세요'
+          <TextField
+            menu={1}
             value={currentPwd}
             onChangeText={setCurrentPwd}
             secureTextEntry={true}
-            placeholder='현재 비밀번호를 입력해주세요'
-            conditionMessage='비밀번호 일치 ✓'
+            placeholder='현재 비밀번호를 다시 입력해주세요'
+            firstMessage='비밀번호 일치'
+            validateFirst={isLen8to20}
+            maxLength={20}
           />
         </View>
 
-        <TouchableOpacity
+        <LongButton
+          label='비밀번호 변경'
           onPress={handleSubmit}
           disabled={disabled || isLoading}
-          className={`mt-4 rounded-xl py-4 items-center transition-all duration-300  ${
-            disabled ? 'bg-gray-200' : 'bg-green-500'
-          }`}
-        >
-          <Text
-            className={`text-base font-bold ${disabled ? 'text-white' : 'text-white'}`}
-          >
-            비밀번호 변경
-          </Text>
-        </TouchableOpacity>
+        />
+
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

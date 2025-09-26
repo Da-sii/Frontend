@@ -1,4 +1,5 @@
 import { IProduct, IRankingProduct } from '../models/product';
+import { IUser } from '../models/user';
 
 export interface RankingResponse {
   count: number;
@@ -25,3 +26,9 @@ export interface UpdatePasswordResponse {
   user_id: number;
   message: string;
 }
+
+export interface MypageResponse {
+  success: boolean;
+  user_info: IUser;
+}
+

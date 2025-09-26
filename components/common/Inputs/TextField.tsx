@@ -3,11 +3,11 @@ import XIcon from '@/assets/icons/auth/ic_red_x.svg';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useMemo, useState } from 'react';
 import {
+  KeyboardTypeOptions,
   Text,
   TextInput,
   TouchableOpacity,
   View,
-  KeyboardTypeOptions,
 } from 'react-native';
 
 type TextFieldProps = {
@@ -26,6 +26,7 @@ type TextFieldProps = {
   validateFirst?: (text: string) => boolean;
   validateSecond?: (text: string) => boolean;
   keyboardType?: KeyboardTypeOptions;
+  maxLength?: number;
 };
 
 export const TextField: React.FC<TextFieldProps> = ({
@@ -43,6 +44,7 @@ export const TextField: React.FC<TextFieldProps> = ({
   validateFirst,
   validateSecond,
   keyboardType,
+  maxLength,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -273,6 +275,7 @@ export const TextField: React.FC<TextFieldProps> = ({
           returnKeyType='done'
           blurOnSubmit
           keyboardType={keyboardType}
+          maxLength={maxLength}
         />
 
         {secureTextEntry && !disabled && (
