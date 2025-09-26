@@ -31,4 +31,3 @@ export interface MypageResponse {
   success: boolean;
   user_info: IUser;
 }
-

@@ -1,4 +1,3 @@
-
 import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
 import { LongButton } from '@/components/common/buttons/LongButton';
 import { TextField } from '@/components/common/Inputs/TextField';
@@ -130,7 +129,6 @@ export default function ChangePassword() {
           onPress={handleSubmit}
           disabled={disabled || isLoading}
         />
-
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
