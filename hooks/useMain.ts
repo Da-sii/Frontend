@@ -1,6 +1,7 @@
 import { mainAPI } from '@/services/home';
 import { MainScreenInfo } from '@/types/models/main';
 import axios from 'axios';
+
 import { useState } from 'react';
 
 export const useMain = () => {

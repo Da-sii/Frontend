@@ -5,7 +5,15 @@ import { SettingSection } from '@/components/page/my/SettingSection';
 import { useUser } from '@/hooks/useUser';
 import { getAccessToken } from '@/lib/authToken';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
+import {
+  Pressable,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { useGetMyReview } from '@/hooks/my/useGetMyReview';
 import { ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLogout } from '../../hooks/useLogout';
@@ -19,7 +27,8 @@ export default function Mypage() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
 
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(false);
+  const { data: myReviews } = useGetMyReview();
 
   const handleOAuthPasswordPress = () => {
     router.replace('/mypage/password');
@@ -88,7 +97,20 @@ export default function Mypage() {
                 label='내가 쓴 리뷰'
                 subLabel={`${mypageInfo?.review_count}개`}
                 onPress={handleReviewsPress}
-              />
+              >
+                <View className='flex-row items-center'>
+                  <Text className='text-base'>내가 쓴 리뷰 </Text>
+                  <Text className='text-base text-green-600 font-medium'>
+                    {myReviews?.length ?? 0}개
+                  </Text>
+                </View>
+                <Ionicons name='chevron-forward' size={20} color='#666' />
+              </TouchableOpacity>
+            </View>
+
+            <View className='h-px bg-gray-100 px-4' />
+
+
             </SettingSection>
 
             <SettingSection title='도움말' topBorder>

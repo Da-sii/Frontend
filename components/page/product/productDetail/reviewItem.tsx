@@ -18,14 +18,19 @@ import MoreIcon from '@/assets/icons/product/productDetail/ic_more_line.svg';
 import { LongButton } from '@/components/common/buttons/LongButton';
 import BottomSheetLayout from '@/components/page/product/productDetail/BottomSeetLayout';
 
+
 import { toCdnUrl } from '@/utils/cdn';
 
 import ReviewStar from './ReviewStar';
 
+import ReviewStar from './ReviewStar';
+import { toCdnUrl } from '@/utils/cdn';
 interface reviewItem {
   id: number;
   reviewId?: number;
   name: string;
+  company?: string;
+  product_name?: string;
   date: string;
   isEdited: boolean;
   content: string;
@@ -110,7 +115,7 @@ export default function ReviewItems({
   const GAP = 12; // 카드 간격(px)
 
   // reviewItem.images가 string[]/object[] 혼용일 수 있으니 URL로 정규화
-  const imageUris: string[] = (reviewItem.images ?? [])
+  const imageKeys: string[] = (reviewItem.images ?? [])
     .map((it: any) => (typeof it === 'string' ? it : (it?.url ?? '')))
     .filter(Boolean);
 
@@ -127,13 +132,15 @@ export default function ReviewItems({
             className='mr-2'
           />
         )}
-        <View className='flex-col'>
+        <View className='flex-col flex-1'>
           {isMyReview && (
-            <Text className='mb-[5px] text-xs color-gray-500'>
-              {reviewItem.name}
+            <Text numberOfLines={1} className='mb-[5px] text-xs color-gray-500'>
+              {reviewItem.company}
             </Text>
           )}
-          <Text className='mb-[5px]'>{reviewItem.name}</Text>
+          <Text numberOfLines={1} className='mb-[5px]'>
+            {reviewItem.name}
+          </Text>
           {!isMyReview && (
             <View className='flex-row items-center'>
               <ReviewStar height={12} reviewRank={reviewItem.rating} />
@@ -187,10 +194,10 @@ export default function ReviewItems({
       </View>
 
       {/* 이미지: 가로 스크롤 썸네일 리스트 */}
-      {imageUris.length > 0 && isPhoto && (
+      {imageKeys.length > 0 && isPhoto && (
         <FlatList
           className='mt-3'
-          data={imageUris}
+          data={imageKeys}
           horizontal
           showsHorizontalScrollIndicator={false}
           keyExtractor={(_: any, idx: number) => `img-${idx}`}

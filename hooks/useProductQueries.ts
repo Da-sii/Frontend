@@ -1,3 +1,4 @@
+
 import { mainAPI } from '@/services/home';
 import { productAPI } from '@/services/product';
 import { rankingAPI } from '@/services/ranking';
@@ -37,3 +38,4 @@ export const useFetchMainScreenQuery = () => {
     queryFn: () => mainAPI.getMainScreen(),
   });
 };
+

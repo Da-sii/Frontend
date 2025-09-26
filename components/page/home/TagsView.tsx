@@ -1,5 +1,6 @@
 import { TopSmallCategory } from '@/types/models/main';
 import { LinearGradient } from 'expo-linear-gradient';
+
 import { useRouter } from 'expo-router';
 import { Pressable, Text, View } from 'react-native';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';

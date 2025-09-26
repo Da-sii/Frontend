@@ -1,3 +1,4 @@
+
 import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
 import { LongButton } from '@/components/common/buttons/LongButton';
 import { TextField } from '@/components/common/Inputs/TextField';
@@ -79,6 +80,12 @@ export default function ChangeNickname() {
           disabled={isLoading || !isNicknameValid}
         />
       </View>
+
+      <LongButton
+        label='수정 완료'
+        onPress={handleUpdateNickname}
+        disabled={isLoading || !isNicknameValid}
+      />
     </SafeAreaView>
   );
 }
