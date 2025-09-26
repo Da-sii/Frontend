@@ -1,4 +1,3 @@
-import React from 'react';
 import { Modal, Text, TouchableOpacity, View } from 'react-native';
 
 type DefaultModalProps = {
@@ -34,11 +33,11 @@ export default function DefaultModal({
       <View className='flex-1 bg-black/60 items-center justify-center px-4'>
         <View className='bg-white rounded-[12px] items-center justify-center max-w-xs pt-7 overflow-hidden'>
           {title && (
-            <Text className='font-extrabold text-b-sm text-gray-900 mb-[15px] text-center'>
+            <Text className='font-extrabold text-b-md text-gray-900 mb-[15px] text-center'>
               {title}
             </Text>
           )}
-          <Text className='text-b-sm text-gray-500 font-bold text-center leading-5'>
+          <Text className='text-b-sm text-gray-500 font-regular text-center leading-5'>
             {message}
           </Text>
           {secondMessage && (

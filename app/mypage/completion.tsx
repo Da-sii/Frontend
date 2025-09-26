@@ -1,7 +1,7 @@
-import Logo from '@/assets/icons/ic_logo_word.svg';
+import Logo from '@/assets/icons/ic_logo_full.svg';
+import { LongButton } from '@/components/common/buttons/LongButton';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Completion() {
@@ -16,7 +16,7 @@ export default function Completion() {
   const buttonText = isWithdraw ? '처음 화면으로' : '바로 로그인';
 
   const handleButton = () => {
-    router.replace('/');
+    router.replace('/auth/login');
   };
 
   return (
@@ -24,7 +24,7 @@ export default function Completion() {
       <Stack.Screen options={{ headerShown: false }} />
 
       <View className='flex-1 flex-col justify-between items-center pt-20 pb-3'>
-        <Text className='text-[24px] font-semibold text-gray-800 mb-6'>
+        <Text className='text-[24px] font-bold text-gray-800 mb-6'>
           {title}
         </Text>
 
@@ -32,16 +32,12 @@ export default function Completion() {
           <Text className='text-[36px] font-bold text-green-500 mb-3'>
             <Logo />
           </Text>
-          <Text className='mt-1 text-center text-[14px] text-gray-500 leading-5'>
+          <Text className='mt-1 text-center font-semibold text-[14px] text-gray-500 leading-5'>
             {subText}
           </Text>
         </View>
-        <TouchableOpacity
-          onPress={handleButton}
-          className='mt-12 w-full bg-green-500 rounded-lg py-4 items-center'
-        >
-          <Text className='text-base font-medium text-white'>{buttonText}</Text>
-        </TouchableOpacity>
+
+        <LongButton label={buttonText} onPress={handleButton} />
       </View>
     </SafeAreaView>
   );
