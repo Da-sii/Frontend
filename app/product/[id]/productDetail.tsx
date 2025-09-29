@@ -28,6 +28,7 @@ import { useGetReviewImageList } from '@/hooks/product/review/image/useGetReview
 import { useProductReviewsPreview } from '@/hooks/product/review/useGetProductReview';
 import { useProductRatingStats } from '@/hooks/product/review/useProductRatingStats';
 import { useProductDetail } from '@/hooks/product/useProductDetail';
+import { ReviewButton } from '@/components/common/buttons/ReviewButton';
 
 const tabs = [
   { key: 'ingredient', label: '성분 정보' },
@@ -54,8 +55,26 @@ export default function ProductDetail() {
     () => reviews.flatMap((r) => (Array.isArray(r.images) ? r.images : [])),
     [reviews],
   );
-  const previewPhotos = reviewPhotos;
 
+  const previewPhotos = reviewPhotos;
+  const photoMap = useMemo(
+    () =>
+      reviews.flatMap((r) =>
+        (Array.isArray(r.images) ? r.images : []).map((img, i) => ({
+          reviewId: r.review_id,
+          url: img, // 원본 서버 URL (cdn 변환 전)
+          indexInReview: i, // 선택: 상세에서 바로 쓸 수도 있음
+        })),
+      ),
+    [reviews],
+  );
+
+  const previewPhotoUrls = useMemo(
+    () => photoMap.map((p) => p.url), // toCdnUrl(p.url)로 바꿔도 OK
+    [photoMap],
+  );
+
+  console.log('previewPhotoUrls', previewPhotoUrls);
   // 화면이 다시 포커스될 때마다 최신화
   useFocusEffect(
     useCallback(() => {
@@ -257,9 +276,26 @@ export default function ProductDetail() {
                       {/* 사진 그리드(주의: 내부가 세로 FlatList면 View+map 버전으로 바꾸기) */}
                       <View className='mt-4 pb-5'>
                         <PhotoCard
-                          images={reviewPhotos}
+                          images={previewPhotoUrls}
                           maxPreview={6}
-                          onPressPhoto={(idx) => console.log('사진 클릭', idx)}
+                          onPressPhoto={(idx) => {
+                            const entry = photoMap[idx];
+                            if (!entry) return;
+                            // 상세 뷰 라우팅: reviewId + imageUrl을 넘긴다
+                            qc.setQueryData(['product', 'detail', idNum], {
+                              reviewAvg: data?.reviewAvg,
+                              reviewCount: data?.reviewCount,
+                            });
+                            router.push({
+                              pathname:
+                                '/product/[id]/review/[reviewId]/photoReviewDetail',
+                              params: {
+                                id: String(id),
+                                reviewId: String(entry.reviewId),
+                                imageUrl: entry.url,
+                              },
+                            });
+                          }}
                           onPressMore={() =>
                             router.push(`/product/${id}/review/photo/allList`)
                           }
@@ -300,7 +336,32 @@ export default function ProductDetail() {
                 )
               : undefined
           }
-          ListFooterComponent={<View style={{ height: 24 }} />}
+          ListFooterComponent={
+            activeTab === 'review' ? (
+              <View className='items-center mt-4 mb-6'>
+                <ReviewButton
+                  onPress={() => {
+                    qc.setQueryData(
+                      ['product', 'ratingStats', Number(id)],
+                      ratingStats,
+                    );
+                    qc.setQueryData(['product', 'photo-preview', idNum], {
+                      previewPhotos,
+                      total_photo: reviewImageList?.pages[0]?.total_images ?? 0,
+                    });
+                    qc.setQueryData(['product', 'detail', idNum], {
+                      reviewAvg: data?.reviewAvg,
+                      reviewCount: data?.reviewCount,
+                    });
+                    router.push(`/product/${id}/review/allReview`);
+                  }}
+                  count={ratingStats?.total_reviews ?? 0}
+                />
+              </View>
+            ) : (
+              <View style={{ height: 24 }} />
+            )
+          }
         />
       </PortalProvider>
     </SafeAreaView>

@@ -2,10 +2,9 @@ import XIcon from '@/assets/icons/ic_x.svg';
 import { ReviewButton } from '@/components/common/buttons/ReviewButton';
 import Navigation from '@/components/layout/Navigation';
 import ReviewItems from '@/components/page/product/productDetail/reviewItem';
-import colors from '@/constants/color';
 import { PortalProvider } from '@gorhom/portal';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Dimensions,
   FlatList,
@@ -18,43 +17,39 @@ import {
 } from 'react-native';
 import { useGetPhotoReviewDetail } from '@/hooks/product/review/image/useGetPhotoReviewDetail';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { toCdnUrl } from '@/utils/cdn';
+import { useQueryClient } from '@tanstack/react-query';
 export default function PhotoReviewDetail() {
   const router = useRouter();
 
-  const { id, reviewId, index } = useLocalSearchParams<{
+  const { id, reviewId, imageUrl } = useLocalSearchParams<{
     id: string;
     reviewId: string;
-    index?: string;
+
+    imageUrl: string;
   }>();
   const reviewIdNum = Number(reviewId);
   const idNum = Number(id);
 
   const { data: reviewDetail } = useGetPhotoReviewDetail(reviewIdNum);
+  const qc = useQueryClient();
+  const reviewCount = qc.getQueryData<{
+    reviewCount: number;
+  }>(['product', 'detail', idNum]);
 
-  const startIndex = Math.max(0, Number(index ?? 0));
+  console.log('reviewCount', reviewCount);
+
   const SCREEN_W = Dimensions.get('window').width;
-  const [currentIndex, setCurrentIndex] = useState(startIndex);
 
-  // 리뷰/이미지 확보
-  // const { review, images } = useMemo(() => {
-  //   const product = mockProductData.find((p) => p.id === String(id));
-  //   const reviews = product?.review?.reviewList ?? [];
-  //   const r = reviews.find(
-  //     (rv: any, i: number) => String(rv.id ?? i) === String(reviewId),
-  //   );
-  //   const imgs: string[] = r?.images ?? [];
-  //   return { review: r, images: imgs };
-  // }, [id, reviewId]);
+  const images = reviewDetail?.images ?? [];
 
-  // 별점 간단 렌더러 (정수/반개 처리 생략 버전)
-  const StarRow = ({ score = 0 }: { score?: number }) => {
-    const filled = Math.round(score); // 네 요구대로 4.79 -> 5가 싫으면 Math.floor로 바꿔
-    return (
-      <Text style={{ color: colors.yellow[500], fontWeight: '700' }}>
-        {'★'.repeat(filled)}
-      </Text>
-    );
-  };
+  const targetIndex = useMemo(() => {
+    if (!images.length || !imageUrl) return 0;
+    const idx = images.findIndex((img: any) => img?.url === String(imageUrl));
+    return idx >= 0 ? idx : 0;
+  }, [images, imageUrl]);
+  const [currentIndex, setCurrentIndex] = useState(targetIndex);
+  const listRef = useRef<FlatList<any>>(null);
 
   const onMomentumEnd = useCallback(
     (e: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -65,7 +60,15 @@ export default function PhotoReviewDetail() {
     [SCREEN_W],
   );
 
-  const listRef = useRef<FlatList<string>>(null);
+  useEffect(() => {
+    if (!images.length) return;
+    // initialScrollIndex가 가끔 무시되는 이슈 보정
+    const t = setTimeout(() => {
+      listRef.current?.scrollToIndex({ index: targetIndex, animated: false });
+      setCurrentIndex(targetIndex);
+    }, 0);
+    return () => clearTimeout(t);
+  }, [images.length, targetIndex]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
@@ -88,17 +91,17 @@ export default function PhotoReviewDetail() {
           >
             <FlatList
               ref={listRef}
-              data={reviewDetail?.url ? [reviewDetail.url] : []}
+              data={images}
               horizontal
               pagingEnabled
-              initialScrollIndex={startIndex}
+              initialScrollIndex={targetIndex}
               getItemLayout={(_, i) => ({
                 length: SCREEN_W,
                 offset: SCREEN_W * i,
                 index: i,
               })}
               showsHorizontalScrollIndicator={false}
-              keyExtractor={(uri, i) => uri + i}
+              keyExtractor={(item, i) => (item?.url ?? '') + i}
               renderItem={({ item }) => (
                 <View
                   style={{
@@ -109,7 +112,7 @@ export default function PhotoReviewDetail() {
                   }}
                 >
                   <Image
-                    source={{ uri: item }}
+                    source={{ uri: toCdnUrl(item.url) }}
                     style={{ width: '100%', height: '100%' }}
                     resizeMode='cover'
                   />
@@ -147,7 +150,7 @@ export default function PhotoReviewDetail() {
                 className='text-white text-c3 font-bold'
                 style={{ color: 'white', fontSize: 12 }}
               >
-                {currentIndex + 1} / {reviewDetail?.url ? 1 : 0}
+                {currentIndex + 1} / {reviewDetail?.images.length ?? 0}
               </Text>
             </View>
           </View>
@@ -158,12 +161,12 @@ export default function PhotoReviewDetail() {
               reviewItem={{
                 id: idNum,
                 reviewId: reviewIdNum,
-                name: reviewDetail.nickname ?? '',
+                name: reviewDetail.user.nickname ?? '',
                 date: reviewDetail.date ?? '-',
                 isEdited: true,
                 content: reviewDetail.review ?? '',
                 rating: reviewDetail.rate ?? 0,
-                images: reviewDetail.url ? [reviewDetail.url] : [],
+                images: reviewDetail.images ? [reviewDetail.images] : [],
               }}
               isPhoto={false}
               isMore={false}
@@ -177,11 +180,7 @@ export default function PhotoReviewDetail() {
                   params: { id: String(id) },
                 })
               }
-              // count={
-              //   mockProductData.find((p) => p.id === String(id))?.review
-              //     ?.reviewList?.length ?? 0
-              // }
-              count={0}
+              count={reviewCount?.reviewCount ?? 0}
             />
           </View>
         </ScrollView>

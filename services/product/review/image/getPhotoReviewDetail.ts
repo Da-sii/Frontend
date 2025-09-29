@@ -1,30 +1,48 @@
 import { axiosInstance } from '../../../index';
 
-type ImagesReviewDetail = {
-  url: string;
-  nickname: string;
+type ReviewDetail = {
+  id: number;
+  user: {
+    id: number;
+    nickname: string;
+    email: string;
+  };
+  product: {
+    id: number;
+    name: string;
+    company: string;
+    price: number;
+    unit: string;
+    piece: number;
+    productType: string;
+    viewCount: number;
+  };
   rate: number;
-  date: string;
   review: string;
+  date: string;
+  updated: boolean;
+  images: {
+    id: number;
+    url: string;
+  }[];
 };
 
-type ImagesReviewDetailMapDTO = {
+type ReviewDetailMapDTO = {
   success?: boolean;
-  image_id: number;
-  review_info: ImagesReviewDetail;
+  review: ReviewDetail;
 };
 
-export async function getPhotoReviewDetail(image_id: number) {
+export async function getPhotoReviewDetail(review_id: number) {
   try {
-    const { data } = await axiosInstance.get<ImagesReviewDetailMapDTO>(
-      `/review/image/${image_id}/`,
+    const { data } = await axiosInstance.get<ReviewDetailMapDTO>(
+      `/review/detail/${review_id}/`,
     );
     console.log('data', data);
-    return data.review_info;
+    return data.review;
   } catch (e: any) {
     const status = e?.response?.status;
     const body = e?.response?.data;
-    console.log('[getPhotoReviewDetail] FAIL', { status, body, image_id });
+    console.log('[getPhotoReviewDetail] FAIL', { status, body, review_id });
 
     throw e;
   }
