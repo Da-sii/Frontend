@@ -103,7 +103,9 @@ export default function ProductDetail() {
           onLeftPress={() => router.back()}
           right={<SearchIcon width={20} height={20} fill={colors.gray[900]} />}
           secondRight={
-            <HomeIcon width={20} height={20} fill={colors.gray[900]} />
+            <Pressable onPress={() => router.push('/home')}>
+              <HomeIcon width={20} height={20} fill={colors.gray[900]} />
+            </Pressable>
           }
           onRightPress={() => router.push('/home/search')}
         />
