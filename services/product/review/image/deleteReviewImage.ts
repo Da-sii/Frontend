@@ -18,5 +18,6 @@ export async function deleteReviewImage(
   const { data } = await axiosInstance.delete<DeleteReviewImageResponse>(
     `/review/${reviewId}/images/${imageId}/`,
   );
+  console.log('deleteReviewImage', data);
   return data;
 }

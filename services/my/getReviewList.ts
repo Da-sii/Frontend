@@ -12,7 +12,7 @@ export type ProductInfoDTO = {
   id: number;
   name: string;
   company: string;
-  image: string;
+  image: { id: number; url: string };
 };
 export type MyReview = {
   review_id: number;
