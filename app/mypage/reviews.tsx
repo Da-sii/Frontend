@@ -37,6 +37,7 @@ export default function MyReviews() {
       ['my', 'reviews'], // ← 실제 키와 일치시키기
     ],
   });
+  console.log('myReviews', myReviews);
 
   const keyExtractor = useCallback((item: MyReview, idx: number) => {
     // review_id가 있으면 그걸로만
@@ -87,20 +88,17 @@ export default function MyReviews() {
               router.push({
                 pathname: '/product/[id]/review/write', // ReviewWritePage 경로
                 params: {
+                  id: String(item.product_info?.id ?? ''),
                   mode: 'edit',
                   reviewId: String(item.review_id),
-                  id: String(item.product_info?.id ?? ''), // 제품 id
+                  imageId: String(item.product_info?.image.id ?? ''),
                   name: item.product_info?.name ?? '',
                   brand: item.product_info?.company ?? '',
-                  image: item.product_info?.image ?? '',
+                  image: JSON.stringify(item.product_info?.image ?? {}),
                   initRate: String(item.rate ?? 0),
                   initReview: item.review ?? '',
                   initImages: JSON.stringify(
-                    (Array.isArray(item.images) ? item.images : [])
-                      .map((img: any) =>
-                        typeof img === 'string' ? img : img?.url,
-                      )
-                      .filter(Boolean),
+                    Array.isArray(item.images) ? item.images : []
                   ),
                 },
               });

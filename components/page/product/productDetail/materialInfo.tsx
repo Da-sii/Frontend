@@ -48,15 +48,18 @@ export default function MaterialInfo({
 
           {isOpen ? (
             <View className='bg-[#F6F5FA] rounded-[12px] flex-col px-3'>
-              <View className='flex-row justify-between items-center h-[40px] '>
+              <Pressable
+                onPress={() => setIsOpen(false)}
+                className='flex-row justify-between items-center h-[40px]'
+              >
                 <Text className='text-c1 font-bold'>
                   효과 및 부작용 알아보기
                 </Text>
-                <Pressable onPress={() => setIsOpen(false)} className='p-1'>
+                <View className='p-1'>
                   <UpArrowIcon className='w-[12px] h-[12px]' />
-                </Pressable>
-              </View>
-              <View className=''>
+                </View>
+              </Pressable>
+              <View className='mt-1'>
                 <View className='flex-row justify-between mb-5 px-[7px]'>
                   <EffectIfon className='mr-[14px]' />
                   <Text className='flex-1 text-c1 font-nomal'>
@@ -74,12 +77,15 @@ export default function MaterialInfo({
               </View>
             </View>
           ) : (
-            <View className='bg-[#F6F5FA] rounded-[12px] flex-row justify-between items-center px-3 h-[40px] '>
+            <Pressable
+              onPress={() => setIsOpen(true)}
+              className='bg-[#F6F5FA] rounded-[12px] flex-row justify-between items-center px-3 h-[40px] '
+            >
               <Text className='text-c1 font-bold'>효과 및 부작용 알아보기</Text>
-              <Pressable onPress={() => setIsOpen(true)} className='p-1'>
+              <View className='p-1'>
                 <DownArrowIcon className='w-[12px] h-[12px]' />
-              </Pressable>
-            </View>
+              </View>
+            </Pressable>
           )}
         </View>
       </View>

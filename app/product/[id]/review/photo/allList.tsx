@@ -25,6 +25,7 @@ type Photo = {
   id: string; // 고유 키(화면용)
   uri: string; // CDN 변환된 URL
   imageIndex: number; // 전체 리스트 내 인덱스(옵션)
+  imageId: number; // ← 추가: 이 이미지가 속한 리뷰 ID
   reviewId: number; // ← 추가: 이 이미지가 속한 리뷰 ID
   indexInReview: number; // ← 추가: 같은 리뷰 안에서의 순번(0부터)
   rawPath: string; // ← 원본 경로(파싱용)
@@ -62,6 +63,7 @@ export default function allList() {
 
       return {
         id: `img-${it.id}-${i}`,
+        imageId: it.id,
         uri: toCdnUrl(raw),
         imageIndex: i,
         reviewId,
@@ -80,8 +82,7 @@ export default function allList() {
             params: {
               id: Number(id),
               reviewId: item.reviewId,
-              url: String(item.uri),
-              index: String(item.imageIndex), // 리뷰 내 시작 인덱스
+              imageUrl: String(item.rawPath),
             },
           })
         }

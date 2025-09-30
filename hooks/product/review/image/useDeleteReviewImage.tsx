@@ -1,9 +1,10 @@
 // hooks/product/review/image/useDeleteReviewImage.ts
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Alert } from 'react-native';
-import { deleteReviewImage } from '@/services/product/review/image/deleteReviewImage';
-
-
+import {
+  deleteReviewImage,
+  DeleteReviewImageResponse,
+} from '@/services/product/review/image/deleteReviewImage';
 
 export const reviewImageListKey = (productId: number) =>
   ['review-image-list', productId] as const;
@@ -12,37 +13,42 @@ export const reviewImageListKey = (productId: number) =>
 export const productReviewsKey = (productId: number) =>
   ['product-reviews', productId] as const;
 
+// 1) vars 타입에서 reviewId를 선택으로
 type DeleteVars = {
-  reviewId: number;
   imageId: number;
-  productId?: number; // 무효화 타겟이 되는 productId가 있다면 넘겨주기
+  reviewId?: number; // ✅ optional
+  productId?: number;
 };
 
 export function useDeleteReviewImage(opts?: {
-  /** invalidate 대상이 되는 productId(선택). mutate 시 vars로 넘겨도 됨 */
   productId?: number;
+  reviewId?: number; // ✅ 훅 옵션 기본값
   onSuccess?: () => void;
   onError?: (err: unknown) => void;
 }) {
   const qc = useQueryClient();
 
-  return useMutation({
-    mutationFn: ({ reviewId, imageId }: DeleteVars) =>
-      deleteReviewImage(reviewId, imageId),
-
-    // 성공 시 관련 캐시 무효화
+  return useMutation<
+    DeleteReviewImageResponse, // ✅ 성공 타입
+    unknown, // ✅ 에러 타입
+    DeleteVars // ✅ variables 타입
+  >({
+    mutationFn: ({ reviewId, imageId }: DeleteVars) => {
+      const rid = reviewId ?? opts?.reviewId; // ✅ 기본값 사용
+      if (!(typeof rid === 'number' && Number.isFinite(rid))) {
+        throw new Error('reviewId required');
+      }
+      return deleteReviewImage(rid, imageId);
+    },
     onSuccess: async (_data, vars) => {
       const pid = opts?.productId ?? vars.productId;
       if (typeof pid === 'number') {
         await qc.invalidateQueries({ queryKey: reviewImageListKey(pid) });
         await qc.invalidateQueries({ queryKey: productReviewsKey(pid) });
-      } else {
-        // productId를 모르면 안전하게 관련 화면에서 수동 리패치 유도 or 광범위 무효화
-        await qc.invalidateQueries();
       }
+      await qc.invalidateQueries({ queryKey: ['my', 'reviews'] });
       opts?.onSuccess?.();
     },
-
     onError: (err: any) => {
       const msg =
         err?.response?.data?.message ||

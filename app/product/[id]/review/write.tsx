@@ -6,7 +6,6 @@ import ReviewStar from '@/components/page/product/productDetail/ReviewStar';
 import colors from '@/constants/color';
 import { useReviewImageUpload } from '@/hooks/product/review/image/useReviewImageUpload';
 import useCreateReview from '@/hooks/product/review/useCreateReview';
-import { mockProductData } from '@/mocks/data/productDetail';
 import * as ImagePicker from 'expo-image-picker';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -24,10 +23,11 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { Keyboard } from 'react-native';
 import useEditMyReview from '@/hooks/my/useEditMyReview';
 import { useDeleteReviewImage } from '@/hooks/product/review/image/useDeleteReviewImage';
 
+type ExistingImage = { id: number; url: string };
 
 type Picked = {
   uri: string;
@@ -37,6 +37,10 @@ type Picked = {
   mimeType?: string;
   fileSize?: number;
 };
+
+type GalleryItem =
+  | { kind: 'existing'; id: number; uri: string }
+  | { kind: 'new'; uri: string };
 
 const startContent = {
   0: '선택해주세요',
@@ -49,6 +53,13 @@ const startContent = {
 
 export default function ReviewWritePage() {
   const router = useRouter();
+  const safeParse = <T,>(s: string | undefined, fallback: T): T => {
+    try {
+      return s ? (JSON.parse(s) as T) : fallback;
+    } catch {
+      return fallback;
+    }
+  };
   const {
     id,
     name,
@@ -63,49 +74,65 @@ export default function ReviewWritePage() {
     id: string;
     name?: string;
     brand?: string;
-    image?: string; // URL만
+    image?: string; // JSON string of { id: number; url: string }
     mode?: 'create' | 'edit';
     reviewId?: string;
     initRate?: string;
     initReview?: string;
     initImages?: string; // JSON string
   }>();
+
   const productIdNum = Number(id);
   const reviewIdNum = reviewId ? Number(reviewId) : NaN;
   const isEdit = mode === 'edit' && Number.isFinite(reviewIdNum);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [images, setImages] = useState<Picked[]>([]);
+
+  const originalExisting = safeParse<ExistingImage[]>(initImages, []);
+  const [existingImages, setExistingImages] = useState<ExistingImage[]>(
+    isEdit ? originalExisting : [],
+  );
+  const MAX = 5;
+
+  const { mutate: removeImage, isPending: isRemoving } = useDeleteReviewImage({
+    productId: productIdNum,
+    reviewId: reviewIdNum, // ✅ 훅 옵션으로 기본값 제공
+  });
+
+  const productImage = (() => {
+    try {
+      return image
+        ? (JSON.parse(image) as { id: number; url: string })
+        : undefined;
+    } catch {
+      return undefined;
+    }
+  })();
+  const gallery: GalleryItem[] = [
+    ...existingImages.map((e) => ({
+      kind: 'existing' as const,
+      id: e.id,
+      uri: toCdnUrl(e.url),
+    })),
+    ...images.map((img) => ({
+      kind: 'new' as const,
+      uri: img.uri,
+    })),
+  ];
 
   const [rate, setRate] = useState<number>(isEdit ? Number(initRate ?? 0) : 0);
   const [review, setReview] = useState<string>(
     isEdit ? (initReview ?? '') : '',
   );
-  const [images, setImages] = useState<Picked[]>([]);
 
-  const originalKeys = (() => {
-    try {
-      return JSON.parse(initImages ?? '[]') as string[];
-    } catch {
-      return [];
-    }
-  })();
-
-  const [existingKeys, setExistingKeys] = useState<string[]>(
-    isEdit ? originalKeys : [],
-  );
-  const existingUrls = existingKeys.map(toCdnUrl);
-  const product = mockProductData.find((item) => item.id === id);
   const [showMinError, setShowMinError] = useState(false);
   const [touched, setTouched] = useState(false);
   const { mutateAsync: createReviewMutate, isPending } = useCreateReview(
     Number(id),
   );
-  const { upload, isUploading, progress, error, cancel } =
-    useReviewImageUpload();
+  const { upload, isUploading } = useReviewImageUpload();
   const { mutateAsync: editReviewMutate, isPending: isUpdating } =
     useEditMyReview(reviewIdNum, { productId: productIdNum });
-
-  const { mutate: removeImage, isPending: isRemoving } = useDeleteReviewImage({
-    productId: productIdNum,
-  });
 
   const isReviewValid = (text: string) => text.trim().length >= 20;
   const canSubmit =
@@ -129,10 +156,6 @@ export default function ReviewWritePage() {
       }
 
       // ========== UPDATE ==========
-      const keep = existingKeys; // 유지되는 기존 URL
-
-      const originally = JSON.parse(initImages ?? '[]') as string[];
-      const deletes = originally.filter((u) => !keep.includes(u));
 
       await editReviewMutate({
         rate,
@@ -160,7 +183,7 @@ export default function ReviewWritePage() {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsMultipleSelection: true, // iOS 14+/Web에서 다중 선택
-      selectionLimit: 5 - images.length, // 최대 5장 예시
+      selectionLimit: Math.max(0, MAX - existingImages.length - images.length),
       quality: 0.9,
       allowsEditing: false,
       exif: false,
@@ -186,8 +209,10 @@ export default function ReviewWritePage() {
     });
 
     setImages((prev) => {
-      const merged = [...prev, ...filtered];
-      return merged.slice(0, 5); // 총 5장 제한
+      // 기존 + 신규 합쳐서 MAX 넘지 않게 자르기
+      const allowed = Math.max(0, MAX - existingImages.length - prev.length);
+      const next = filtered.slice(0, allowed);
+      return [...prev, ...next];
     });
   };
 
@@ -231,13 +256,16 @@ export default function ReviewWritePage() {
       return;
     }
 
-    setImages((prev) => [...prev, one].slice(0, 5));
+    setImages((prev) => {
+      const allowed = Math.max(0, MAX - existingImages.length - prev.length);
+      return allowed > 0 ? [...prev, one] : prev;
+    });
   };
 
   // iOS/Android 공통 선택창
   const handleAttachPress = () => {
     forceBlurCheck();
-    if (images.length >= 5) {
+    if (existingImages.length + images.length >= MAX) {
       Alert.alert('사진은 최대 5개까지 첨부 가능합니다.');
       return;
     }
@@ -264,13 +292,6 @@ export default function ReviewWritePage() {
         { cancelable: true },
       );
     }
-  };
-  const handleReviewBlur = () => {
-    const len = review.trim().length;
-    // 아무것도 안 썼다면 굳이 에러 안 띄움(원하면 len === 0 도 에러로 바꿔도 됨)
-    if (len === 0) return setShowMinError(false);
-
-    setShowMinError(len < 20);
   };
 
   const forceBlurCheck = () => {
@@ -308,15 +329,11 @@ export default function ReviewWritePage() {
           <View className='gap-y-4'>
             <View className='flex-row'>
               <View className='w-[49px] aspect-square mr-[10px] border-gray-100 border rounded-[10px]'>
-                {product?.image ? (
-                  typeof product.image === 'string' ? (
-                    <Image source={{ uri: image }} className='w-full h-full' />
-                  ) : (
-                    <Image
-                      source={product.image as any}
-                      className='w-full h-full'
-                    />
-                  )
+                {productImage ? (
+                  <Image
+                    source={{ uri: productImage.url }}
+                    className='w-full h-full'
+                  />
                 ) : (
                   <View className='border-gray-100 w-full h-full items-center justify-center'>
                     <Text className='text-b-lg font-bold text-gray-500'>?</Text>
@@ -423,56 +440,79 @@ export default function ReviewWritePage() {
               </Text>
             </Pressable>
 
-            {images.length > 0 && (
+            {/* ✅ 기존+신규 한 줄 갤러리 */}
+            {gallery.length > 0 && (
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 className='mt-4'
                 contentContainerStyle={{ gap: 8 }}
               >
-                {images.map((img, idx) => (
-                  <View key={idx} className='relative'>
+                {gallery.map((item) => (
+                  <View
+                    key={
+                      item.kind === 'existing'
+                        ? `ex-${item.id}`
+                        : `new-${item.uri}`
+                    }
+                    className='relative'
+                  >
                     <Image
-                      source={{ uri: img.uri }}
+                      source={{ uri: item.uri }}
                       className='w-[100px] h-[100px] rounded-[10px] bg-gray-100'
                     />
                     <Pressable
-                      onPress={() => removeAt(idx)}
-                      className='absolute top-2 right-2 w-[18px] h-[18px] rounded-full bg-black/50 items-center justify-center'
-                    >
-                      <Text className='text-white text-xs'>✕</Text>
-                    </Pressable>
-                  </View>
-                ))}
-              </ScrollView>
-            )}
-            {isEdit && existingUrls.length > 0 && (
-              <ScrollView
-                horizontal
-                className='mt-4'
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ gap: 8 }}
-              >
-                {existingUrls.map((uri, idx) => (
-                  <View key={`exist-${idx}`} className='relative'>
-                    <Image
-                      source={{ uri }}
-                      className='w-[100px] h-[100px] rounded-[10px] bg-gray-100'
-                    />
-                    <Pressable
-                      onPress={() =>
-                        setExistingKeys((prev) =>
-                          prev.filter((_, i) => i !== idx),
-                        )
+                      disabled={
+                        item.kind === 'existing' &&
+                        (isRemoving || deletingId === item.id)
                       }
+                      onPress={() => {
+                        if (item.kind === 'existing') {
+                          if (!Number.isFinite(reviewIdNum)) {
+                            Alert.alert(
+                              '삭제 실패',
+                              '리뷰 정보가 올바르지 않습니다.',
+                            );
+                            return;
+                          }
+                          setDeletingId(item.id);
+                          removeImage(
+                            { imageId: item.id, productId: productIdNum }, // reviewId는 훅 옵션 기본값 사용
+                            {
+                              onSuccess: () => {
+                                setExistingImages((prev) =>
+                                  prev.filter((e) => e.id !== item.id),
+                                );
+                              },
+                              onSettled: () => setDeletingId(null),
+                              onError: () => {
+                                Alert.alert(
+                                  '삭제 실패',
+                                  '이미지 삭제에 실패했습니다.',
+                                );
+                              },
+                            },
+                          );
+                        } else {
+                          // 신규(로컬) 이미지 삭제
+                          setImages((prev) =>
+                            prev.filter((p) => p.uri !== item.uri),
+                          );
+                        }
+                      }}
                       className='absolute top-2 right-2 w-[18px] h-[18px] rounded-full bg-black/50 items-center justify-center'
                     >
-                      <Text className='text-white text-xs'>✕</Text>
+                      <Text className='text-white text-xs'>
+                        {item.kind === 'existing' && deletingId === item.id
+                          ? '…'
+                          : '✕'}
+                      </Text>
                     </Pressable>
                   </View>
                 ))}
               </ScrollView>
             )}
+
             <View className='p-[13px] bg-gray-50 rounded-[12px] '>
               <View className='flex-row items-start mb-[5px]'>
                 <Text className='mr-1 text-c3 font-regular text-gray-400'>
