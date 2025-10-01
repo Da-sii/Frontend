@@ -4,6 +4,7 @@ export type SignUpRequest = {
   email: string;
   password: string;
   password2: string;
+  phone_number: string;
 };
 
 export type SignUpResponse = {

@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { signUp, SignUpRequest, SignUpResponse } from '../services/auth/signUp';
+import { Alert } from 'react-native';
 
 export const useSignup = (opts?: {
   onSuccess?: (data: SignUpResponse) => void;
@@ -24,8 +25,10 @@ export const useSignup = (opts?: {
             return `${field} : ${messages}`;
           })
           .join('\n\n');
+        Alert.alert(msg);
       } else if (typeof err?.response?.data === 'string') {
         msg = err.response.data;
+        Alert.alert(msg);
       }
 
       opts?.onError?.(err);
