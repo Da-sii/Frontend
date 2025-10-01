@@ -171,6 +171,28 @@ export default function Index() {
     }
   };
 
+  const handleResend = () => {
+    if (!phone || phone.length !== 11) {
+      setModalMessage('휴대폰 번호를 올바르게 입력해 주세요.');
+      setVisibleModal(true);
+      return;
+    }
+
+    // 이전 시도 상태 초기화
+    verifyAuthCodeMutation.reset();
+    setAuthNumber('');
+    setVerificationToken(null);
+    setVisibleModal(false);
+
+    // 재전송
+    sendPhoneAuthMutation.mutate(phone, {
+      onSuccess: (res) => {
+        setRequestAuthNumber(true);
+        setRemainSec(EXPIRE_SECONDS); // 서버값 있으면 사용
+      },
+    });
+  };
+
   return (
     <SafeAreaView className='flex-1 bg-white'>
       <Stack.Screen options={{ headerShown: false }} />
@@ -245,7 +267,7 @@ export default function Index() {
             <Text className='text-b-sm font-bold text-gray-500 mr-2'>
               인증번호를 받지 못하셨나요?
             </Text>
-            <Pressable onPress={handlePress}>
+            <Pressable onPress={handleResend}>
               <Text className='text-b-md font-extrabold text-[#19B375]'>
                 재전송
               </Text>

@@ -1,7 +1,7 @@
 import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
 import { LongButton } from '@/components/common/buttons/LongButton';
 import Navigation from '@/components/layout/Navigation';
-import { Stack, useRouter } from 'expo-router';
+import { Stack, useNavigation, useRouter } from 'expo-router';
 import { SafeAreaView, Text, View } from 'react-native';
 import { useFoundAccounts } from '@/store/useFoundAccounts';
 
@@ -18,13 +18,13 @@ const formatDate = (iso: string | null) => {
 export default function Result() {
   const router = useRouter();
   const { phone, accounts, clear } = useFoundAccounts();
-
+  const navigation = useNavigation<any>();
   return (
     <SafeAreaView className='flex-1 bg-white'>
       <Stack.Screen options={{ headerShown: false }} />
       <Navigation
         left={<ArrowLeftIcon width={20} height={20} />}
-        onLeftPress={() => router.back()}
+        onLeftPress={() => navigation.pop(2)}
       />
 
       <View className='p-5 flex-1'>
@@ -63,7 +63,12 @@ export default function Result() {
       </View>
 
       <View className='p-5'>
-        <LongButton label='가입한 계정으로 로그인' onPress={() => {}} />
+        <LongButton
+          label='가입한 계정으로 로그인'
+          onPress={() => {
+            router.push('/auth/login/email');
+          }}
+        />
       </View>
     </SafeAreaView>
   );
