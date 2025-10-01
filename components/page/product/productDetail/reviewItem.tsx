@@ -19,6 +19,8 @@ import { LongButton } from '@/components/common/buttons/LongButton';
 import BottomSheetLayout from '@/components/page/product/productDetail/BottomSeetLayout';
 import { toCdnUrl } from '@/utils/cdn';
 import ReviewStar from './ReviewStar';
+import { useReportReview } from '@/hooks/useReportReview';
+import { ReportReason, ReportRequest } from '@/services/report';
 
 interface reviewItem {
   id: number;
@@ -44,13 +46,22 @@ interface reviewItemProups {
 
 type SheetView = 'menu' | 'report';
 
-const REASONS = [
+const REASON_LABELS = [
   '제품과 관련 없는 이미지 / 내용',
   '제품 미사용 / 리뷰 내용과 다른 제품 선택',
   '광고 홍보 / 거래 시도',
   '욕설, 비속어가 포함된 내용',
   '개인 정보 노출',
-];
+] as const;
+
+// 서버 API 코드 매핑
+const REASON_CODES: Record<(typeof REASON_LABELS)[number], ReportReason> = {
+  '제품과 관련 없는 이미지 / 내용': 'IRRELEVANT',
+  '제품 미사용 / 리뷰 내용과 다른 제품 선택': 'MISMATCH',
+  '광고 홍보 / 거래 시도': 'PROMOTION',
+  '욕설, 비속어가 포함된 내용': 'ABUSE',
+  '개인 정보 노출': 'PRIVACY',
+};
 
 export default function ReviewItems({
   reviewItem,
@@ -67,6 +78,7 @@ export default function ReviewItems({
   const [sheetView, setSheetView] = useState<SheetView>('menu');
   const [selected, setSelected] = useState<number | null>(null);
 
+  const { mutate: report, isPending } = useReportReview();
   const photoViewerKey = (token: string) => ['photoViewer', token] as const;
   const MAX_LINES = 5;
   const MAX_HEIGHT = 100;
@@ -87,8 +99,21 @@ export default function ReviewItems({
 
   const submitReport = async () => {
     if (selected == null) return;
-    // TODO: 신고 API 호출
-    // await reportReview({ reviewId: reviewItem.id, reason: REASONS[selected] });
+    const label = REASON_LABELS[selected];
+    const reason = REASON_CODES[label];
+
+    if (isPending) return;
+
+    report(
+      { reviewId: reviewItem.id, reason },
+      {
+        onSuccess: () => {
+          setSelected(null);
+          closeSheet();
+        },
+      },
+    );
+
     closeSheet();
   };
 
@@ -256,7 +281,7 @@ export default function ReviewItems({
             </View>
 
             <View className='gap-y-[25px] mb-[25px]'>
-              {REASONS.map((label, idx) => {
+              {REASON_LABELS.map((label, idx) => {
                 const checked = selected === idx;
                 return (
                   <Pressable
@@ -287,9 +312,9 @@ export default function ReviewItems({
               })}
             </View>
             <LongButton
-              label='리뷰 신고 완료'
+              label={isPending ? '신고 처리 중…' : '리뷰 신고 완료'}
               onPress={submitReport}
-              disabled={selected === null}
+              disabled={selected === null || isPending}
             />
           </View>
         )}
