@@ -14,6 +14,8 @@ import {
   useVerifyAuthCode,
   useVerifyAuthToken,
 } from '@/hooks/auth/usePhoneAuth';
+import { useFindIDWithPhone } from '@/hooks/auth/useFindAccount';
+import { useFoundAccounts } from '@/store/useFoundAccounts';
 
 export default function Index() {
   const { menu } = useLocalSearchParams<{ menu?: string }>();
@@ -26,12 +28,28 @@ export default function Index() {
   const [verificationToken, setVerificationToken] = useState<string | null>(
     null,
   );
+  const setAccountPhone = useFoundAccounts((s) => s.setFound);
+
   const [remainSec, setRemainSec] = useState(0);
 
   const [modalMessage, setModalMessage] =
     useState('인증번호가 일치하지 않습니다');
   const EXPIRE_SECONDS = 180;
+
+  const formatPhoneNumber = (phone: string) => {
+    const digits = phone.replace(/\D/g, '');
+
+    if (digits.length <= 3) return digits; // 010
+    if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`; // 010-0000
+    return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
+  };
+
   const { email, password, confirmPassword, clear } = useSignupDraft();
+  const {
+    data: findData,
+    refetch: refetchFindId,
+    isFetching: isFinding,
+  } = useFindIDWithPhone(formatPhoneNumber(phone), { enabled: false });
 
   // 1) 인증번호 발송 훅
   const sendPhoneAuthMutation = useSendPhoneAuth({
@@ -86,14 +104,6 @@ export default function Index() {
     return `${m}:${s}`;
   }, [remainSec]);
 
-  const formatPhoneNumber = (phone: string) => {
-    const digits = phone.replace(/\D/g, '');
-
-    if (digits.length <= 3) return digits; // 010
-    if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`; // 010-0000
-    return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
-  };
-
   const signupMutation = useSignup({
     onSuccess: () => {
       clear();
@@ -107,7 +117,7 @@ export default function Index() {
     return true;
   }, [phone, authNumber, requestAuthNumber]);
 
-  const onVerified = () => {
+  const onVerified = async () => {
     if (menu === 'signUp') {
       signupMutation.mutate({
         email,
@@ -118,9 +128,19 @@ export default function Index() {
     } else if (menu === 'findPassword') {
       // router.push('/auth/find/result');
     } else if (menu === 'findId') {
-      // router.push('/auth/find/id/result');
-      router.push('/auth/find/id/result');
+      const { data: res } = await refetchFindId();
 
+      if (!res || !Array.isArray(res.accounts)) {
+        setModalMessage('해당 번호로 등록된 계정을 찾을 수 없습니다.');
+        setVisibleModal(true);
+        return;
+      }
+      setAccountPhone(formatPhoneNumber(phone), res.accounts);
+
+      // ✅ 결과 페이지로 전달 (예: params 또는 state)
+      router.push({
+        pathname: '/auth/find/id/result',
+      });
     }
   };
 
