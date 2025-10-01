@@ -113,12 +113,14 @@ export default function Index() {
         email,
         password,
         password2: confirmPassword,
-        phone_number: phone,
+        phoneNumber: phone,
       });
     } else if (menu === 'findPassword') {
       // router.push('/auth/find/result');
     } else if (menu === 'findId') {
       // router.push('/auth/find/id/result');
+      router.push('/auth/find/id/result');
+
     }
   };
 

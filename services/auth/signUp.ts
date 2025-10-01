@@ -4,12 +4,13 @@ export type SignUpRequest = {
   email: string;
   password: string;
   password2: string;
-  phone_number: string;
+  phoneNumber: string;
 };
 
 export type SignUpResponse = {
   id: number;
   email: string;
+  phoneNumber: string;
 };
 
 export async function signUp(data: SignUpRequest): Promise<SignUpResponse> {
