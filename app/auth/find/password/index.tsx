@@ -2,29 +2,25 @@ import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
 import { LongButton } from '@/components/common/buttons/LongButton';
 import { TextField } from '@/components/common/Inputs/TextField';
 import Navigation from '@/components/layout/Navigation';
+import DefaultModal from '@/components/common/modals/DefaultModal';
 import { isEmail } from '@/utils/validation';
 import { Stack, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Alert, Pressable, SafeAreaView, Text, View } from 'react-native';
+import { Pressable, SafeAreaView, Text, View } from 'react-native';
 import { usePasswordReset } from '@/store/usePasswordReset';
 import { useCheckEmailExists } from '@/hooks/auth/useCheckExistsEmail';
-import DefaultModal from '@/components/common/modals/DefaultModal';
+
 export default function Index() {
   const router = useRouter();
 
-  const [isEmailValid, setIsEmailValid] = useState(false);
-  const { email, setEmail } = usePasswordReset();
-  const [isExistsEmail, setIsExistsEmail] = useState(false);
+  const { email, setEmail, clear } = usePasswordReset();
   const [visibleModal, setVisibleModal] = useState(false);
+
   const { mutate: checkEmail, isPending } = useCheckEmailExists({
     onSuccess: (res) => {
       if (res.exists) {
-        setIsExistsEmail(true);
-        setVisibleModal(false);
         router.push('/auth/phone?menu=findPassword');
       } else {
-        console.log(res.exists);
-        setIsExistsEmail(false);
         setVisibleModal(true);
       }
     },
@@ -32,21 +28,13 @@ export default function Index() {
       const msg =
         // @ts-ignore
         err?.response?.data?.message || '이메일 확인 중 오류가 발생했습니다.';
-      Alert.alert(msg);
+      console.log(msg);
     },
   });
-  const validateEmail = (value: string) => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(value);
-  };
 
   useEffect(() => {
-    if (!validateEmail(email)) {
-      setIsEmailValid(true);
-    } else {
-      setIsEmailValid(false);
-    }
-  }, [email]);
+    clear();
+  }, [clear]);
 
   const handlePhoneAuthPress = () => {
     checkEmail({ email });
@@ -82,9 +70,9 @@ export default function Index() {
         </View>
         <View className='mb-[25px]'>
           <LongButton
-            label='휴대폰 본인인증'
+            label={isPending ? '확인 중...' : '휴대폰 본인인증'}
             onPress={handlePhoneAuthPress}
-            disabled={email.length === 0}
+            disabled={!isEmail(email) || isPending}
           />
         </View>
         <View className='flex-row items-center justify-center mt-[10px]'>
