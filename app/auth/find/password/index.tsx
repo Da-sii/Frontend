@@ -6,12 +6,13 @@ import { isEmail } from '@/utils/validation';
 import { Stack, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Pressable, SafeAreaView, Text, View } from 'react-native';
-import { useSignupDraft } from '@/store/useSignupDraft';
+import { usePasswordReset } from '@/store/usePasswordReset';
+
 export default function Index() {
   const router = useRouter();
 
   const [isEmailValid, setIsEmailValid] = useState(false);
-  const { email, setEmail } = useSignupDraft();
+  const { email, setEmail } = usePasswordReset();
   // 이메일 형식 체크
   const validateEmail = (value: string) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -59,7 +60,7 @@ export default function Index() {
           <LongButton
             label='휴대폰 본인인증'
             onPress={() => {
-              router.push('/auth/phone');
+              router.push('/auth/phone?menu=findPassword');
             }}
             disabled={email.length === 0}
           />

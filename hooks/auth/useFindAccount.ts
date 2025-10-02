@@ -1,10 +1,16 @@
 // hooks/auth/useFindIDWithPhone.ts
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import {
   findIDWithPhone,
   findIDWithPhoneResponse,
 } from '@/services/auth/findIDWithPhone';
+
+import {
+  ResetPasswordResponse,
+  resetPasswordConfirm,
+  ResetPasswordRequest,
+} from '@/services/auth/changePWwithEmail';
 
 type Options = {
   enabled?: boolean;
@@ -42,3 +48,17 @@ export const useFindIDWithPhone = (phone_number: string, opts?: Options) => {
 
   return query;
 };
+
+export const useResetPassword = (opts?: {
+  onSuccess?: (data: ResetPasswordResponse) => void;
+  onError?: (err: unknown) => void;
+}) =>
+  useMutation<ResetPasswordResponse, unknown, ResetPasswordRequest>({
+    mutationFn: resetPasswordConfirm,
+    onSuccess: (data) => {
+      opts?.onSuccess?.(data);
+    },
+    onError: (err) => {
+      opts?.onError?.(err);
+    },
+  });

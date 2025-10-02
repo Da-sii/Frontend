@@ -16,10 +16,13 @@ import {
 } from '@/hooks/auth/usePhoneAuth';
 import { useFindIDWithPhone } from '@/hooks/auth/useFindAccount';
 import { useFoundAccounts } from '@/store/useFoundAccounts';
+import { usePasswordReset } from '@/store/usePasswordReset';
 
 export default function Index() {
   const { menu } = useLocalSearchParams<{ menu?: string }>();
   const router = useRouter();
+  const { setVerificationToken: setResetPwToken } = usePasswordReset();
+
   const [phone, setPhone] = useState('');
   const [authNumber, setAuthNumber] = useState('');
   const [requestAuthNumber, setRequestAuthNumber] = useState(false);
@@ -64,9 +67,11 @@ export default function Index() {
   // 2) 인증번호 검증 훅
   const verifyAuthCodeMutation = useVerifyAuthCode({
     onSuccess: (data) => {
-      // 서버가 준 verification_token 저장 (필요시 토큰 검증/다음 단계에 활용)
-      setVerificationToken(data.verification_token);
-      onVerified();
+      const token = data.verification_token;
+      setVerificationToken(token);
+      setResetPwToken(token);
+      console.log('token', token);
+      onVerified(token);
     },
     onError: () => {
       setModalMessage('인증번호가 일치하지 않습니다');
@@ -117,7 +122,7 @@ export default function Index() {
     return true;
   }, [phone, authNumber, requestAuthNumber]);
 
-  const onVerified = async () => {
+  const onVerified = async (token?: string) => {
     if (menu === 'signUp') {
       signupMutation.mutate({
         email,
@@ -126,6 +131,15 @@ export default function Index() {
         phoneNumber: phone,
       });
     } else if (menu === 'findPassword') {
+      setPhone(phone);
+      if (!token) {
+        setModalMessage('인증 토큰을 확인할 수 없습니다. 다시 시도해 주세요.');
+        setVisibleModal(true);
+        return;
+      }
+      setResetPwToken(token);
+      router.replace('/auth/find/password/change');
+      return;
       // router.push('/auth/find/result');
     } else if (menu === 'findId') {
       const { data: res } = await refetchFindId();
