@@ -2,29 +2,43 @@ import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
 import { LongButton } from '@/components/common/buttons/LongButton';
 import { TextField } from '@/components/common/Inputs/TextField';
 import Navigation from '@/components/layout/Navigation';
+import DefaultModal from '@/components/common/modals/DefaultModal';
 import { isEmail } from '@/utils/validation';
 import { Stack, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Pressable, SafeAreaView, Text, View } from 'react-native';
-import { useSignupDraft } from '@/store/useSignupDraft';
+import { usePasswordReset } from '@/store/usePasswordReset';
+import { useCheckEmailExists } from '@/hooks/auth/useCheckExistsEmail';
+
 export default function Index() {
   const router = useRouter();
 
-  const [isEmailValid, setIsEmailValid] = useState(false);
-  const { email, setEmail } = useSignupDraft();
-  // 이메일 형식 체크
-  const validateEmail = (value: string) => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(value);
-  };
+  const { email, setEmail, clear } = usePasswordReset();
+  const [visibleModal, setVisibleModal] = useState(false);
+
+  const { mutate: checkEmail, isPending } = useCheckEmailExists({
+    onSuccess: (res) => {
+      if (res.exists) {
+        router.push('/auth/phone?menu=findPassword');
+      } else {
+        setVisibleModal(true);
+      }
+    },
+    onError: (err) => {
+      const msg =
+        // @ts-ignore
+        err?.response?.data?.message || '이메일 확인 중 오류가 발생했습니다.';
+      console.log(msg);
+    },
+  });
 
   useEffect(() => {
-    if (!validateEmail(email)) {
-      setIsEmailValid(true);
-    } else {
-      setIsEmailValid(false);
-    }
-  }, [email]);
+    clear();
+  }, [clear]);
+
+  const handlePhoneAuthPress = () => {
+    checkEmail({ email });
+  };
 
   return (
     <SafeAreaView className='flex-1 bg-white'>
@@ -33,7 +47,6 @@ export default function Index() {
         left={<ArrowLeftIcon width={20} height={20} />}
         onLeftPress={() => router.back()}
       />
-
       <View className='p-5'>
         <Text className='text-h-lg font-extrabold text-gray-700 mb-[12px]'>
           비밀번호 변경
@@ -57,11 +70,9 @@ export default function Index() {
         </View>
         <View className='mb-[25px]'>
           <LongButton
-            label='휴대폰 본인인증'
-            onPress={() => {
-              router.push('/auth/phone');
-            }}
-            disabled={email.length === 0}
+            label={isPending ? '확인 중...' : '휴대폰 본인인증'}
+            onPress={handlePhoneAuthPress}
+            disabled={!isEmail(email) || isPending}
           />
         </View>
         <View className='flex-row items-center justify-center mt-[10px]'>
@@ -79,6 +90,21 @@ export default function Index() {
           </Pressable>
         </View>
       </View>
+      {visibleModal && (
+        <DefaultModal
+          visible={visibleModal}
+          onConfirm={() => {
+            setVisibleModal(false);
+            router.push('/auth/signUp');
+          }}
+          onCancel={() => setVisibleModal(false)}
+          title='계정을 찾을 수 없습니다.'
+          message='해당 정보로 가입된 계정을 찾을 수 없습니다.'
+          secondMessage='다시 한번 확인해주시거나, 회원가입을 진행해주세요.'
+          confirmText='회원가입'
+          cancelText='처음으로'
+        />
+      )}
     </SafeAreaView>
   );
 }

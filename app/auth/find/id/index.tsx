@@ -38,7 +38,7 @@ export default function Index() {
         <LongButton
           label='휴대폰 본인인증'
           onPress={() => {
-            router.push('/auth/phone');
+            router.push('/auth/phone?menu=findId');
           }}
         />
       </View>

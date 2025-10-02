@@ -61,7 +61,7 @@ export default function Index() {
 
         <View className='flex-row items-center justify-center mt-[10px]'>
           <Text className='text-b-sm font-bold text-gray-500'>
-            서비스가 궁굼하시다면?
+            서비스가 궁금하시다면?
           </Text>
           <Pressable
             onPress={() => {

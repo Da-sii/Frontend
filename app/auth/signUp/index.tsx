@@ -6,7 +6,8 @@ import { LongButton } from '@/components/common/buttons/LongButton';
 import { TextField } from '@/components/common/Inputs/TextField';
 import Navigation from '@/components/layout/Navigation';
 import BottomSheetLayout from '@/components/page/product/productDetail/BottomSeetLayout';
-import { useSignup } from '@/hooks/useSignUp';
+import { useCheckEmailExists } from '@/hooks/auth/useCheckExistsEmail';
+
 import {
   hasPasswordComposition,
   isEmail,
@@ -20,6 +21,7 @@ import { useMemo, useRef, useState } from 'react';
 import { Pressable, SafeAreaView, Text, View } from 'react-native';
 import { useSignupDraft } from '@/store/useSignupDraft';
 import Svg, { Path } from 'react-native-svg';
+
 const TERMS: { id: string; terms: string; essential: boolean }[] = [
   { id: 'service', terms: '이용 약관 동의', essential: true },
   { id: 'privacy', terms: '개인정보 수집/이용 동의', essential: true },
@@ -31,6 +33,7 @@ const TERMS: { id: string; terms: string; essential: boolean }[] = [
 export default function Index() {
   const router = useRouter();
   const [checkedSet, setCheckedSet] = useState<Set<number>>(new Set());
+  const [isExistsEmail, setIsExistsEmail] = useState(false);
   const {
     email,
     password,
@@ -40,13 +43,14 @@ export default function Index() {
     setConfirmPassword,
   } = useSignupDraft();
 
+  const { mutateAsync: checkEmailExists, isPending } = useCheckEmailExists();
+
   // ===== BottomSheet =====
   const sheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => [462], []);
   const openSheet = () => {
-    sheetRef.current?.snapToIndex?.(0); // 첫 스냅으로 열기
+    sheetRef.current?.snapToIndex?.(0);
   };
-  const closeSheet = () => sheetRef.current?.close();
 
   // 필수 항목 인덱스
   const essentialIdxs = useMemo(
@@ -81,20 +85,47 @@ export default function Index() {
   const canSubmit = useMemo(() => {
     return (
       isEmail(email) &&
+      !isExistsEmail &&
       isLen8to20(password) &&
       hasPasswordComposition(password) &&
       isSamePassword(password, confirmPassword)
     );
-  }, [email, password, confirmPassword]);
+  }, [email, password, confirmPassword, isExistsEmail]);
 
-  const signupMutation = useSignup({
-    onSuccess: (data) => {
-      router.replace('/auth/phone?menu=signUp');
-    },
-  });
+  // 이메일 변경 시, 중복 상태 리셋
+  const handleChangeEmail = (v: string) => {
+    setEmail(v);
+    if (isExistsEmail) setIsExistsEmail(false);
+  };
+
+  // 휴대폰 본인인증 버튼 핸들러
+  const onPressPhoneAuth = async () => {
+    // 로컬 입력 검증(형식/길이/구성/일치) 먼저
+    if (
+      !isEmail(email) ||
+      !isLen8to20(password) ||
+      !hasPasswordComposition(password) ||
+      !isSamePassword(password, confirmPassword)
+    )
+      return;
+
+    try {
+      const res = await checkEmailExists({ email });
+      if (res.exists) {
+        // 이미 가입된 이메일 → 필드 에러 상태 전환
+        setIsExistsEmail(true);
+        return;
+      }
+      // 가입 가능 → 약관 바텀시트 오픈
+      openSheet();
+    } catch (e: any) {
+      console.log(
+        e?.response?.data?.message || '이메일 확인 중 오류가 발생했습니다.',
+      );
+    }
+  };
 
   const onPressSubmit = async () => {
-    if (!canSubmit) return;
     router.push('/auth/phone?menu=signUp');
   };
 
@@ -123,10 +154,13 @@ export default function Index() {
               <TextField
                 menu={1}
                 value={email}
-                onChangeText={setEmail}
+                onChangeText={handleChangeEmail}
+                // onEndEditing={handleEmailEndEditing}
                 placeholder='이메일을 입력해주세요.'
-                firstMessage='이메일 형식'
-                validateFirst={isEmail}
+                firstMessage={
+                  isExistsEmail ? '이미 가입된 이메일입니다.' : '이메일 형식'
+                }
+                validateFirst={(v) => isEmail(v) && !isExistsEmail}
               />
             </View>
             <View>
@@ -156,9 +190,9 @@ export default function Index() {
           </View>
 
           <LongButton
-            label='휴대폰 본인인증'
-            onPress={openSheet}
-            disabled={!canSubmit}
+            label={isPending ? '확인 중...' : '휴대폰 본인인증'}
+            onPress={onPressPhoneAuth}
+            disabled={!canSubmit || isPending}
           />
         </View>
 
