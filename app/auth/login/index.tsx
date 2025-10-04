@@ -6,15 +6,25 @@ import { Stack, useRouter } from 'expo-router';
 import { Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import KakaoLogin from '@/components/page/login/kakaoLogin';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import KakaoLoginWebView from '@/components/page/login/KakaoLoginWebView';
 import { useKakaoLogin } from '@/hooks/useKakaoLogin';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function Index() {
   const router = useRouter();
   const [showKakao, setShowKakao] = useState(false);
-
+  const [forceReauth, setForceReauth] = useState(false);
   const kakaoLogin = useKakaoLogin();
+
+  useEffect(() => {
+    // 로그아웃 후 첫 로그인 여부 확인
+    AsyncStorage.getItem('forceReauth').then((value) => {
+      if (value === 'true') {
+        setForceReauth(true);
+        AsyncStorage.removeItem('forceReauth'); // 한 번 쓰면 바로 삭제
+      }
+    });
+  }, []);
 
   return (
     <SafeAreaView className='flex-1 bg-white'>
@@ -81,6 +91,7 @@ export default function Index() {
           visible={showKakao}
           onClose={() => setShowKakao(false)}
           onAuthCode={kakaoLogin.mutate}
+          forceReauth={forceReauth} 
         />
       )}
     </SafeAreaView>
