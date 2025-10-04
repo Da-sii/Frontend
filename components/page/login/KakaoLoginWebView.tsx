@@ -9,6 +9,7 @@ type Props = {
   onClose: () => void;
   // code를 부모로 넘겨서 토큰 교환을 하도록
   onAuthCode: (code: string) => void;
+  forceReauth?: boolean;
 };
 
 const H = Dimensions.get('window').height - 100;
@@ -16,19 +17,23 @@ export default function KakaoLoginWebView({
   visible,
   onClose,
   onAuthCode,
+  forceReauth,
 }: Props) {
   const modalRef = useRef<Modalize>(null);
 
   const REST_KEY = process.env.EXPO_PUBLIC_KAKAO_REST_API_KEY!;
   const REDIRECT_URI = process.env.EXPO_PUBLIC_KAKAO_REDIRECT_URI!;
-  const authUrl = useMemo(
-    () =>
+  const authUrl = useMemo(() => {
+    const promptType = forceReauth ? 'login' : 'select_account'; // 첫 로그인만 강제
+    return (
       `https://kauth.kakao.com/oauth/authorize` +
       `?client_id=${REST_KEY}` +
       `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
-      `&response_type=code`,
-    [REST_KEY, REDIRECT_URI],
-  );
+      `&response_type=code` +
+      `&prompt=${promptType}` +
+      `&through_talk=false`
+    );
+  }, [REST_KEY, REDIRECT_URI, forceReauth]);
 
   const extractCode = (url: string) => {
     const u = new URL(url);
