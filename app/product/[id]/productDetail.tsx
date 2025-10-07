@@ -6,7 +6,7 @@ import {
   useLocalSearchParams,
   useRouter,
 } from 'expo-router';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FlatList, Image, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -17,7 +17,9 @@ import SearchIcon from '@/assets/icons/ic_magnifier.svg';
 import StarIcon from '@/assets/icons/ic_star.svg';
 import EmptyReviewIcon from '@/assets/icons/product/productDetail/ic_no_review.svg';
 import { LongButton } from '@/components/common/buttons/LongButton';
+import { ReviewButton } from '@/components/common/buttons/ReviewButton';
 import Navigation from '@/components/layout/Navigation';
+import CoupangTabBar from '@/components/page/product/productDetail/CoupangTabBar';
 import MaterialInfo from '@/components/page/product/productDetail/materialInfo';
 import PhotoCard from '@/components/page/product/productDetail/PhotoCard';
 import ReviewCard from '@/components/page/product/productDetail/ReviewCard';
@@ -28,7 +30,7 @@ import { useGetReviewImageList } from '@/hooks/product/review/image/useGetReview
 import { useProductReviewsPreview } from '@/hooks/product/review/useGetProductReview';
 import { useProductRatingStats } from '@/hooks/product/review/useProductRatingStats';
 import { useProductDetail } from '@/hooks/product/useProductDetail';
-import { ReviewButton } from '@/components/common/buttons/ReviewButton';
+import { searchCoupangProduct } from '@/services/product/coupang';
 
 const tabs = [
   { key: 'ingredient', label: '성분 정보' },
@@ -89,6 +91,18 @@ export default function ProductDetail() {
       refetchRatingStats();
     }, [qc, idNum, refetchRatingStats]),
   );
+
+  const [coupangProduct, setCoupangProduct] = useState(null);
+  useEffect(() => {
+    const productKeyword = '영양제';
+
+    const loadProduct = async () => {
+      const data = await searchCoupangProduct(productKeyword);
+      setCoupangProduct(data);
+    };
+
+    loadProduct();
+  }, []);
 
   if (!data) return <Text>제품을 찾을 수 없습니다.</Text>;
 
@@ -366,6 +380,7 @@ export default function ProductDetail() {
           }
         />
       </PortalProvider>
+      <CoupangTabBar product={coupangProduct} />
     </SafeAreaView>
   );
 }
