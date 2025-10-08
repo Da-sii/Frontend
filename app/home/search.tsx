@@ -45,6 +45,7 @@ export default function Search() {
   const [inputValue, setInputValue] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSort, setSelectedSort] = useState('monthly_rank');
+  const [hasSearched, setHasSearched] = useState(false);
 
   const { data: searchData } = useSearchProductsQuery({
     word: searchQuery,
@@ -116,25 +117,18 @@ export default function Search() {
     }
   };
 
-  useEffect(() => {
-    const loadRecentSearches = async () => {
-      try {
-        const storedSearches = await AsyncStorage.getItem(RECENT_SEARCHES_KEY);
-        if (storedSearches) {
-          setRecentSearches(JSON.parse(storedSearches));
-        }
-      } catch (error) {
-        console.error('Failed to load recent searches.', error);
-      }
-    };
-    loadRecentSearches();
-  }, []);
-
   const handleSearch = () => {
     if (inputValue.trim()) {
       setSearchQuery(inputValue);
       addRecentSearch(inputValue);
+      setHasSearched(true);
     }
+  };
+
+  const handleRecentSearchPress = (search: string) => {
+    setSearchQuery(search);
+    setInputValue(search);
+    setHasSearched(true);
   };
 
   const renderProductItem = ({ item }: { item: IProduct }) => (
@@ -148,6 +142,8 @@ export default function Search() {
       }}
     />
   );
+
+  const hasResults = searchData?.results && searchData.results.length > 0;
 
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ['40%'], []);
@@ -173,7 +169,7 @@ export default function Search() {
   return (
     <SafeAreaView className='bg-white flex-1'>
       <Navigation
-        title='검색 결과'
+        title={hasSearched ? '검색 결과' : '검색'}
         left={<ArrowLeftIcon width={20} height={20} fill={colors.gray[900]} />}
         onLeftPress={() => router.back()}
       />
@@ -184,86 +180,100 @@ export default function Search() {
         onSubmit={handleSearch}
         placeholder='성분, 제품명으로 검색해보세요!'
         recentSearches={recentSearches}
+        onRecentSearchPress={handleRecentSearchPress}
         onRemoveRecentSearch={removeRecentSearch}
         onClearAllRecentSearches={clearAllRecentSearches}
       />
-
-      <FlatList
-        ListHeaderComponent={
-          <View className='py-1 mb-2'>
-            <View className='flex-row justify-between items-center'>
-              <Text className='text-sm text-gray-900 font-semibold'>
-                총 {searchData?.results.length}개
-              </Text>
-              <View className='flex-row items-center'>
-                <Pressable
-                  className='flex-row items-center mr-2'
-                  onPress={() => bottomSheetRef.current?.expand()}
-                >
-                  <Text className='text-xs text-gray-900 mr-1'>
-                    {sortOptions.find((option) => option.id === selectedSort)
-                      ?.label || '랭킹순'}
+      {hasResults ? (
+        <FlatList
+          ListHeaderComponent={
+            searchData?.results && (
+              <View className='py-1 mb-2'>
+                <View className='flex-row justify-between items-center'>
+                  <Text className='text-sm text-gray-900 font-semibold'>
+                    총 {searchData?.results.length}개
                   </Text>
-                  <SelectOptionsIcon
-                    width={10}
-                    height={10}
-                    fill={colors.gray[900]}
-                  />
-                </Pressable>
-                <Pressable onPress={toggleViewType}>
-                  {viewType === 'grid' ? (
-                    <ViewTypeIcon width={16} height={16} />
-                  ) : (
-                    <ListTypeIcon width={16} height={16} />
-                  )}
-                </Pressable>
+                  <View className='flex-row items-center'>
+                    <Pressable
+                      className='flex-row items-center mr-2'
+                      onPress={() => bottomSheetRef.current?.expand()}
+                    >
+                      <Text className='text-xs text-gray-900 mr-1'>
+                        {sortOptions.find(
+                          (option) => option.id === selectedSort,
+                        )?.label || '랭킹순'}
+                      </Text>
+                      <SelectOptionsIcon
+                        width={10}
+                        height={10}
+                        fill={colors.gray[900]}
+                      />
+                    </Pressable>
+                    <Pressable onPress={toggleViewType}>
+                      {viewType === 'grid' ? (
+                        <ViewTypeIcon width={16} height={16} />
+                      ) : (
+                        <ListTypeIcon width={16} height={16} />
+                      )}
+                    </Pressable>
+                  </View>
+                </View>
               </View>
-            </View>
+            )
+          }
+          key={viewType}
+          data={searchData?.results}
+          numColumns={viewType === 'grid' ? 2 : 1}
+          keyExtractor={(item) => item.id.toString()}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingHorizontal: 20,
+            paddingTop: 8,
+          }}
+          columnWrapperStyle={
+            viewType === 'grid'
+              ? {
+                  justifyContent: 'space-between',
+                  marginBottom: 16,
+                }
+              : undefined
+          }
+          renderItem={({ item }) =>
+            viewType === 'grid' ? (
+              <View style={{ width: cardWidth }}>
+                <ProductCard
+                  item={item as IProduct}
+                  style={{ width: cardWidth }}
+                  imageStyle={{ width: cardWidth, height: cardWidth }}
+                  titleNumberOfLines={2}
+                  onPress={() => {
+                    router.push({
+                      pathname: '/product/[id]/productDetail',
+                      params: { id: item.id },
+                    });
+                  }}
+                />
+              </View>
+            ) : (
+              renderProductItem({ item })
+            )
+          }
+          ItemSeparatorComponent={
+            viewType === 'list'
+              ? () => <View className='h-[0.5px] bg-gray-200 mx-2' />
+              : undefined
+          }
+        />
+      ) : (
+        hasSearched &&
+        searchQuery && (
+          <View className='flex-1 items-center py-10'>
+            <Text className='text-gray-400 font-medium text-center'>
+              {`'${inputValue}'에 대한\n검색 결과가 없습니다.`}
+            </Text>
           </View>
-        }
-        key={viewType}
-        data={searchData?.results}
-        numColumns={viewType === 'grid' ? 2 : 1}
-        keyExtractor={(item) => item.id.toString()}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingHorizontal: 20,
-          paddingTop: 8,
-        }}
-        columnWrapperStyle={
-          viewType === 'grid'
-            ? {
-                justifyContent: 'space-between',
-                marginBottom: 16,
-              }
-            : undefined
-        }
-        renderItem={({ item }) =>
-          viewType === 'grid' ? (
-            <View style={{ width: cardWidth }}>
-              <ProductCard
-                item={item as IProduct}
-                style={{ width: cardWidth }}
-                imageStyle={{ width: cardWidth, height: cardWidth }}
-                titleNumberOfLines={2}
-                onPress={() => {
-                  router.push({
-                    pathname: '/product/[id]/productDetail',
-                    params: { id: item.id },
-                  });
-                }}
-              />
-            </View>
-          ) : (
-            renderProductItem({ item })
-          )
-        }
-        ItemSeparatorComponent={
-          viewType === 'list'
-            ? () => <View className='h-[0.5px] bg-gray-200 mx-2' />
-            : undefined
-        }
-      />
+        )
+      )}
 
       <BottomSheet
         ref={bottomSheetRef}

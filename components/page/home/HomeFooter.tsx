@@ -21,11 +21,11 @@ export default function HomeFooter() {
   const [isAdInquiryModalVisible, setIsAdInquiryModalVisible] = useState(false);
 
   return (
-    <View className='bg-white p-4 px-6'>
-      <LogoIcon width={40} className='mb-2' />
+    <View className='bg-white py-8 px-10 border-t border-gray-100'>
+      <LogoIcon width={45} className='mb-3' />
 
       <TouchableOpacity
-        className='flex-row items-center mb-3'
+        className='flex-row items-center mb-4'
         onPress={() => setIsExpanded(!isExpanded)}
         activeOpacity={0.7}
       >

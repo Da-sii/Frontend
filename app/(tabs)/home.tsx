@@ -1,4 +1,3 @@
-import AddProductButton from '@/app/product/add';
 import GoRankingIcon from '@/assets/icons/ic_arrow_right.svg';
 import LogoIcon from '@/assets/icons/ic_logo_full.svg';
 import MagnifierIcon from '@/assets/icons/ic_magnifier.svg';
@@ -61,15 +60,15 @@ export default function Home() {
           />
         </View>
 
-        <View className='px-6 mb-2 mt-4'>
+        <View className='px-6 mb-2 mt-6'>
           <TagsView
             categories={mainScreenInfo?.topSmallCategories || []}
             isLoading={isLoading}
           />
         </View>
 
-        <View className='px-6'>
-          <View className='flex-row justify-between items-center'>
+        <View className='mt-2 mb-12'>
+          <View className='mx-6 flex-row justify-between items-center'>
             <Text className='text-base font-semibold'>현재 급상승 랭킹</Text>
             <GoRankingIcon
               onPress={() => router.push('/(tabs)/home/ranking')}

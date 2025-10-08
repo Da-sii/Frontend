@@ -57,7 +57,12 @@ export default function ProductCard({
 
         <View style={[{ padding: 8 }, infoContainerStyle]}>
           <Text
-            style={{ fontSize: 12, color: colors.gray[500], marginBottom: 4 }}
+            style={{
+              fontSize: 12,
+              color: colors.gray[400],
+              marginBottom: 4,
+              fontWeight: '400',
+            }}
           >
             {item.company}
           </Text>
@@ -86,24 +91,34 @@ export default function ProductCard({
           >
             <Text style={{ color: colors.yellow.star, fontSize: 12 }}>★</Text>
             <Text
-              style={{ fontSize: 12, color: colors.gray[400], marginLeft: 4 }}
+              style={{ fontSize: 10, color: colors.gray[500], marginLeft: 4 }}
             >
-              {item.reviewAvg} ({item.reviewCount.toString()})
+              {item.reviewAvg || 0.0}
+            </Text>
+            <Text
+              style={{ fontSize: 10, color: colors.gray[400], marginLeft: 2 }}
+            >
+              ({item.reviewCount.toString()})
             </Text>
           </View>
 
           <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
             <Text
+              style={{ fontSize: 12, color: colors.gray[900], marginRight: 4 }}
+            >
+              정가
+            </Text>
+            <Text
               style={{
-                fontSize: 16,
-                fontWeight: '600',
+                fontSize: 14,
+                fontWeight: '400',
                 color: colors.gray[900],
               }}
             >
-              {item.price}
+              {item.price.toLocaleString('ko-KR')}원
             </Text>
             <Text
-              style={{ fontSize: 12, color: colors.gray[400], marginLeft: 4 }}
+              style={{ fontSize: 10, color: colors.gray[400], marginLeft: 4 }}
             >
               / {item.unit}
             </Text>

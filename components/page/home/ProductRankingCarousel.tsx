@@ -63,7 +63,7 @@ export default function ProductRankingCarousel({ data, isLoading }: Props) {
         <View
           style={{
             position: 'absolute',
-            top: 17,
+            top: 18,
             left: 10,
 
             justifyContent: 'center',
@@ -76,26 +76,30 @@ export default function ProductRankingCarousel({ data, isLoading }: Props) {
           />
           <Text className='text-white text-xs font-semibold'>{index + 1}</Text>
         </View>
-        <Text className='text-xs mt-1 text-gray-400' numberOfLines={1}>
-          {item.company}
-        </Text>
-        <Text className='text-sm font-medium text-gray-800' numberOfLines={1}>
-          {item.name}
-        </Text>
-        <View
-          style={{ flexDirection: 'row', alignItems: 'center' }}
-          className='mb-2'
-        >
-          <Text className='mr-1 text-yellow-star text-xs'>★</Text>
-          <Text className='text-gray-500 mr-1 text-xs'>
-            {item.reviewAvg || (0).toFixed(2)}
+        <View className='flex-col ml-0.5'>
+          <Text className='text-xs mt-1 text-gray-400' numberOfLines={1}>
+            {item.company}
           </Text>
-          <Text className='text-xs text-gray-300'>({item.reviewCount})</Text>
-        </View>
+          <Text className='text-sm font-medium text-gray-800' numberOfLines={1}>
+            {item.name}
+          </Text>
+          <View
+            style={{ flexDirection: 'row', alignItems: 'center' }}
+            className='mb-1'
+          >
+            <Text className='mr-1 text-yellow-star text-xs'>★</Text>
+            <Text className='text-gray-500 mr-1 text-xs'>
+              {item.reviewAvg || (0).toFixed(2)}
+            </Text>
+            <Text className='text-xs text-gray-300'>({item.reviewCount})</Text>
+          </View>
 
-        <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
-          <Text className='mr-1 text-xs'>정가</Text>
-          <Text className='text-base text-gray-900 mr-1'>{item.price}원</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
+            <Text className='mr-1 text-xs'>정가</Text>
+            <Text className='text-base text-gray-900 mr-1'>
+              {item.price.toLocaleString('ko-KR')}원
+            </Text>
+          </View>
         </View>
       </View>
     </Pressable>
@@ -127,6 +131,7 @@ export default function ProductRankingCarousel({ data, isLoading }: Props) {
       keyExtractor={(item) => item.id.toString()}
       horizontal
       showsHorizontalScrollIndicator={false}
+      className='px-6'
     />
   );
 }

@@ -1,4 +1,5 @@
 import ViewAllIcon from '@/assets/icons/ic_arrow_right.svg';
+import SearchIcon from '@/assets/icons/ic_magnifier.svg';
 import Navigation from '@/components/layout/Navigation';
 import { useCategory } from '@/hooks/useCategory';
 import { useRouter } from 'expo-router';
@@ -71,7 +72,11 @@ export default function Category() {
 
   return (
     <SafeAreaView className='flex-1 bg-white' edges={['top', 'left', 'right']}>
-      <Navigation title='카테고리' />
+      <Navigation
+        title='카테고리'
+        right={<SearchIcon width={18} height={18} />}
+        onRightPress={() => router.push('/home/search')}
+      />
 
       <View className='w-full border-b-[0.5px] border-gray-200' />
 
@@ -115,7 +120,9 @@ export default function Category() {
               onPress={() => goToList()}
               className='flex-row items-center'
             >
-              <Text className='text-xs text-gray-500'>전체보기</Text>
+              <Text className='text-xs text-gray-500 mr-1 font-semibold'>
+                전체보기
+              </Text>
               <ViewAllIcon width={10} height={10} />
             </Pressable>
           </View>

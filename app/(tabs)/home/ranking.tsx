@@ -139,8 +139,10 @@ export default function Ranking() {
                   }`}
                 >
                   <Text
-                    className={`text-xs font-medium ${
-                      selected ? 'text-white' : 'text-gray-700'
+                    className={`text-xs ${
+                      selected
+                        ? 'text-white font-extrabold'
+                        : 'text-gray-700 font-medium'
                     }`}
                   >
                     {cat}
@@ -165,7 +167,7 @@ export default function Ranking() {
           <View className='flex-row items-center'>
             <ListIcon width={12} height={12} className='mr-1' />
             <Text className='text-gray-200 text-xs'>
-              {tab === 'daily' && 'MM.DD '}18:00 기준
+              MM.DD{tab === 'daily' && ' 18:00'} 기준
             </Text>
           </View>
         </View>
