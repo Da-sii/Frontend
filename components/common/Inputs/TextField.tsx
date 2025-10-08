@@ -263,7 +263,9 @@ export const TextField: React.FC<TextFieldProps> = ({
         className={`flex-row items-center w-full h-[60px] rounded-xl py-[21px] px-4 border ${borderColorClass} ${disabled ? 'bg-gray-50' : ''}`}
       >
         <TextInput
-          className={`flex-1 text-b-sm font-bold text-gray-900 ${disabled ? 'text-gray-400' : ''}`}
+          className={`flex-1 text-b-sm font-bold text-gray-900 ${disabled ? 'text-gray-400' : ''}  ${
+            value.length === 0 ? 'font-normal' : 'font-bold'
+          }`}
           value={value}
           onChangeText={handleChangeText}
           onBlur={handleBlur}
@@ -284,6 +286,7 @@ export const TextField: React.FC<TextFieldProps> = ({
               name={showPassword ? 'eye-off' : 'eye'}
               size={20}
               color='#9ca3af'
+              style={{ paddingBottom: 20 }}
             />
           </TouchableOpacity>
         )}

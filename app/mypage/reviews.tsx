@@ -1,13 +1,14 @@
 // app/mypage/review.tsx
-import ReviewItems from '@/components/page/product/productDetail/reviewItem'; // 실제 경로로 수정
-import { useGetMyReview } from '@/hooks/my/useGetMyReview';
-import { useDeleteReview } from '@/hooks/my/useDeleteMyReview';
+import BackIcon from '@/assets/icons/ic_arrow_left.svg';
 import DefaultModal from '@/components/common/modals/DefaultModal';
+import ReviewItems from '@/components/page/product/productDetail/reviewItem'; // 실제 경로로 수정
+import { useDeleteReview } from '@/hooks/my/useDeleteMyReview';
+import { useGetMyReview } from '@/hooks/my/useGetMyReview';
 import { useState } from 'react';
 
-import { Ionicons } from '@expo/vector-icons';
-
+import { MyReview } from '@/services/my/getReviewList';
 import { Stack, useRouter } from 'expo-router';
+import { useCallback } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -15,8 +16,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { MyReview } from '@/services/my/getReviewList';
-import { useCallback } from 'react';
 
 export default function MyReviews() {
   const router = useRouter();
@@ -98,7 +97,7 @@ export default function MyReviews() {
                   initRate: String(item.rate ?? 0),
                   initReview: item.review ?? '',
                   initImages: JSON.stringify(
-                    Array.isArray(item.images) ? item.images : []
+                    Array.isArray(item.images) ? item.images : [],
                   ),
                 },
               });
@@ -152,8 +151,8 @@ export default function MyReviews() {
         options={{
           headerTitle: '내가 쓴 리뷰',
           headerLeft: () => (
-            <TouchableOpacity onPress={() => router.back()} className='px-4'>
-              <Ionicons name='chevron-back' size={24} color='#333' />
+            <TouchableOpacity onPress={() => router.back()}>
+              <BackIcon width={17} height={17} />
             </TouchableOpacity>
           ),
           headerTitleAlign: 'center',
@@ -165,7 +164,7 @@ export default function MyReviews() {
         data={flatReviews}
         keyExtractor={keyExtractor}
         ListHeaderComponent={
-          <Text className='px-4 pt-4 pb-2 text-base font-medium'>
+          <Text className='px-1 pt-4 pb-2 text-base font-medium'>
             {flatReviews.length ?? 0}개의 리뷰를 작성했어요!
           </Text>
         }

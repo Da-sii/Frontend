@@ -12,6 +12,8 @@ export default function ChangePassword() {
   const router = useRouter();
   const { updatePassword, isLoading } = useUser();
 
+  const [step, setStep] = useState<'current' | 'new'>('current');
+
   const [newPwd, setNewPwd] = useState('');
   const [confirmPwd, setConfirmPwd] = useState('');
   const [currentPwd, setCurrentPwd] = useState('');
@@ -27,7 +29,9 @@ export default function ChangePassword() {
     setMatchConfirm(newPwd === confirmPwd && confirmPwd.length > 0);
   }, [newPwd, confirmPwd]);
 
-  const disabled = !(validNew && matchConfirm && currentPwd.length > 0);
+  const isNextDisabled = currentPwd.length === 0;
+  const isSubmitDisabled = !(validNew && matchConfirm);
+  const disabled = step === 'current' ? isNextDisabled : isSubmitDisabled;
 
   const isLen8to20 = (text: string) => {
     return text.length >= 8 && text.length <= 20;
@@ -51,6 +55,17 @@ export default function ChangePassword() {
     }
   };
 
+  const handlePressNextOrSubmit = () => {
+    if (disabled || isLoading) return;
+
+    if (step === 'current') {
+      // TODO: 현재 비밀번호가 맞는지 서버에 확인하는 로직을 추가하면 더 좋습니다.
+      setStep('new'); // 다음 단계로 이동
+    } else {
+      handleSubmit(); // 최종 제출
+    }
+  };
+
   return (
     <SafeAreaView className='flex-1 bg-white px-2'>
       <Stack.Screen
@@ -69,64 +84,68 @@ export default function ChangePassword() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         className='flex-1 px-4 py-3'
       >
-        <View className='mb-2'>
-          <View>
-            <Text className='mb-3 font-semibold'>
-              새로운 비밀번호를 입력해주세요
-            </Text>
-          </View>
+        {step === 'new' && (
+          <View className='mb-2'>
+            <View>
+              <Text className='mb-3 font-semibold'>
+                새로운 비밀번호를 입력해주세요
+              </Text>
+            </View>
 
-          <View className='mb-3'>
+            <View className='mb-3'>
+              <TextField
+                menu={1}
+                value={newPwd}
+                onChangeText={setNewPwd}
+                secureTextEntry={true}
+                placeholder='새로운 비밀번호를 입력해주세요'
+                firstMessage='8-20자 이내'
+                secondMessage='영문, 숫자, 특수문자 포함'
+                validateFirst={isLen8to20}
+                validateSecond={hasPasswordComposition}
+                maxLength={20}
+              />
+            </View>
+
+            <View className='mb-3'>
+              <TextField
+                menu={1}
+                value={confirmPwd}
+                onChangeText={setConfirmPwd}
+                secureTextEntry={true}
+                placeholder='새로운 비밀번호를 다시 입력해주세요'
+                firstMessage='비밀번호 일치'
+                validateFirst={isLen8to20}
+                maxLength={20}
+              />
+            </View>
+          </View>
+        )}
+
+        {step === 'current' && (
+          <View className='mb-6'>
+            <View>
+              <Text className='mb-3 font-semibold'>
+                현재 비밀번호를 입력해주세요
+              </Text>
+            </View>
+
             <TextField
               menu={1}
-              value={newPwd}
-              onChangeText={setNewPwd}
+              value={currentPwd}
+              onChangeText={setCurrentPwd}
               secureTextEntry={true}
-              placeholder='새로운 비밀번호를 입력해주세요'
-              firstMessage='8-20자 이내'
-              secondMessage='영문, 숫자, 특수문자 포함'
-              validateFirst={isLen8to20}
-              validateSecond={hasPasswordComposition}
-              maxLength={20}
-            />
-          </View>
-
-          <View className='mb-3'>
-            <TextField
-              menu={1}
-              value={confirmPwd}
-              onChangeText={setConfirmPwd}
-              secureTextEntry={true}
-              placeholder='새로운 비밀번호를 다시 입력해주세요'
+              placeholder='현재 비밀번호를 다시 입력해주세요'
               firstMessage='비밀번호 일치'
               validateFirst={isLen8to20}
               maxLength={20}
             />
           </View>
-        </View>
-
-        <View className='mb-6'>
-          <View>
-            <Text className='mb-3 font-semibold'>
-              현재 비밀번호를 입력해주세요
-            </Text>
-          </View>
-
-          <TextField
-            menu={1}
-            value={currentPwd}
-            onChangeText={setCurrentPwd}
-            secureTextEntry={true}
-            placeholder='현재 비밀번호를 다시 입력해주세요'
-            firstMessage='비밀번호 일치'
-            validateFirst={isLen8to20}
-            maxLength={20}
-          />
-        </View>
+        )}
 
         <LongButton
-          label='비밀번호 변경'
-          onPress={handleSubmit}
+          label={step === 'current' ? '다음' : '비밀번호 변경'}
+          onPress={handlePressNextOrSubmit}
           disabled={disabled || isLoading}
         />
       </KeyboardAvoidingView>
