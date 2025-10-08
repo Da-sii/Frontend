@@ -80,9 +80,9 @@ export default function RankingItem({
           </Text>
           <View
             style={{ flexDirection: 'row', alignItems: 'center' }}
-            className='mb-4'
+            className='mb-1'
           >
-            <Text className='text-yellow-star text-xs'>★</Text>
+            <Text className='text-yellow-star text-xs mr-0.5'>★</Text>
             <Text className='text-gray-500 mr-1 text-xs'>
               {item.reviewAvg || (0).toFixed(2)}
             </Text>
@@ -91,7 +91,9 @@ export default function RankingItem({
 
           <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
             <Text className='mr-1 text-xs'>정가</Text>
-            <Text className='text-base text-gray-900 mr-1'>{item.price}원</Text>
+            <Text className='text-base text-gray-900 mr-1'>
+              {item.price.toLocaleString('ko-KR')}원
+            </Text>
             <Text className='text-xs text-gray-300'>/ {item.unit}</Text>
           </View>
         </View>

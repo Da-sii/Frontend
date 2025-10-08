@@ -1,3 +1,6 @@
+import BottomSheet from '@gorhom/bottom-sheet';
+import { useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'expo-router';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import {
   FlatList,
@@ -9,18 +12,15 @@ import {
   View,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
-import { useRouter } from 'expo-router';
-import BottomSheet from '@gorhom/bottom-sheet';
-import { useQueryClient } from '@tanstack/react-query';
 
 import MoreIcon from '@/assets/icons/product/productDetail/ic_more_line.svg';
 
 import { LongButton } from '@/components/common/buttons/LongButton';
 import BottomSheetLayout from '@/components/page/product/productDetail/BottomSeetLayout';
+import { useReportReview } from '@/hooks/useReportReview';
+import { ReportReason } from '@/services/report';
 import { toCdnUrl } from '@/utils/cdn';
 import ReviewStar from './ReviewStar';
-import { useReportReview } from '@/hooks/useReportReview';
-import { ReportReason, ReportRequest } from '@/services/report';
 
 interface reviewItem {
   id: number;
@@ -180,9 +180,9 @@ export default function ReviewItems({
       {isMyReview && (
         <View className='flex-row items-center pb-2'>
           <ReviewStar height={12} reviewRank={reviewItem.rating} />
-          <Text className='border-l ml-1 pl-1 border-[#E4E6E7] text-c3 font-bold text-gray-300'>
+          <Text className='border-l ml-1 pl-1 border-[#E4E6E7] text-c3 font-normal text-gray-300'>
             {reviewItem.date}
-            {reviewItem.isEdited && '  수정됨'}
+            {reviewItem.isEdited && ' 수정됨'}
           </Text>
         </View>
       )}
