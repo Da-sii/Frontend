@@ -25,7 +25,6 @@ export default function CoopangTabBar({ product }: Props) {
 
   useEffect(() => {
     if (isTooltipVisible) {
-      // 보일 때: 먼저 마운트하고 애니메이션 시작
       setIsMounted(true);
       Animated.timing(fadeAnim, {
         toValue: 1,
