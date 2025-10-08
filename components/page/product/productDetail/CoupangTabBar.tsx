@@ -25,7 +25,6 @@ export default function CoopangTabBar({ product }: Props) {
 
   useEffect(() => {
     if (isTooltipVisible) {
-      // 보일 때: 먼저 마운트하고 애니메이션 시작
       setIsMounted(true);
       Animated.timing(fadeAnim, {
         toValue: 1,
@@ -33,13 +32,11 @@ export default function CoopangTabBar({ product }: Props) {
         useNativeDriver: true,
       }).start();
     } else {
-      // 사라질 때: 애니메이션을 먼저 실행하고, 끝나면 언마운트
       Animated.timing(fadeAnim, {
         toValue: 0,
         duration: 100,
         useNativeDriver: true,
       }).start(() => {
-        // 2. 애니메이션이 끝난 후, isMounted 상태를 false로 변경
         setIsMounted(false);
       });
     }

@@ -30,7 +30,6 @@ import { useGetReviewImageList } from '@/hooks/product/review/image/useGetReview
 import { useProductReviewsPreview } from '@/hooks/product/review/useGetProductReview';
 import { useProductRatingStats } from '@/hooks/product/review/useProductRatingStats';
 import { useProductDetail } from '@/hooks/product/useProductDetail';
-import { searchCoupangProduct } from '@/services/product/coupang';
 
 const tabs = [
   { key: 'ingredient', label: '성분 정보' },
@@ -94,14 +93,12 @@ export default function ProductDetail() {
 
   const [coupangProduct, setCoupangProduct] = useState(null);
   useEffect(() => {
-    const productKeyword = '영양제';
-
-    const loadProduct = async () => {
-      const data = await searchCoupangProduct(productKeyword);
-      setCoupangProduct(data);
-    };
-
-    loadProduct();
+    // const productKeyword = '영양제';
+    // const loadProduct = async () => {
+    //   const data = await searchCoupangProduct(productKeyword);
+    //   setCoupangProduct(data);
+    // };
+    // loadProduct();
   }, []);
 
   if (!data) return <Text>제품을 찾을 수 없습니다.</Text>;
