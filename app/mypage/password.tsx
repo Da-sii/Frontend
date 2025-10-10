@@ -59,10 +59,9 @@ export default function ChangePassword() {
     if (disabled || isLoading) return;
 
     if (step === 'current') {
-      // TODO: 현재 비밀번호가 맞는지 서버에 확인하는 로직을 추가하면 더 좋습니다.
-      setStep('new'); // 다음 단계로 이동
+      setStep('new');
     } else {
-      handleSubmit(); // 최종 제출
+      handleSubmit();
     }
   };
 
