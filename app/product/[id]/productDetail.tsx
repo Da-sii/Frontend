@@ -17,6 +17,7 @@ import SearchIcon from '@/assets/icons/ic_magnifier.svg';
 import StarIcon from '@/assets/icons/ic_star.svg';
 import EmptyReviewIcon from '@/assets/icons/product/productDetail/ic_no_review.svg';
 import { LongButton } from '@/components/common/buttons/LongButton';
+import { ReviewButton } from '@/components/common/buttons/ReviewButton';
 import Navigation from '@/components/layout/Navigation';
 import CoupangTabBar from '@/components/page/product/productDetail/CoupangTabBar';
 import MaterialInfo from '@/components/page/product/productDetail/materialInfo';
