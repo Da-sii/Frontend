@@ -87,16 +87,16 @@ export default function ProductRankingCarousel({ data, isLoading }: Props) {
             style={{ flexDirection: 'row', alignItems: 'center' }}
             className='mb-1'
           >
-            <Text className='mr-1 text-yellow-star text-xs'>★</Text>
-            <Text className='text-gray-500 mr-1 text-xs'>
+            <Text className='mr-0.5 text-yellow-star text-xs'>★</Text>
+            <Text className='text-gray-500 mr-0.5 text-xs'>
               {item.reviewAvg || (0).toFixed(2)}
             </Text>
             <Text className='text-xs text-gray-300'>({item.reviewCount})</Text>
           </View>
 
           <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
-            <Text className='mr-1 text-xs'>정가</Text>
-            <Text className='text-base text-gray-900 mr-1'>
+            <Text className='mr-1 text-sm font-regular'>정가</Text>
+            <Text className='text-base text-gray-900 mr-1 font-regular'>
               {item.price.toLocaleString('ko-KR')}원
             </Text>
           </View>
@@ -131,7 +131,7 @@ export default function ProductRankingCarousel({ data, isLoading }: Props) {
       keyExtractor={(item) => item.id.toString()}
       horizontal
       showsHorizontalScrollIndicator={false}
-      className='px-6'
+      contentContainerStyle={{ paddingHorizontal: 24 }}
     />
   );
 }

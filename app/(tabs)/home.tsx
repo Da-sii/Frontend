@@ -82,8 +82,6 @@ export default function Home() {
         </View>
 
         <HomeFooter />
-
-        {/* <AddProductButton /> */}
       </ScrollView>
     </SafeAreaView>
   );

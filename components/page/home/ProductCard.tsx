@@ -55,7 +55,7 @@ export default function ProductCard({
           </View>
         )}
 
-        <View style={[{ padding: 8 }, infoContainerStyle]}>
+        <View style={[{ padding: 4, paddingTop: 6 }, infoContainerStyle]}>
           <Text
             style={{
               fontSize: 12,
@@ -91,9 +91,9 @@ export default function ProductCard({
           >
             <Text style={{ color: colors.yellow.star, fontSize: 12 }}>★</Text>
             <Text
-              style={{ fontSize: 10, color: colors.gray[500], marginLeft: 4 }}
+              style={{ fontSize: 10, color: colors.gray[500], marginLeft: 2 }}
             >
-              {item.reviewAvg || 0.0}
+              {item.reviewAvg || (0).toFixed(2)}
             </Text>
             <Text
               style={{ fontSize: 10, color: colors.gray[400], marginLeft: 2 }}
@@ -104,7 +104,7 @@ export default function ProductCard({
 
           <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
             <Text
-              style={{ fontSize: 12, color: colors.gray[900], marginRight: 4 }}
+              style={{ fontSize: 13, color: colors.gray[900], marginRight: 4 }}
             >
               정가
             </Text>
@@ -118,7 +118,7 @@ export default function ProductCard({
               {item.price.toLocaleString('ko-KR')}원
             </Text>
             <Text
-              style={{ fontSize: 10, color: colors.gray[400], marginLeft: 4 }}
+              style={{ fontSize: 11, color: colors.gray[400], marginLeft: 4 }}
             >
               / {item.unit}
             </Text>

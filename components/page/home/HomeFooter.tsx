@@ -22,14 +22,14 @@ export default function HomeFooter() {
 
   return (
     <View className='bg-white py-8 px-10 border-t border-gray-100'>
-      <LogoIcon width={45} className='mb-3' />
+      <LogoIcon width={54} className='mb-3' />
 
       <TouchableOpacity
         className='flex-row items-center mb-4'
         onPress={() => setIsExpanded(!isExpanded)}
         activeOpacity={0.7}
       >
-        <Text className='text-xs text-gray-700 font-light mr-1'>
+        <Text className='text-sm text-gray-700 font-light mr-1'>
           사업자정보
         </Text>
         {isExpanded ? <LessIcon color='gray' /> : <MoreIcon color='gray' />}

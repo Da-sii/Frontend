@@ -83,7 +83,7 @@ export default function BannerCarousel({
       </View>
       <View className='absolute top-4 right-4 bg-black/40 px-2 py-1 rounded-full'>
         <Text className='text-white text-xs font-semibold'>
-          {index + 1}/{data.length}
+          {index + 1} / {data.length}
         </Text>
       </View>
     </Animated.View>

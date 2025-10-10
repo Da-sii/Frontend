@@ -1,6 +1,7 @@
 import ViewAllIcon from '@/assets/icons/ic_arrow_right.svg';
 import SearchIcon from '@/assets/icons/ic_magnifier.svg';
 import Navigation from '@/components/layout/Navigation';
+import colors from '@/constants/color';
 import { useCategory } from '@/hooks/useCategory';
 import { useRouter } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
@@ -60,7 +61,7 @@ export default function Category() {
       setColWidth(w);
     }
   };
-  const sidebarWidth = colWidth + 16 * 2;
+  const sidebarWidth = colWidth;
 
   const goToList = (sub?: string) => {
     if (!selectedBigCategory) return;
@@ -93,15 +94,15 @@ export default function Category() {
             <Pressable
               key={cat}
               onPress={() => setSelectedBigCategory(cat)}
-              className={`items-start py-3 ${
+              className={`items-start py-4 ${
                 selectedBigCategory === cat ? 'bg-white' : 'bg-gray-100'
               }`}
             >
               <Text
-                className={`text-sm font-medium pl-6 ${
+                className={`text-md pl-6 ${
                   selectedBigCategory === cat
-                    ? 'text-gray-900'
-                    : 'text-gray-400'
+                    ? 'text-gray-900 font-semibold'
+                    : 'text-gray-400 font-semibold'
                 }`}
                 onLayout={onTextLayout}
               >
@@ -112,7 +113,7 @@ export default function Category() {
         </ScrollView>
 
         <View className='flex-1'>
-          <View className='flex-row justify-between items-center px-4 py-3'>
+          <View className='flex-row justify-between items-center px-4 pt-2 pb-1'>
             <Text className='text-lg font-semibold text-gray-900'>
               {selectedBigCategory}
             </Text>
@@ -123,7 +124,7 @@ export default function Category() {
               <Text className='text-xs text-gray-500 mr-1 font-semibold'>
                 전체보기
               </Text>
-              <ViewAllIcon width={10} height={10} />
+              <ViewAllIcon width={10} height={10} color={colors.gray[900]} />
             </Pressable>
           </View>
 
@@ -132,12 +133,14 @@ export default function Category() {
             keyExtractor={(item) => item}
             renderItem={({ item }) => (
               <Pressable
-                className='py-3 px-4'
+                className='py-2.5 px-4'
                 onPress={() => {
                   goToList(item);
                 }}
               >
-                <Text className='text-sm text-gray-900'>{item}</Text>
+                <Text className='text-sm text-gray-900 font-semibold'>
+                  {item}
+                </Text>
               </Pressable>
             )}
             showsVerticalScrollIndicator={false}
