@@ -31,7 +31,9 @@ export const userAPI = {
   },
 
   getMypage: async (): Promise<MypageResponse> => {
-    const { data } = await axiosInstance.get<MypageResponse>('/auth/mypage/');
+    const { data } = await axiosInstance.get<MypageResponse>('/auth/mypage/', {
+      disableRedirect: true,
+    });
     return data;
   },
 };

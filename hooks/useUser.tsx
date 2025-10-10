@@ -6,22 +6,20 @@ import {
 } from '@/types/payloads/fetch';
 import axios from 'axios';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 export const useUser = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [mypageInfo, setMypageInfo] = useState<IUser>();
 
-  const fetchMypage = async () => {
-    setIsLoading(true);
+  const fetchMypage = useCallback(async () => {
     try {
       const data = await userAPI.getMypage();
       setMypageInfo(data.user_info);
-      return true;
-    } finally {
-      setIsLoading(false);
+    } catch (e) {
+      console.error(e);
     }
-  };
+  }, []);
 
   const updateNickname = async (payload: UpdateNicknamePayload) => {
     setIsLoading(true);

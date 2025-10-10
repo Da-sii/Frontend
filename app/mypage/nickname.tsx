@@ -15,13 +15,16 @@ export default function ChangeNickname() {
   const [nickname, setNickname] = useState('');
   const [isNicknameValid, setIsNicknameValid] = useState(false);
 
-  const isLen8to20 = (text: string) => {
-    return text.length >= 8 && text.length <= 20;
+  const isLen2to10 = (text: string) => {
+    return text.length >= 2 && text.length <= 10;
   };
 
-  const hasNicknameComposition = (text: string) => {
+  const hasNicknameComposition = (nickname: string): boolean => {
     const regex = /^[ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z0-9]+$/;
-    return regex.test(text);
+    if (!nickname || nickname.trim().length === 0) {
+      return false;
+    }
+    return regex.test(nickname);
   };
 
   useEffect(() => {
@@ -36,8 +39,13 @@ export default function ChangeNickname() {
     setIsNicknameValid(validateNickname());
   }, [nickname]);
 
-  const handleUpdateNickname = () => {
-    updateNickname({ nickname });
+  const handleUpdateNickname = async () => {
+    try {
+      await updateNickname({ nickname });
+      router.push('/mypage');
+    } catch (error) {
+      console.error('닉네임 변경 실패:', error);
+    }
   };
 
   return (
@@ -65,8 +73,8 @@ export default function ChangeNickname() {
           secureTextEntry={false}
           placeholder='닉네임을 입력해주세요'
           firstMessage='2-10자 이내'
-          secondMessage='영문, 숫자, 특수문자 포함'
-          validateFirst={isLen8to20}
+          secondMessage='한글, 영문, 숫자만'
+          validateFirst={isLen2to10}
           validateSecond={hasNicknameComposition}
           maxLength={20}
         />
