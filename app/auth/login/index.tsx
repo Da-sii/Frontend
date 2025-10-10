@@ -1,17 +1,21 @@
+import XIcon from '@/assets/icons/auth/ic_emergency_x.svg';
 import AppleIcon from '@/assets/icons/ic_apple.svg';
 import EmailIcon from '@/assets/icons/ic_email.svg';
 import Logo from '@/assets/icons/ic_logo_start.svg';
 import LoginButton from '@/components/common/buttons/LoginButton';
-import { Stack, useRouter } from 'expo-router';
-import { Pressable, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import Navigation from '@/components/layout/Navigation';
 import KakaoLogin from '@/components/page/login/kakaoLogin';
-import { useEffect, useState } from 'react';
 import KakaoLoginWebView from '@/components/page/login/KakaoLoginWebView';
 import { useKakaoLogin } from '@/hooks/useKakaoLogin';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { Pressable, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 export default function Index() {
   const router = useRouter();
+  const { emergency } = useLocalSearchParams<{ emergency?: string }>();
   const [showKakao, setShowKakao] = useState(false);
   const [forceReauth, setForceReauth] = useState(false);
   const kakaoLogin = useKakaoLogin();
@@ -29,6 +33,12 @@ export default function Index() {
   return (
     <SafeAreaView className='flex-1 bg-white'>
       <Stack.Screen options={{ headerShown: false }} />
+      {emergency && (
+        <Navigation
+          right={<XIcon />}
+          onRightPress={() => router.push('/home/search')}
+        />
+      )}
       <View className='flex-1 items-center'>
         <View className='items-center w-full justify-center h-[64.98%]'>
           <Logo width={112} height={33} />
@@ -69,20 +79,23 @@ export default function Index() {
           />
         </View>
 
-        <View className='flex-row items-center justify-center mt-[10px]'>
-          <Text className='text-b-sm font-bold text-gray-500'>
-            서비스가 궁금하시다면?
-          </Text>
-          <Pressable
-            onPress={() => {
-              router.push('/home');
-            }}
-          >
-            <Text className='text-b-md font-extrabold text-[#19B375] ml-1'>
-              둘러보기
+        {!emergency && (
+          <View className='flex-row items-center justify-center mt-[10px]'>
+            <Text className='text-b-sm font-bold text-gray-500'>
+              서비스가 궁금하시다면?
             </Text>
-          </Pressable>
-        </View>
+
+            <Pressable
+              onPress={() => {
+                router.push('/home');
+              }}
+            >
+              <Text className='text-b-md font-extrabold text-[#19B375] ml-1'>
+                둘러보기
+              </Text>
+            </Pressable>
+          </View>
+        )}
       </View>
 
       {/* KakaoLoginWebView 모달 */}
@@ -91,7 +104,7 @@ export default function Index() {
           visible={showKakao}
           onClose={() => setShowKakao(false)}
           onAuthCode={kakaoLogin.mutate}
-          forceReauth={forceReauth} 
+          forceReauth={forceReauth}
         />
       )}
     </SafeAreaView>
