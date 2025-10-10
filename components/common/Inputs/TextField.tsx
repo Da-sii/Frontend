@@ -273,7 +273,7 @@ export const TextField: React.FC<TextFieldProps> = ({
           secureTextEntry={secureTextEntry && !showPassword}
           editable={!disabled}
           placeholder={placeholder}
-          placeholderTextColor='#9ca3af'
+          placeholderTextColor='#60676C'
           returnKeyType='done'
           blurOnSubmit
           keyboardType={keyboardType}

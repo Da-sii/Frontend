@@ -4,7 +4,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { Modal, SafeAreaView, ScrollView, Text } from 'react-native';
 
 interface ModalProps {
-  type: 'terms' | 'service' | 'privacy' | 'reviewPolicy' | 'adInquiry';
+  type:
+    | 'terms'
+    | 'privacy'
+    | 'adInquiry'
+    | 'inquiryAppUsage'
+    | 'footerReviewPolicy'
+    | 'footerService';
   visible: boolean;
   onClose: () => void;
 }
@@ -24,10 +30,12 @@ export const HomeFooterModal = ({ type, visible, onClose }: ModalProps) => {
           title={TERMS.find((term) => term.id === type)?.title}
         />
 
-        <ScrollView className='p-4'>
+        <ScrollView className='p-4 pt-0'>
           <Text className='text-base text-gray-800 leading-6'>
             <Text className='font-bold'>
-              {TERMS.find((term) => term.id === type)?.title} {'\n'}
+              {TERMS.find((term) => term.id === type)?.subtitle ||
+                TERMS.find((term) => term.id === type)?.title}{' '}
+              {'\n'}
             </Text>
             {TERMS.find((term) => term.id === type)?.content}
           </Text>

@@ -15,9 +15,9 @@ const dummyTagWidths = [80, 110, 70, 90, 100, 80];
 export default function TagsView({
   categories,
   title = '인기 카테고리',
+  isLoading,
 }: TagsViewProps) {
   const router = useRouter();
-  const isLoading = false;
 
   const handlePress = (cat: TopSmallCategory) => {
     router.push({
@@ -43,12 +43,17 @@ export default function TagsView({
         ) : (
           categories.map((cat: TopSmallCategory) => (
             <Pressable key={cat.smallCategory} onPress={() => handlePress(cat)}>
-              <View
-                key={cat.smallCategory}
-                className='px-3 py-1 bg-white border-[0.5px] border-gray-100 text-gray-700 rounded-full'
-              >
-                <Text className='text-sm'>{cat.smallCategory}</Text>
-              </View>
+              {({ pressed }) => (
+                <View
+                  className={`px-3 py-1 border-[0.5px] border-gray-100 rounded-full ${
+                    pressed ? 'bg-gray-100' : 'bg-white'
+                  }`}
+                >
+                  <Text className='text-sm text-gray-700'>
+                    {cat.smallCategory}
+                  </Text>
+                </View>
+              )}
             </Pressable>
           ))
         )}

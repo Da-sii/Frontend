@@ -146,7 +146,7 @@ export default function Search() {
   const hasResults = searchData?.results && searchData.results.length > 0;
 
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ['40%'], []);
+  const snapPoints = useMemo(() => ['30%'], []);
 
   const handleSortSelect = (sortId: string) => {
     setSelectedSort(sortId);
@@ -188,7 +188,7 @@ export default function Search() {
         <FlatList
           ListHeaderComponent={
             searchData?.results && (
-              <View className='py-1 mb-2'>
+              <View className='mb-3 mt-[-10px]'>
                 <View className='flex-row justify-between items-center'>
                   <Text className='text-sm text-gray-900 font-semibold'>
                     총 {searchData?.results.length}개
@@ -198,7 +198,7 @@ export default function Search() {
                       className='flex-row items-center mr-2'
                       onPress={() => bottomSheetRef.current?.expand()}
                     >
-                      <Text className='text-xs text-gray-900 mr-1'>
+                      <Text className='text-sm font-semibold text-gray-900 mr-1'>
                         {sortOptions.find(
                           (option) => option.id === selectedSort,
                         )?.label || '랭킹순'}
@@ -260,7 +260,7 @@ export default function Search() {
           }
           ItemSeparatorComponent={
             viewType === 'list'
-              ? () => <View className='h-[0.5px] bg-gray-200 mx-2' />
+              ? () => <View className='h-[0.5px] bg-gray-200' />
               : undefined
           }
         />
