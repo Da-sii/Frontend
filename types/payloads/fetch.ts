@@ -26,3 +26,7 @@ export interface UpdatePasswordPayload {
   new_password1: string;
   new_password2: string;
 }
+
+export interface VerifyCurrentPasswordPayload {
+  current_password: string;
+}
