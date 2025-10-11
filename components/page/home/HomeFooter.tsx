@@ -65,13 +65,13 @@ export default function HomeFooter() {
       </View>
 
       <HomeFooterModal
-        type='service'
+        type='footerService'
         visible={isTermsModalVisible}
         onClose={() => setIsTermsModalVisible(false)}
       />
 
       <HomeFooterModal
-        type='reviewPolicy'
+        type='footerReviewPolicy'
         visible={isReviewPolicyModalVisible}
         onClose={() => setIsReviewPolicyModalVisible(false)}
       />
