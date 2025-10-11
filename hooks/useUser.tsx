@@ -1,10 +1,11 @@
+import { handelError } from '@/services/handelErrors';
 import { userAPI } from '@/services/user';
 import { IUser } from '@/types/models/user';
 import {
   UpdateNicknamePayload,
   UpdatePasswordPayload,
+  VerifyCurrentPasswordPayload,
 } from '@/types/payloads/fetch';
-import axios from 'axios';
 
 import { useCallback, useState } from 'react';
 
@@ -28,11 +29,7 @@ export const useUser = () => {
       const data = await userAPI.updateNickname(payload);
       return data;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 401) {
-        // console.log('잘못된 핀번호입니다.');
-      } else {
-        // console.log('500');
-      }
+      handelError(error);
       return false;
     } finally {
       setIsLoading(false);
@@ -45,12 +42,22 @@ export const useUser = () => {
       const data = await userAPI.updatePassword(payload);
       return data;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 401) {
-        // console.log('잘못된 핀번호입니다.');
-      } else {
-        // console.log('500');
-      }
+      handelError(error);
       return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const verifyCurrentPassword = async (
+    payload: VerifyCurrentPasswordPayload,
+  ) => {
+    setIsLoading(true);
+    try {
+      const data = await userAPI.verifyCurrentPassword(payload);
+      return data;
+    } catch (error) {
+      handelError(error);
     } finally {
       setIsLoading(false);
     }
@@ -61,6 +68,7 @@ export const useUser = () => {
     mypageInfo,
     updateNickname,
     updatePassword,
+    verifyCurrentPassword,
     isLoading,
     setIsLoading,
   };
