@@ -21,8 +21,9 @@ export default function Ranking() {
 
   const { categories, fetchCategories } = useCategory();
   const initialFilter = params.category ? (params.category as string) : '전체';
+  const initialTab = params.initialTab === 'monthly' ? 'monthly' : 'daily';
   const [filter, setFilter] = useState<string>(initialFilter);
-  const [tab, setTab] = useState<'daily' | 'monthly'>('daily');
+  const [tab, setTab] = useState<'daily' | 'monthly'>(initialTab);
 
   const { data: rankingInfo, isLoading } = useFetchRankingQuery({
     period: tab === 'daily' ? 'daily' : 'monthly',
@@ -38,6 +39,12 @@ export default function Ranking() {
   useEffect(() => {
     fetchCategories();
   }, []);
+
+  useEffect(() => {
+    if (params.initialTab === 'daily' || params.initialTab === 'monthly') {
+      setTab(params.initialTab);
+    }
+  }, [params.initialTab]);
 
   useEffect(() => {
     if (
