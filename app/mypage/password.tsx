@@ -77,7 +77,6 @@ export default function ChangePassword() {
   };
 
   const handleVerifyPassword = async () => {
-    // 입력값이 없으면 검증하지 않음
     if (!currentPwd) {
       setCurrentPwdValid(undefined);
       return;

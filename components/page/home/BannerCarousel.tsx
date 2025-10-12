@@ -1,120 +1,79 @@
-import { useEffect, useRef } from 'react';
-import {
-  Animated,
-  Dimensions,
-  FlatList,
-  Image,
-  Text,
-  View,
-  ViewabilityConfig,
-} from 'react-native';
-
-const { width: screenWidth } = Dimensions.get('window');
-
-const SIDE_PREVIEW = 30;
-const ITEM_WIDTH = screenWidth - SIDE_PREVIEW * 2;
-const ITEM_SPACING = -10;
-
-interface BannerItem {
-  id: string;
-  image: string;
-  description: string;
-}
+import { IBannerCell } from '@/types/models/main';
+import { useState } from 'react';
+import { Dimensions, Image, Pressable, Text, View } from 'react-native';
+import { useSharedValue } from 'react-native-reanimated';
+import Carousel from 'react-native-reanimated-carousel';
 
 interface BannerCarouselProps {
-  data: BannerItem[];
-  focusedIndex: number;
-  onViewableItemsChanged: any;
-  viewabilityConfig: ViewabilityConfig;
+  data: IBannerCell[];
+  onPress: (index: number) => void;
 }
 
-export default function BannerCarousel({
-  data,
-  focusedIndex,
-  onViewableItemsChanged,
-  viewabilityConfig,
-}: BannerCarouselProps) {
-  const scales = useRef(data.map(() => new Animated.Value(0.9))).current;
-  const opacities = useRef(data.map(() => new Animated.Value(0.7))).current;
+export default function BannerCarousel({ data, onPress }: BannerCarouselProps) {
+  const screenWidth = Dimensions.get('window').width;
+  const ITEM_SIZE = screenWidth;
 
-  useEffect(() => {
-    scales.forEach((scale, i) => {
-      Animated.timing(scale, {
-        toValue: i === focusedIndex ? 1 : 0.9,
-        duration: 100,
-        useNativeDriver: true,
-      }).start();
-    });
-    opacities.forEach((opacity, i) => {
-      Animated.timing(opacity, {
-        toValue: i === focusedIndex ? 1 : 0.7,
-        duration: 100,
-        useNativeDriver: true,
-      }).start();
-    });
-  }, [focusedIndex, scales, opacities]);
+  const [activeIndex, setActiveIndex] = useState(0);
 
-  // 카드 렌더러
-  const renderBannerItem = ({
-    item,
-    index,
-  }: {
-    item: BannerItem;
-    index: number;
-  }) => (
-    <Animated.View
-      key={item.id}
-      className='bg-gray-box rounded-xl overflow-hidden'
+  const renderBannerItem = ({ item }: { item: IBannerCell }) => (
+    <Pressable
+      onPress={() => onPress(activeIndex)}
       style={{
-        width: ITEM_WIDTH,
-        height: ITEM_WIDTH,
-        marginRight: index === data.length - 1 ? 0 : ITEM_SPACING,
-        transform: [{ scale: scales[index] }],
-        opacity: opacities[index],
+        width: '100%',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
       }}
     >
-      <Image
-        source={{ uri: item.image }}
-        resizeMode='cover'
-        className='w-full h-full'
-      />
-      <View className='absolute left-4 bottom-6'>
-        <Text className='text-white text-lg font-bold'>{item.description}</Text>
+      <View
+        className='bg-white rounded-2xl overflow-hidden shadow-lg'
+        style={{
+          width: '100%',
+          height: '100%',
+        }}
+      >
+        <Image
+          source={item.image}
+          resizeMode='contain'
+          className='w-full h-full'
+        />
+        <View className='absolute left-8 bottom-8'>
+          <Text className='text-white text-2xl font-bold'>{item.title}</Text>
+          <Text className='text-white text-lg font-bold mt-1'>
+            {item.subTitle}
+          </Text>
+        </View>
+        <View className='absolute top-5 right-5 bg-black/40 px-4 py-1 rounded-full'>
+          <Text className='text-white text-sm font-semibold'>
+            {activeIndex + 1} / {data.length}
+          </Text>
+        </View>
       </View>
-      <View className='absolute top-4 right-4 bg-black/40 px-2 py-1 rounded-full'>
-        <Text className='text-white text-xs font-semibold'>
-          {index + 1} / {data.length}
-        </Text>
-      </View>
-    </Animated.View>
+    </Pressable>
   );
-
-  const spacerWidth = (screenWidth - ITEM_WIDTH) / 2 - 15;
+  const progress = useSharedValue<number>(0);
 
   return (
-    <FlatList
+    <Carousel
+      autoPlay
+      autoPlayInterval={5000}
       data={data}
+      height={ITEM_SIZE}
+      loop={true}
+      pagingEnabled={true}
+      snapEnabled={true}
+      width={Dimensions.get('window').width}
+      style={{
+        width: Dimensions.get('window').width,
+      }}
+      mode='parallax'
+      modeConfig={{
+        parallaxScrollingScale: 0.85,
+        parallaxScrollingOffset: 70,
+      }}
+      onProgressChange={progress}
       renderItem={renderBannerItem}
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      snapToInterval={ITEM_WIDTH + ITEM_SPACING}
-      snapToAlignment='center'
-      decelerationRate='fast'
-      disableIntervalMomentum={true}
-      // --- 변경된 부분 ---
-      // 1. contentContainerStyle에서 paddingHorizontal 제거
-      contentContainerStyle={
-        {
-          // paddingHorizontal: SIDE_PREVIEW, // 이 줄을 제거합니다.
-        }
-      }
-      // 2. 리스트 시작 부분에 스페이서 추가
-      ListHeaderComponent={<View style={{ width: spacerWidth }} />}
-      // 3. 리스트 끝 부분에 스페이서 추가
-      ListFooterComponent={<View style={{ width: spacerWidth }} />}
-      keyExtractor={(item) => item.id}
-      onViewableItemsChanged={onViewableItemsChanged}
-      viewabilityConfig={viewabilityConfig}
+      onSnapToItem={(index) => setActiveIndex(index)}
     />
   );
 }

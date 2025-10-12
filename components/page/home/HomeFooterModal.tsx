@@ -10,7 +10,8 @@ interface ModalProps {
     | 'adInquiry'
     | 'inquiryAppUsage'
     | 'footerReviewPolicy'
-    | 'footerService';
+    | 'footerService'
+    | 'footerPrivacy';
   visible: boolean;
   onClose: () => void;
 }

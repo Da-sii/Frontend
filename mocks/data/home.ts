@@ -1,26 +1,3 @@
-export const bannerData = [
-  {
-    id: '1',
-    image: require('@/assets/images/img_product_4.png'),
-    description: '빠른 부종 개선에 유용한 인기템',
-  },
-  {
-    id: '2',
-    image: require('@/assets/images/img_product_2.png'),
-    description: '다른 배너 설명',
-  },
-  {
-    id: '3',
-    image: require('@/assets/images/img_product_4.png'),
-    description: '빠른 부종 개선에 유용한 인기템',
-  },
-  {
-    id: '4',
-    image: require('@/assets/images/img_product_2.png'),
-    description: '다른 배너 설명',
-  },
-];
-
 export const mockRankingData = [
   {
     id: '1',
