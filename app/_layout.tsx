@@ -10,7 +10,7 @@ import 'react-native-url-polyfill/auto';
 
 if (!__DEV__) {
   Sentry.init({
-    dsn: 'https://94cf4844eeacc7628b50e1af33131335@o4510182859800577.ingest.us.sentry.io/4510182861701120',
+    dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
     sendDefaultPii: true,
     enableLogs: true,
     replaysSessionSampleRate: 0.1,
