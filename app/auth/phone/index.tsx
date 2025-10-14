@@ -1,22 +1,21 @@
 import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
-import Navigation from '@/components/layout/Navigation';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { Pressable, SafeAreaView, Text, View } from 'react-native';
-import { useEffect, useState } from 'react';
 import { TextField } from '@/components/common/Inputs/TextField';
 import { LongButton } from '@/components/common/buttons/LongButton';
-import { useMemo } from 'react';
 import DefaultModal from '@/components/common/modals/DefaultModal';
-import { useSignup } from '@/hooks/useSignUp';
-import { useSignupDraft } from '@/store/useSignupDraft';
+import Navigation from '@/components/layout/Navigation';
+import { useFindIDWithPhone } from '@/hooks/auth/useFindAccount';
 import {
   useSendPhoneAuth,
   useVerifyAuthCode,
   useVerifyAuthToken,
 } from '@/hooks/auth/usePhoneAuth';
-import { useFindIDWithPhone } from '@/hooks/auth/useFindAccount';
+import { useSignup } from '@/hooks/useSignUp';
 import { useFoundAccounts } from '@/store/useFoundAccounts';
 import { usePasswordReset } from '@/store/usePasswordReset';
+import { useSignupDraft } from '@/store/useSignupDraft';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { useEffect, useMemo, useState } from 'react';
+import { Pressable, SafeAreaView, Text, View } from 'react-native';
 
 export default function Index() {
   const { menu } = useLocalSearchParams<{ menu?: string }>();
@@ -219,12 +218,22 @@ export default function Index() {
         <Text className='text-h-lg font-extrabold text-gray-700 mb-[12px]'>
           휴대폰 본인 인증
         </Text>
-        <Text className='text-b-md font-bold text-gray-700 mb-[8px]'>
-          계정 생성 후,
-        </Text>
-        <Text className='text-b-md font-bold text-gray-700 mb-[25px]'>
-          휴대폰 본인인증을 완료하면 가입이 완료됩니다.
-        </Text>
+        {menu === 'signUp' ? (
+          <>
+            <Text className='text-b-md font-bold text-gray-700 mb-[8px]'>
+              계정 생성 후,
+            </Text>
+            <Text className='text-b-md font-bold text-gray-700 mb-[25px]'>
+              휴대폰 본인인증을 완료하면 가입이 완료됩니다.
+            </Text>
+          </>
+        ) : (
+          <>
+            <Text className='text-b-md font-bold text-gray-700 mb-[25px]'>
+              입력하신 정보는 본인 확인을 위해서만 사용됩니다.
+            </Text>
+          </>
+        )}
 
         {/* 휴대폰 번호 */}
         <TextField
