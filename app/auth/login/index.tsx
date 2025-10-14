@@ -58,8 +58,8 @@ export default function Index({ emergency }: { emergency?: string }) {
             Icon={AppleIcon}
             textColor='text-white'
             border='border-none'
-            IconWidth={46}
-            IconHeight={46}
+            IconWidth={16}
+            IconHeight={20}
           />
           <LoginButton
             label='이메일로 로그인'
