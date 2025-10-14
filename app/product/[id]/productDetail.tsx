@@ -184,11 +184,20 @@ export default function ProductDetail() {
                   <Text className='text-c2 font-normal text-gray-400 mr-[26px] w-[46px]'>
                     랭킹
                   </Text>
-                  <View className='flex-col'>
+                  <View className='flex-row  flex-wrap'>
                     {data?.ranking?.map((item, index) => (
-                      <Text key={index} className='text-c2 font-normal'>
-                        {item.title}
-                      </Text>
+                      <View
+                        key={index}
+                        className='flex-row items-baseline mr-2'
+                      >
+                        <Text className='text-c2 font-normal'>
+                          {item.bigCategory}
+                        </Text>
+                        <Text className='text-c2 font-normal'> / </Text>
+                        <Text className='text-c2 font-normal'>
+                          {item.smallCategory} {item.monthlyRank}위
+                        </Text>
+                      </View>
                     ))}
                   </View>
                 </View>
