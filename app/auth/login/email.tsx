@@ -47,8 +47,8 @@ export default function Email() {
         <Text className='text-h-lg font-extrabold text-gray-700 mb-[25px]'>
           이메일로 계속
         </Text>
-        <View className='space-y-3 mb-[25px]'>
-          <View>
+        <View className='space-y-[12px] mb-[25px]'>
+          <View className=''>
             <TextField
               menu={2}
               value={email}

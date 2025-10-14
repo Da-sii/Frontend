@@ -8,6 +8,8 @@ import Navigation from '@/components/layout/Navigation';
 import BottomSheetLayout from '@/components/page/product/productDetail/BottomSeetLayout';
 import { useCheckEmailExists } from '@/hooks/auth/useCheckExistsEmail';
 
+import { HomeFooterModal } from '@/components/page/home/HomeFooterModal';
+import { useSignupDraft } from '@/store/useSignupDraft';
 import {
   hasPasswordComposition,
   isEmail,
@@ -19,7 +21,6 @@ import { PortalProvider } from '@gorhom/portal';
 import { Stack, useRouter } from 'expo-router';
 import { useMemo, useRef, useState } from 'react';
 import { Pressable, SafeAreaView, Text, View } from 'react-native';
-import { useSignupDraft } from '@/store/useSignupDraft';
 import Svg, { Path } from 'react-native-svg';
 
 const TERMS: { id: string; terms: string; essential: boolean }[] = [
@@ -34,6 +35,8 @@ export default function Index() {
   const router = useRouter();
   const [checkedSet, setCheckedSet] = useState<Set<number>>(new Set());
   const [isExistsEmail, setIsExistsEmail] = useState(false);
+  const [isTermsModalVisible, setIsTermsModalVisible] = useState(false);
+  const [selectedTerm, setSelectedTerm] = useState<string>('');
   const {
     email,
     password,
@@ -265,7 +268,10 @@ export default function Index() {
                       </Text>
                     </Pressable>
                     <Pressable
-                      onPress={() => router.push(`/auth/signUp/terms/${id}`)}
+                      onPress={() => {
+                        setIsTermsModalVisible(true);
+                        setSelectedTerm(id);
+                      }}
                     >
                       <RightArrowIcon />
                     </Pressable>
@@ -281,6 +287,19 @@ export default function Index() {
           </View>
         </BottomSheetLayout>
       </PortalProvider>
+
+      <HomeFooterModal
+        type={
+          selectedTerm as
+            | 'service'
+            | 'privacy'
+            | 'age'
+            | 'appUsage'
+            | 'notification'
+        }
+        visible={isTermsModalVisible}
+        onClose={() => setIsTermsModalVisible(false)}
+      />
     </SafeAreaView>
   );
 }

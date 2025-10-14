@@ -1,4 +1,26 @@
-import { PortalProvider } from '@gorhom/portal';
+import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
+import ArrowRightIcon from '@/assets/icons/ic_arrow_right.svg';
+import HomeIcon from '@/assets/icons/ic_home.svg';
+import SearchIcon from '@/assets/icons/ic_magnifier.svg';
+import StarIcon from '@/assets/icons/ic_star.svg';
+import EmptyReviewIcon from '@/assets/icons/product/productDetail/ic_no_review.svg';
+import { LongButton } from '@/components/common/buttons/LongButton';
+import { ReviewButton } from '@/components/common/buttons/ReviewButton';
+import DefaultModal from '@/components/common/modals/DefaultModal';
+import Navigation from '@/components/layout/Navigation';
+import CoupangTabBar from '@/components/page/product/productDetail/CoupangTabBar';
+import MaterialInfo from '@/components/page/product/productDetail/materialInfo';
+import PhotoCard from '@/components/page/product/productDetail/PhotoCard';
+import ReviewCard from '@/components/page/product/productDetail/ReviewCard';
+import ReviewItems from '@/components/page/product/productDetail/reviewItem';
+import CustomTabs from '@/components/page/product/productDetail/tab';
+import colors from '@/constants/color';
+import { useIsLoggedIn } from '@/hooks/auth/useIsLoggedIn';
+import { useGetReviewImageList } from '@/hooks/product/review/image/useGetReviewImageList';
+import { useProductReviewsPreview } from '@/hooks/product/review/useGetProductReview';
+import { useProductRatingStats } from '@/hooks/product/review/useProductRatingStats';
+import { useProductDetail } from '@/hooks/product/useProductDetail';
+import { PortalHost, PortalProvider } from '@gorhom/portal';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   Stack,
@@ -10,27 +32,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FlatList, Image, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
-import ArrowRightIcon from '@/assets/icons/ic_arrow_right.svg';
-import HomeIcon from '@/assets/icons/ic_home.svg';
-import SearchIcon from '@/assets/icons/ic_magnifier.svg';
-import StarIcon from '@/assets/icons/ic_star.svg';
-import EmptyReviewIcon from '@/assets/icons/product/productDetail/ic_no_review.svg';
-import { LongButton } from '@/components/common/buttons/LongButton';
-import { ReviewButton } from '@/components/common/buttons/ReviewButton';
-import Navigation from '@/components/layout/Navigation';
-import CoupangTabBar from '@/components/page/product/productDetail/CoupangTabBar';
-import MaterialInfo from '@/components/page/product/productDetail/materialInfo';
-import PhotoCard from '@/components/page/product/productDetail/PhotoCard';
-import ReviewCard from '@/components/page/product/productDetail/ReviewCard';
-import ReviewItems from '@/components/page/product/productDetail/reviewItem';
-import CustomTabs from '@/components/page/product/productDetail/tab';
-import colors from '@/constants/color';
-import { useGetReviewImageList } from '@/hooks/product/review/image/useGetReviewImageList';
-import { useProductReviewsPreview } from '@/hooks/product/review/useGetProductReview';
-import { useProductRatingStats } from '@/hooks/product/review/useProductRatingStats';
-import { useProductDetail } from '@/hooks/product/useProductDetail';
-
 const tabs = [
   { key: 'ingredient', label: '성분 정보' },
   { key: 'review', label: '리뷰' },
@@ -38,6 +39,10 @@ const tabs = [
 
 export default function ProductDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
+
+  const [showIsMyReviewModal, setShowIsMyReviewModal] = useState(false);
+
+  const isLoggedIn = useIsLoggedIn();
   const idNum = Number(id);
   const { data } = useProductDetail(id);
   const { data: reviews = [] } = useProductReviewsPreview(idNum, 'time');
@@ -104,9 +109,10 @@ export default function ProductDetail() {
   if (!data) return <Text>제품을 찾을 수 없습니다.</Text>;
 
   return (
-    <SafeAreaView className='flex-1 bg-white'>
-      <Stack.Screen options={{ headerShown: false }} />
-      <PortalProvider>
+    <PortalProvider>
+      <SafeAreaView className='flex-1 bg-white'>
+        <Stack.Screen options={{ headerShown: false }} />
+
         <Navigation
           left={
             <ArrowLeftIcon width={20} height={20} fill={colors.gray[900]} />
@@ -167,7 +173,7 @@ export default function ProductDetail() {
                 <View className='flex-row items-center'>
                   <Text className='text-b-lg font-bold'>정가 </Text>
                   <Text className='text-h-md font-extrabold'>
-                    {data?.price ?? 0}원{' '}
+                    {data?.price.toLocaleString('ko-KR') ?? 0}원{' '}
                   </Text>
                   <Text className='text-c1 font-bold text-gray-300'>
                     / {data?.unit ?? ''}
@@ -176,18 +182,23 @@ export default function ProductDetail() {
               </View>
 
               {/* 랭킹 및 영양 정보 */}
-              <View className='flex-col gap-y-4 border-gray-100 border-b-[3px] py-5 px-5'>
+              <View className='flex-col gap-y-4 border-gray-100 border-b-[3px] py-5 px-5 '>
                 <View className='flex-row'>
                   <Text className='text-c2 font-normal text-gray-400 mr-[26px] w-[46px]'>
                     랭킹
                   </Text>
-                  <View className='flex-col'>
-                    {data?.ranking?.map((item, index) => (
-                      <Text key={index} className='text-c2 font-normal'>
-                        {item.title}
+
+                  {data?.ranking?.map((item, index) => (
+                    <View key={index} className='flex-row items-baseline mr-2'>
+                      <Text className='text-c2 font-normal h-[16px]'>
+                        {item.bigCategory}
                       </Text>
-                    ))}
-                  </View>
+                      <Text className='text-c2 font-normal'> / </Text>
+                      <Text className='text-c2 font-normal'>
+                        {item.smallCategory} {item.monthlyRank}위
+                      </Text>
+                    </View>
+                  ))}
                 </View>
                 <View className='flex-row'>
                   <Text className='text-c2 font-normal text-gray-400 w-[46px] mr-[26px]'>
@@ -245,20 +256,29 @@ export default function ProductDetail() {
                   <LongButton
                     label={'리뷰 작성하기'}
                     height='h-[40px]'
-                    onPress={() =>
-                      router.push({
-                        pathname: `/product/${id}/review/write` as any,
-                        params: {
-                          id: String(id), // 제품아이디
-                          name: data?.name ?? '', // 제품명
-                          brand: data?.company ?? '', // 회사명
-                          image:
-                            typeof data?.images === 'string'
-                              ? data?.images
-                              : '', // URL만 보내기
-                        },
-                      })
-                    }
+                    onPress={async () => {
+                      if (data?.isMyReview) {
+                        setShowIsMyReviewModal(true);
+                        return;
+                      } else {
+                        if (await isLoggedIn()) {
+                          router.push({
+                            pathname: `/product/${id}/review/write` as any,
+                            params: {
+                              id: String(id), // 제품아이디
+                              name: data?.name ?? '', // 제품명
+                              brand: data?.company ?? '', // 회사명
+                              image:
+                                typeof data?.images === 'string'
+                                  ? data?.images
+                                  : '', // URL만 보내기
+                            },
+                          });
+                        } else {
+                          router.push('/auth/login/emergency');
+                        }
+                      }
+                    }}
                   />
 
                   {(ratingStats?.total_reviews ?? 0) <= 0 ? (
@@ -376,9 +396,19 @@ export default function ProductDetail() {
             )
           }
         />
-      </PortalProvider>
-      <CoupangTabBar product={coupangProduct} />
-    </SafeAreaView>
+
+        <CoupangTabBar product={coupangProduct} />
+        <PortalHost name='overlay-top' />
+        <DefaultModal
+          visible={showIsMyReviewModal}
+          message='이미 리뷰를 작성하셨어요.'
+          confirmText='확인'
+          onConfirm={() => setShowIsMyReviewModal(false)}
+          singleButton={true}
+          // 필요하면 onClose/onCancel도 동일하게 닫기
+        />
+      </SafeAreaView>
+    </PortalProvider>
   );
 }
 

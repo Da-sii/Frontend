@@ -40,14 +40,14 @@ export default function ProductCard({
             ellipsizeMode='tail'
             numberOfLines={1}
           >
-            {brand}dd
+            {brand}
           </Text>
           <Text
             className='text-b-sm font-bold'
             ellipsizeMode='tail'
             numberOfLines={1}
           >
-            {name}dd
+            {name}
           </Text>
         </View>
       </View>
