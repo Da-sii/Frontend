@@ -294,9 +294,9 @@ export const TextField: React.FC<TextFieldProps> = ({
         )}
       </View>
 
-      <View className='flex-row items-center mt-2'>
+      <View className='flex-row items-center'>
         {shouldShowFirst && firstMessage && (
-          <View className='flex-row items-center'>
+          <View className='flex-row items-center mt-2'>
             <Text
               className={`text-c2 font-bold ml-[17px] mr-[2px] ${firstState.color}`}
             >
@@ -307,7 +307,7 @@ export const TextField: React.FC<TextFieldProps> = ({
         )}
 
         {shouldShowSecond && secondMessage && (
-          <View className='flex-row items-center'>
+          <View className='flex-row items-center mt-2'>
             <Text
               className={`text-c2 font-bold ml-[15px] mr-[2px] ${secondState.color}`}
             >

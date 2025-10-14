@@ -25,7 +25,7 @@ export default function ProgressBar({
         }}
       >
         <Text className='text-gray-400 text-c3 font-bold mb-1'>
-          1일 권장량 {recommended}mg
+          하루 최대치 {recommended}mg
         </Text>
         <View className='w-[5px] h-[5px] rounded-full bg-gray-400 mb-1' />
       </View>

@@ -22,6 +22,7 @@ export type ProductDetailDTO = {
   unit: string; // "51g"
   piece: number; // 낱개 수량
   productType: string; // "supplement"
+  isMyReview: boolean;
   reviewCount: number; // int
   reviewAvg: number | null; // null 가능
   ranking: any[]; // 서버에서 배열 내려줌
