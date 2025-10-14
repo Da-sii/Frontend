@@ -1,4 +1,4 @@
-import { useQuery, keepPreviousData } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import {
   getProductDetail,
   ProductDetail,
@@ -21,6 +21,5 @@ export function useProductDetail(id?: number | string) {
     },
     enabled: id != null, // id 있을 때만 호출
     placeholderData: keepPreviousData,
-    staleTime: 1000 * 60, // 1분
   });
 }

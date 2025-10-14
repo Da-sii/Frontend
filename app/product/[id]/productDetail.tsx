@@ -6,6 +6,7 @@ import StarIcon from '@/assets/icons/ic_star.svg';
 import EmptyReviewIcon from '@/assets/icons/product/productDetail/ic_no_review.svg';
 import { LongButton } from '@/components/common/buttons/LongButton';
 import { ReviewButton } from '@/components/common/buttons/ReviewButton';
+import DefaultModal from '@/components/common/modals/DefaultModal';
 import Navigation from '@/components/layout/Navigation';
 import CoupangTabBar from '@/components/page/product/productDetail/CoupangTabBar';
 import MaterialInfo from '@/components/page/product/productDetail/materialInfo';
@@ -18,7 +19,6 @@ import { useIsLoggedIn } from '@/hooks/auth/useIsLoggedIn';
 import { useGetReviewImageList } from '@/hooks/product/review/image/useGetReviewImageList';
 import { useProductReviewsPreview } from '@/hooks/product/review/useGetProductReview';
 import { useProductRatingStats } from '@/hooks/product/review/useProductRatingStats';
-import { useGetThreeRandomProduct } from '@/hooks/product/useGetRandomProduct';
 import { useProductDetail } from '@/hooks/product/useProductDetail';
 import { PortalHost, PortalProvider } from '@gorhom/portal';
 import { useQueryClient } from '@tanstack/react-query';
@@ -40,11 +40,12 @@ const tabs = [
 export default function ProductDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
 
+  const [showIsMyReviewModal, setShowIsMyReviewModal] = useState(false);
+
   const isLoggedIn = useIsLoggedIn();
   const idNum = Number(id);
   const { data } = useProductDetail(id);
   const { data: reviews = [] } = useProductReviewsPreview(idNum, 'time');
-
   const { data: ratingStats, refetch: refetchRatingStats } =
     useProductRatingStats(id);
   const { data: reviewImageList } = useGetReviewImageList(idNum, 0);
@@ -256,21 +257,26 @@ export default function ProductDetail() {
                     label={'리뷰 작성하기'}
                     height='h-[40px]'
                     onPress={async () => {
-                      if (await isLoggedIn()) {
-                        router.push({
-                          pathname: `/product/${id}/review/write` as any,
-                          params: {
-                            id: String(id), // 제품아이디
-                            name: data?.name ?? '', // 제품명
-                            brand: data?.company ?? '', // 회사명
-                            image:
-                              typeof data?.images === 'string'
-                                ? data?.images
-                                : '', // URL만 보내기
-                          },
-                        });
+                      if (data?.isMyReview) {
+                        setShowIsMyReviewModal(true);
+                        return;
                       } else {
-                        router.push('/auth/login/emergency');
+                        if (await isLoggedIn()) {
+                          router.push({
+                            pathname: `/product/${id}/review/write` as any,
+                            params: {
+                              id: String(id), // 제품아이디
+                              name: data?.name ?? '', // 제품명
+                              brand: data?.company ?? '', // 회사명
+                              image:
+                                typeof data?.images === 'string'
+                                  ? data?.images
+                                  : '', // URL만 보내기
+                            },
+                          });
+                        } else {
+                          router.push('/auth/login/emergency');
+                        }
                       }
                     }}
                   />
@@ -393,6 +399,14 @@ export default function ProductDetail() {
 
         <CoupangTabBar product={coupangProduct} />
         <PortalHost name='overlay-top' />
+        <DefaultModal
+          visible={showIsMyReviewModal}
+          message='이미 리뷰를 작성하셨어요.'
+          confirmText='확인'
+          onConfirm={() => setShowIsMyReviewModal(false)}
+          singleButton={true}
+          // 필요하면 onClose/onCancel도 동일하게 닫기
+        />
       </SafeAreaView>
     </PortalProvider>
   );
