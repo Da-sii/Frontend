@@ -5,7 +5,7 @@ import { SettingSection } from '@/components/page/my/SettingSection';
 import { useUser } from '@/hooks/useUser';
 import { getAccessToken } from '@/lib/authToken';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLogout } from '../../hooks/useLogout';
@@ -47,16 +47,17 @@ export default function Mypage() {
 
   useFocusEffect(
     useCallback(() => {
-      (async () => {
+      const checkLoginAndFetchData = async () => {
         const token = await getAccessToken();
-        setIsLogin(!!token);
-      })();
-    }, []),
+        const isLoggedIn = !!token;
+        setIsLogin(isLoggedIn);
+        if (isLoggedIn) {
+          await fetchMypage();
+        }
+      };
+      checkLoginAndFetchData();
+    }, [fetchMypage]),
   );
-
-  useEffect(() => {
-    fetchMypage();
-  }, []);
 
   return (
     <SafeAreaView className='flex-1 bg-white'>
@@ -113,11 +114,6 @@ export default function Mypage() {
             <SettingSection title='도움말' topBorder>
               <SettingItem label='버전 정보' value='V 1.0' />
               <SettingItem label='문의 메일' value='podostore1111@gmail.com' />
-              <SettingItem
-                label='내가 쓴 리뷰 디버깅용'
-                subLabel={`${mypageInfo?.review_count}개`}
-                onPress={() => router.push('/mypage/reviews')}
-              />
             </SettingSection>
           </>
         )}

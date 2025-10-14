@@ -1,14 +1,25 @@
-import 'react-native-reanimated';
-import 'react-native-url-polyfill/auto';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import * as Sentry from '@sentry/react-native';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import 'react-native-url-polyfill/auto';
 
-export default function RootLayout() {
+if (!__DEV__) {
+  Sentry.init({
+    dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
+    sendDefaultPii: true,
+    enableLogs: true,
+    replaysSessionSampleRate: 0.1,
+    replaysOnErrorSampleRate: 1,
+    integrations: [Sentry.mobileReplayIntegration()],
+  });
+}
+
+function RootLayout() {
   const queryClient = new QueryClient();
 
   const [loaded] = useFonts({
@@ -34,3 +45,5 @@ export default function RootLayout() {
     </QueryClientProvider>
   );
 }
+
+export default __DEV__ ? RootLayout : Sentry.wrap(RootLayout);

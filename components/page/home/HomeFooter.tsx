@@ -16,20 +16,21 @@ const InfoRow = ({ label, value }: { label: string; value: string }) => (
 export default function HomeFooter() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isTermsModalVisible, setIsTermsModalVisible] = useState(false);
+  const [isPrivacyModalVisible, setIsPrivacyModalVisible] = useState(false);
   const [isReviewPolicyModalVisible, setIsReviewPolicyModalVisible] =
     useState(false);
   const [isAdInquiryModalVisible, setIsAdInquiryModalVisible] = useState(false);
 
   return (
-    <View className='bg-white py-8 px-10 border-t border-gray-100'>
-      <LogoIcon width={45} className='mb-3' />
+    <View className='bg-white py-8 px-8 border-t border-gray-100'>
+      <LogoIcon width={54} className='mb-3' />
 
       <TouchableOpacity
         className='flex-row items-center mb-4'
         onPress={() => setIsExpanded(!isExpanded)}
         activeOpacity={0.7}
       >
-        <Text className='text-xs text-gray-700 font-light mr-1'>
+        <Text className='text-sm text-gray-700 font-light mr-1'>
           사업자정보
         </Text>
         {isExpanded ? <LessIcon color='gray' /> : <MoreIcon color='gray' />}
@@ -48,10 +49,15 @@ export default function HomeFooter() {
         </View>
       )}
 
-      <View className='flex-row items-center space-x-4'>
+      <View className='flex-row items-center space-x-2'>
         <TouchableOpacity onPress={() => setIsTermsModalVisible(true)}>
           <Text className='text-xs text-gray-600 underline'>
             서비스 이용 약관
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setIsPrivacyModalVisible(true)}>
+          <Text className='text-xs text-gray-600 underline'>
+            개인정보 처리방침
           </Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => setIsReviewPolicyModalVisible(true)}>
@@ -65,13 +71,19 @@ export default function HomeFooter() {
       </View>
 
       <HomeFooterModal
-        type='service'
+        type='footerService'
         visible={isTermsModalVisible}
         onClose={() => setIsTermsModalVisible(false)}
       />
 
       <HomeFooterModal
-        type='reviewPolicy'
+        type='footerPrivacy'
+        visible={isPrivacyModalVisible}
+        onClose={() => setIsPrivacyModalVisible(false)}
+      />
+
+      <HomeFooterModal
+        type='footerReviewPolicy'
         visible={isReviewPolicyModalVisible}
         onClose={() => setIsReviewPolicyModalVisible(false)}
       />

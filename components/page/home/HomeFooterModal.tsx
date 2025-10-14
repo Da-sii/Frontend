@@ -13,6 +13,7 @@ interface ModalProps {
     | 'age'
     | 'appUsage'
     | 'notification';
+
   visible: boolean;
   onClose: () => void;
 }
@@ -42,9 +43,11 @@ export const HomeFooterModal = ({ type, visible, onClose }: ModalProps) => {
           title={TERMS.find((term) => term.id === type)?.title}
         />
 
+
         <ScrollView className='p-4'>
           <Text className='font-bold'>
             {TERMS.find((term) => term.id === type)?.subTitle} {'\n'}
+
           </Text>
           <Markdown
             style={{

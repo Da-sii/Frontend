@@ -188,7 +188,7 @@ export default function List() {
       </View>
 
       <View className='px-4 py-3 pb-1 mb-2 flex-row justify-between items-center'>
-        <Text className='text-sm text-gray-900'>
+        <Text className='text-sm text-gray-900 font-semibold'>
           총 {productList?.results.length}개
         </Text>
         <View className='flex-row items-center'>
@@ -196,7 +196,7 @@ export default function List() {
             className='flex-row items-center mr-2'
             onPress={openSortSheet}
           >
-            <Text className='text-xs text-gray-900 mr-1'>
+            <Text className='text-sm text-gray-900 mr-1 font-semibold'>
               {sortOptions.find((opt) => opt.id === selectedSort)?.label}
             </Text>
             <SelectOptionsIcon width={10} height={10} fill={colors.gray[900]} />

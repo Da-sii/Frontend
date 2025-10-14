@@ -90,6 +90,7 @@ axiosInstance.interceptors.response.use(
     const status = error.response?.status;
     const original = error.config as InternalAxiosRequestConfig & {
       _retry?: boolean;
+      disableRedirect?: boolean;
     };
 
     if (status === 401 && !original?._retry) {
@@ -118,7 +119,9 @@ axiosInstance.interceptors.response.use(
       } catch (e) {
         flushQueue(undefined, e);
         await clearTokens();
-        router.replace('/auth/login');
+        if (!original.disableRedirect) {
+          router.replace('/auth/login');
+        }
         return Promise.reject(e);
       } finally {
         isRefreshing = false;

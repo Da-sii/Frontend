@@ -16,6 +16,7 @@ type TextFieldProps = {
   onChangeText: (text: string) => void;
   secureTextEntry?: boolean;
   disabled?: boolean;
+  onBlur?: () => void;
 
   // 메시지
   firstMessage?: string;
@@ -35,7 +36,7 @@ export const TextField: React.FC<TextFieldProps> = ({
   onChangeText,
   secureTextEntry = false,
   disabled = false,
-
+  onBlur,
   firstMessage,
   secondMessage,
 
@@ -198,6 +199,7 @@ export const TextField: React.FC<TextFieldProps> = ({
     if (useInternalValidation && menu === 2) {
       setTouched(true);
     }
+    onBlur?.();
   };
 
   const handleSubmitEditing = () => {
@@ -273,7 +275,7 @@ export const TextField: React.FC<TextFieldProps> = ({
           secureTextEntry={secureTextEntry && !showPassword}
           editable={!disabled}
           placeholder={placeholder}
-          placeholderTextColor='#9ca3af'
+          placeholderTextColor='#60676C'
           returnKeyType='done'
           blurOnSubmit
           keyboardType={keyboardType}

@@ -10,7 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ChangePassword() {
   const router = useRouter();
-  const { updatePassword, isLoading } = useUser();
+  const { updatePassword, isLoading, verifyCurrentPassword } = useUser();
 
   const [step, setStep] = useState<'current' | 'new'>('current');
 
@@ -18,6 +18,9 @@ export default function ChangePassword() {
   const [confirmPwd, setConfirmPwd] = useState('');
   const [currentPwd, setCurrentPwd] = useState('');
 
+  const [currentPwdValid, setCurrentPwdValid] = useState<boolean | undefined>(
+    undefined,
+  );
   const [validNew, setValidNew] = useState(false);
   const [matchConfirm, setMatchConfirm] = useState(false);
 
@@ -29,7 +32,7 @@ export default function ChangePassword() {
     setMatchConfirm(newPwd === confirmPwd && confirmPwd.length > 0);
   }, [newPwd, confirmPwd]);
 
-  const isNextDisabled = currentPwd.length === 0;
+  const isNextDisabled = currentPwd.length === 0 || currentPwdValid === false;
   const isSubmitDisabled = !(validNew && matchConfirm);
   const disabled = step === 'current' ? isNextDisabled : isSubmitDisabled;
 
@@ -55,17 +58,51 @@ export default function ChangePassword() {
     }
   };
 
-  const handlePressNextOrSubmit = () => {
+  const handlePressNextOrSubmit = async () => {
     if (disabled || isLoading) return;
 
     if (step === 'current') {
-      // TODO: 현재 비밀번호가 맞는지 서버에 확인하는 로직을 추가하면 더 좋습니다.
-      setStep('new'); // 다음 단계로 이동
-    } else {
-      handleSubmit(); // 최종 제출
+      const data = await verifyCurrentPassword({
+        current_password: currentPwd,
+      });
+      if (data?.valid === true) {
+        setStep('new');
+        setCurrentPwdValid(true);
+      } else {
+        setCurrentPwdValid(false);
+      }
+    } else if (step === 'new') {
+      handleSubmit();
     }
   };
 
+  const handleVerifyPassword = async () => {
+    if (!currentPwd) {
+      setCurrentPwdValid(undefined);
+      return;
+    }
+
+    try {
+      const data = await verifyCurrentPassword({
+        current_password: currentPwd,
+      });
+      setCurrentPwdValid(data?.valid === true);
+    } catch (error) {
+      console.error('비밀번호 검증 실패:', error);
+      setCurrentPwdValid(false);
+    }
+  };
+
+  // 3. TextField로 전달할 유효성 검사 함수
+  const isCurrentPwdValid = (text: string): boolean => {
+    if (text.length === 0) return false;
+
+    // 아직 검증 전(undefined)이면, 에러를 표시하지 않기 위해 true를 반환 (또는 원하는 초기 동작 설정)
+    if (currentPwdValid === undefined) return true;
+
+    // 검증 후에는 실제 결과(true 또는 false)를 반환
+    return currentPwdValid;
+  };
   return (
     <SafeAreaView className='flex-1 bg-white px-2'>
       <Stack.Screen
@@ -137,8 +174,9 @@ export default function ChangePassword() {
               secureTextEntry={true}
               placeholder='현재 비밀번호를 다시 입력해주세요'
               firstMessage='비밀번호 일치'
-              validateFirst={isLen8to20}
+              validateFirst={isCurrentPwdValid}
               maxLength={20}
+              onBlur={handleVerifyPassword}
             />
           </View>
         )}

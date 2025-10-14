@@ -1,6 +1,7 @@
 import MagnifierIcon from '@/assets/icons/ic_magnifier.svg';
 import CloseIcon from '@/assets/icons/ic_x.svg';
 import colors from '@/constants/color';
+import { useRef, useState } from 'react';
 import {
   FlatList,
   LayoutAnimation,
@@ -35,11 +36,25 @@ export default function SearchBar({
   onRemoveRecentSearch,
   onClearAllRecentSearches,
 }: SearchBarProps) {
+  const inputRef = useRef<TextInput>(null);
+  const [isFocused, setIsFocused] = useState(false);
+
+  const handleSearchSubmit = () => {
+    inputRef.current?.blur();
+    onSubmit?.();
+  };
+
+  const handleRecentSearchPress = (search: string) => {
+    inputRef.current?.blur();
+    onRecentSearchPress?.(search);
+  };
+
   return (
     <View>
       <View className='px-4'>
         <View className='flex-row items-center bg-gray-50 rounded-full pb-2 px-4 mb-4'>
           <TextInput
+            ref={inputRef}
             className='flex-1 text-base pt-1'
             placeholder={placeholder}
             placeholderTextColor={colors.gray[400]}
@@ -49,14 +64,14 @@ export default function SearchBar({
               LayoutAnimation.configureNext(
                 LayoutAnimation.Presets.easeInEaseOut,
               );
-
+              setIsFocused(true);
               onFocus?.();
             }}
             onBlur={() => {
               LayoutAnimation.configureNext(
                 LayoutAnimation.Presets.easeInEaseOut,
               );
-
+              setIsFocused(false);
               onBlur?.();
             }}
             autoFocus={true}
@@ -71,7 +86,7 @@ export default function SearchBar({
               <CloseIcon width={13} height={13} color={colors.gray[0]} />
             </Pressable>
           )}
-          <Pressable className='ml-4 mt-2' onPress={onSubmit}>
+          <Pressable className='ml-4 mt-2' onPress={handleSearchSubmit}>
             <MagnifierIcon
               width={18}
               height={18}
@@ -83,7 +98,7 @@ export default function SearchBar({
 
       <View className='w-full border-[0.5px] border-gray-100 mb-4' />
 
-      {recentSearches && recentSearches.length > 0 && (
+      {isFocused && recentSearches && recentSearches.length > 0 && (
         <>
           <View className='px-4 mb-4'>
             <View>
@@ -105,7 +120,7 @@ export default function SearchBar({
                 contentContainerStyle={{ paddingVertical: 4 }}
                 renderItem={({ item }) => (
                   <Pressable
-                    onPress={() => onRecentSearchPress?.(item)}
+                    onPress={() => handleRecentSearchPress(item)}
                     className='flex-row items-center bg-white border-[0.5px] border-gray-200 rounded-full pl-4 pr-2 py-1'
                   >
                     <Text
@@ -131,8 +146,6 @@ export default function SearchBar({
               />
             </View>
           </View>
-
-          <View className='w-full border-[0.5px] border-gray-100 mb-4' />
         </>
       )}
     </View>

@@ -1,7 +1,9 @@
 import {
   UpdateNicknamePayload,
   UpdatePasswordPayload,
+  VerifyCurrentPasswordPayload,
 } from '@/types/payloads/fetch';
+import { VerifyCurrentPasswordResponse } from '@/types/responses/my';
 import {
   MypageResponse,
   UpdateNicknameResponse,
@@ -31,7 +33,19 @@ export const userAPI = {
   },
 
   getMypage: async (): Promise<MypageResponse> => {
-    const { data } = await axiosInstance.get<MypageResponse>('/auth/mypage/');
+    const { data } = await axiosInstance.get<MypageResponse>('/auth/mypage/', {
+      disableRedirect: true,
+    });
+    return data;
+  },
+
+  verifyCurrentPassword: async (
+    payload: VerifyCurrentPasswordPayload,
+  ): Promise<VerifyCurrentPasswordResponse> => {
+    const { data } = await axiosInstance.post<VerifyCurrentPasswordResponse>(
+      '/auth/password/verify/',
+      payload,
+    );
     return data;
   },
 };

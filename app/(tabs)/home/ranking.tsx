@@ -21,8 +21,9 @@ export default function Ranking() {
 
   const { categories, fetchCategories } = useCategory();
   const initialFilter = params.category ? (params.category as string) : '전체';
+  const initialTab = params.initialTab === 'monthly' ? 'monthly' : 'daily';
   const [filter, setFilter] = useState<string>(initialFilter);
-  const [tab, setTab] = useState<'daily' | 'monthly'>('daily');
+  const [tab, setTab] = useState<'daily' | 'monthly'>(initialTab);
 
   const { data: rankingInfo, isLoading } = useFetchRankingQuery({
     period: tab === 'daily' ? 'daily' : 'monthly',
@@ -38,6 +39,12 @@ export default function Ranking() {
   useEffect(() => {
     fetchCategories();
   }, []);
+
+  useEffect(() => {
+    if (params.initialTab === 'daily' || params.initialTab === 'monthly') {
+      setTab(params.initialTab);
+    }
+  }, [params.initialTab]);
 
   useEffect(() => {
     if (
@@ -96,6 +103,7 @@ export default function Ranking() {
           className='px-2 py-3 mx-2'
         >
           <Text
+            className='text-xs'
             style={{
               textAlign: 'center',
               color: tab === 'daily' ? colors.gray[900] : colors.gray[500],
@@ -106,6 +114,7 @@ export default function Ranking() {
         </Pressable>
         <Pressable onPress={() => onChangeTab('monthly')} className='px-2 py-3'>
           <Text
+            className='text-xs'
             style={{
               textAlign: 'center',
               color: tab === 'monthly' ? colors.gray[900] : colors.gray[500],
@@ -134,12 +143,12 @@ export default function Ranking() {
                     borderWidth: 1,
                     borderColor: selected ? '#50D88F' : '#D1D5DB',
                   }}
-                  className={`mr-2 rounded-full px-3 py-1 ${
+                  className={`mr-2 rounded-full px-3.5 py-1 ${
                     selected ? 'bg-green-500' : 'bg-white'
                   }`}
                 >
                   <Text
-                    className={`text-xs ${
+                    className={`text-sm ${
                       selected
                         ? 'text-white font-extrabold'
                         : 'text-gray-700 font-medium'
