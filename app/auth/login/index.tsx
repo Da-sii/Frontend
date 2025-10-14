@@ -8,14 +8,14 @@ import KakaoLogin from '@/components/page/login/kakaoLogin';
 import KakaoLoginWebView from '@/components/page/login/KakaoLoginWebView';
 import { useKakaoLogin } from '@/hooks/useKakaoLogin';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function Index() {
+export default function Index({ emergency }: { emergency?: string }) {
   const router = useRouter();
-  const { emergency } = useLocalSearchParams<{ emergency?: string }>();
+
   const [showKakao, setShowKakao] = useState(false);
   const [forceReauth, setForceReauth] = useState(false);
   const kakaoLogin = useKakaoLogin();
@@ -34,10 +34,7 @@ export default function Index() {
     <SafeAreaView className='flex-1 bg-white'>
       <Stack.Screen options={{ headerShown: false }} />
       {emergency && (
-        <Navigation
-          right={<XIcon />}
-          onRightPress={() => router.push('/home/search')}
-        />
+        <Navigation right={<XIcon />} onRightPress={() => router.back()} />
       )}
       <View className='flex-1 items-center'>
         <View className='items-center w-full justify-center h-[64.98%]'>

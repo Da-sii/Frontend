@@ -17,6 +17,7 @@ import MoreIcon from '@/assets/icons/product/productDetail/ic_more_line.svg';
 
 import { LongButton } from '@/components/common/buttons/LongButton';
 import BottomSheetLayout from '@/components/page/product/productDetail/BottomSeetLayout';
+import { useIsLoggedIn } from '@/hooks/auth/useIsLoggedIn';
 import { useReportReview } from '@/hooks/useReportReview';
 import { ReportReason } from '@/services/report';
 import { toCdnUrl } from '@/utils/cdn';
@@ -77,6 +78,7 @@ export default function ReviewItems({
   const [needsClamp, setNeedsClamp] = useState(false);
   const [sheetView, setSheetView] = useState<SheetView>('menu');
   const [selected, setSelected] = useState<number | null>(null);
+  const isLoggedIn = useIsLoggedIn();
 
   const { mutate: report, isPending } = useReportReview();
   const photoViewerKey = (token: string) => ['photoViewer', token] as const;
@@ -86,6 +88,14 @@ export default function ReviewItems({
   // ===== BottomSheet =====
   const sheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => [154], [414]);
+
+  const navigateToEmergencyLogin = (href: string) => {
+    closeSheet();
+    requestAnimationFrame(() => {
+      router.push(href as any);
+    });
+  };
+
   const openSheet = () => {
     setSheetView('menu'); // 항상 메뉴부터
     sheetRef.current?.snapToIndex?.(0); // 첫 스냅으로 열기
@@ -93,11 +103,19 @@ export default function ReviewItems({
   const closeSheet = () => sheetRef.current?.close();
 
   const goReport = () => {
+    if (!isLoggedIn) {
+      navigateToEmergencyLogin('/auth/login/emergency');
+      return;
+    }
     setSheetView('report');
     sheetRef.current?.snapToIndex(1);
   };
 
   const submitReport = async () => {
+    if (!isLoggedIn) {
+      navigateToEmergencyLogin('/auth/login/emergency');
+      return;
+    }
     if (selected == null) return;
     const label = REASON_LABELS[selected];
     const reason = REASON_CODES[label];
