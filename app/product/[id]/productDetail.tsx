@@ -1,15 +1,3 @@
-import { PortalProvider } from '@gorhom/portal';
-import { useQueryClient } from '@tanstack/react-query';
-import {
-  Stack,
-  useFocusEffect,
-  useLocalSearchParams,
-  useRouter,
-} from 'expo-router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { FlatList, Image, Pressable, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-
 import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
 import ArrowRightIcon from '@/assets/icons/ic_arrow_right.svg';
 import HomeIcon from '@/assets/icons/ic_home.svg';
@@ -26,10 +14,22 @@ import ReviewCard from '@/components/page/product/productDetail/ReviewCard';
 import ReviewItems from '@/components/page/product/productDetail/reviewItem';
 import CustomTabs from '@/components/page/product/productDetail/tab';
 import colors from '@/constants/color';
+import { useIsLoggedIn } from '@/hooks/auth/useIsLoggedIn';
 import { useGetReviewImageList } from '@/hooks/product/review/image/useGetReviewImageList';
 import { useProductReviewsPreview } from '@/hooks/product/review/useGetProductReview';
 import { useProductRatingStats } from '@/hooks/product/review/useProductRatingStats';
 import { useProductDetail } from '@/hooks/product/useProductDetail';
+import { PortalHost, PortalProvider } from '@gorhom/portal';
+import { useQueryClient } from '@tanstack/react-query';
+import {
+  Stack,
+  useFocusEffect,
+  useLocalSearchParams,
+  useRouter,
+} from 'expo-router';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { FlatList, Image, Pressable, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const tabs = [
   { key: 'ingredient', label: '성분 정보' },
@@ -38,6 +38,8 @@ const tabs = [
 
 export default function ProductDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
+
+  const isLoggedIn = useIsLoggedIn();
   const idNum = Number(id);
   const { data } = useProductDetail(id);
   const { data: reviews = [] } = useProductReviewsPreview(idNum, 'time');
@@ -104,9 +106,10 @@ export default function ProductDetail() {
   if (!data) return <Text>제품을 찾을 수 없습니다.</Text>;
 
   return (
-    <SafeAreaView className='flex-1 bg-white'>
-      <Stack.Screen options={{ headerShown: false }} />
-      <PortalProvider>
+    <PortalProvider>
+      <SafeAreaView className='flex-1 bg-white'>
+        <Stack.Screen options={{ headerShown: false }} />
+
         <Navigation
           left={
             <ArrowLeftIcon width={20} height={20} fill={colors.gray[900]} />
@@ -245,20 +248,24 @@ export default function ProductDetail() {
                   <LongButton
                     label={'리뷰 작성하기'}
                     height='h-[40px]'
-                    onPress={() =>
-                      router.push({
-                        pathname: `/product/${id}/review/write` as any,
-                        params: {
-                          id: String(id), // 제품아이디
-                          name: data?.name ?? '', // 제품명
-                          brand: data?.company ?? '', // 회사명
-                          image:
-                            typeof data?.images === 'string'
-                              ? data?.images
-                              : '', // URL만 보내기
-                        },
-                      })
-                    }
+                    onPress={async () => {
+                      if (await isLoggedIn()) {
+                        router.push({
+                          pathname: `/product/${id}/review/write` as any,
+                          params: {
+                            id: String(id), // 제품아이디
+                            name: data?.name ?? '', // 제품명
+                            brand: data?.company ?? '', // 회사명
+                            image:
+                              typeof data?.images === 'string'
+                                ? data?.images
+                                : '', // URL만 보내기
+                          },
+                        });
+                      } else {
+                        router.push('/auth/login/emergency');
+                      }
+                    }}
                   />
 
                   {(ratingStats?.total_reviews ?? 0) <= 0 ? (
@@ -376,9 +383,11 @@ export default function ProductDetail() {
             )
           }
         />
-      </PortalProvider>
-      <CoupangTabBar product={coupangProduct} />
-    </SafeAreaView>
+
+        <CoupangTabBar product={coupangProduct} />
+        <PortalHost name='overlay-top' />
+      </SafeAreaView>
+    </PortalProvider>
   );
 }
 
