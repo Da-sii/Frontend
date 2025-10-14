@@ -18,6 +18,7 @@ import { useIsLoggedIn } from '@/hooks/auth/useIsLoggedIn';
 import { useGetReviewImageList } from '@/hooks/product/review/image/useGetReviewImageList';
 import { useProductReviewsPreview } from '@/hooks/product/review/useGetProductReview';
 import { useProductRatingStats } from '@/hooks/product/review/useProductRatingStats';
+import { useGetThreeRandomProduct } from '@/hooks/product/useGetRandomProduct';
 import { useProductDetail } from '@/hooks/product/useProductDetail';
 import { PortalHost, PortalProvider } from '@gorhom/portal';
 import { useQueryClient } from '@tanstack/react-query';
@@ -43,6 +44,7 @@ export default function ProductDetail() {
   const idNum = Number(id);
   const { data } = useProductDetail(id);
   const { data: reviews = [] } = useProductReviewsPreview(idNum, 'time');
+
   const { data: ratingStats, refetch: refetchRatingStats } =
     useProductRatingStats(id);
   const { data: reviewImageList } = useGetReviewImageList(idNum, 0);
@@ -179,27 +181,23 @@ export default function ProductDetail() {
               </View>
 
               {/* 랭킹 및 영양 정보 */}
-              <View className='flex-col gap-y-4 border-gray-100 border-b-[3px] py-5 px-5'>
+              <View className='flex-col gap-y-4 border-gray-100 border-b-[3px] py-5 px-5 '>
                 <View className='flex-row'>
                   <Text className='text-c2 font-normal text-gray-400 mr-[26px] w-[46px]'>
                     랭킹
                   </Text>
-                  <View className='flex-row  flex-wrap'>
-                    {data?.ranking?.map((item, index) => (
-                      <View
-                        key={index}
-                        className='flex-row items-baseline mr-2'
-                      >
-                        <Text className='text-c2 font-normal'>
-                          {item.bigCategory}
-                        </Text>
-                        <Text className='text-c2 font-normal'> / </Text>
-                        <Text className='text-c2 font-normal'>
-                          {item.smallCategory} {item.monthlyRank}위
-                        </Text>
-                      </View>
-                    ))}
-                  </View>
+
+                  {data?.ranking?.map((item, index) => (
+                    <View key={index} className='flex-row items-baseline mr-2'>
+                      <Text className='text-c2 font-normal h-[16px]'>
+                        {item.bigCategory}
+                      </Text>
+                      <Text className='text-c2 font-normal'> / </Text>
+                      <Text className='text-c2 font-normal'>
+                        {item.smallCategory} {item.monthlyRank}위
+                      </Text>
+                    </View>
+                  ))}
                 </View>
                 <View className='flex-row'>
                   <Text className='text-c2 font-normal text-gray-400 w-[46px] mr-[26px]'>
