@@ -30,9 +30,7 @@ export default function BannerDetailModal({
     return null;
   }
 
-  const detailImagesData = bannerDetailData[Number(bannerItem.id)];
-
-  console.log(detailImagesData);
+  const detailData = bannerDetailData.find((data) => data.id === bannerItem.id);
 
   const handleShare = async () => {
     try {
@@ -45,7 +43,7 @@ export default function BannerDetailModal({
     }
   };
 
-  if (!detailImagesData) {
+  if (!detailData) {
     return (
       <Modal visible={visible} onRequestClose={onClose}>
         <SafeAreaView className='flex-1 justify-center items-center'>
@@ -57,8 +55,6 @@ export default function BannerDetailModal({
       </Modal>
     );
   }
-
-  const imagesToRender = Object.values(detailImagesData);
 
   return (
     <Modal
@@ -77,35 +73,18 @@ export default function BannerDetailModal({
         />
 
         <ScrollView className='flex-1'>
-          <View className=''>
-            <Image
-              key={100}
-              source={detailImagesData.images.image_1}
-              resizeMode='contain'
-              className='w-full'
-              style={{ height: Dimensions.get('window').width }}
-            />
-            <Image
-              key={101}
-              source={detailImagesData.images.image_2}
-              resizeMode='contain'
-              className='w-full'
-              style={{ height: Dimensions.get('window').width }}
-            />
-            <Image
-              key={102}
-              source={detailImagesData.images.image_3}
-              resizeMode='contain'
-              className='w-full'
-              style={{ height: Dimensions.get('window').width }}
-            />
-            <Image
-              key={103}
-              source={detailImagesData.images.image_4}
-              resizeMode='contain'
-              className='w-full'
-              style={{ height: Dimensions.get('window').width }}
-            />
+          <View className='px-1'>
+            {detailData.images.map((imageSource, index) => (
+              <Image
+                key={index}
+                source={imageSource}
+                resizeMode='contain'
+                style={{
+                  width: Dimensions.get('window').width,
+                  height: Dimensions.get('window').width * 1.3,
+                }}
+              />
+            ))}
           </View>
         </ScrollView>
       </SafeAreaView>

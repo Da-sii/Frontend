@@ -37,9 +37,11 @@ export default function DefaultModal({
               {title}
             </Text>
           )}
-          <Text className='text-b-sm text-gray-500 font-regular text-center leading-5'>
-            {message}
-          </Text>
+          {message && (
+            <Text className='text-b-sm text-gray-500 font-regular text-center leading-5'>
+              {message}
+            </Text>
+          )}
           {secondMessage && (
             <Text className='text-c2 text-gray-500 font-bold text-center'>
               {secondMessage}
