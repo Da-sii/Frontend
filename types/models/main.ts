@@ -20,10 +20,5 @@ export interface IBannerCell {
 
 export interface IBannerDetail {
   id: string;
-  images: {
-    image_1: ImageSourcePropType;
-    image_2: ImageSourcePropType;
-    image_3: ImageSourcePropType;
-    image_4: ImageSourcePropType;
-  };
+  images: ImageSourcePropType[];
 }
