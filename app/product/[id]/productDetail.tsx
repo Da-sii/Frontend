@@ -6,6 +6,7 @@ import StarIcon from '@/assets/icons/ic_star.svg';
 import EmptyReviewIcon from '@/assets/icons/product/productDetail/ic_no_review.svg';
 import { LongButton } from '@/components/common/buttons/LongButton';
 import { ReviewButton } from '@/components/common/buttons/ReviewButton';
+import { ScrollToTopButton } from '@/components/common/buttons/ScrollToTopButton';
 import DefaultModal from '@/components/common/modals/DefaultModal';
 import Navigation from '@/components/layout/Navigation';
 import CoupangTabBar from '@/components/page/product/productDetail/CoupangTabBar';
@@ -28,7 +29,7 @@ import {
   useLocalSearchParams,
   useRouter,
 } from 'expo-router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FlatList, Image, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -39,9 +40,9 @@ const tabs = [
 
 export default function ProductDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
-
+  const listRef = useRef<FlatList<any>>(null);
   const [showIsMyReviewModal, setShowIsMyReviewModal] = useState(false);
-
+  const [showTopButton, setShowTopButton] = useState(false);
   const isLoggedIn = useIsLoggedIn();
   const idNum = Number(id);
   const { data } = useProductDetail(id);
@@ -61,7 +62,11 @@ export default function ProductDetail() {
     () => reviews.flatMap((r) => (Array.isArray(r.images) ? r.images : [])),
     [reviews],
   );
-
+  // 스크롤 200px 넘으면 버튼 보이기
+  const handleScroll = useCallback((e: any) => {
+    const y = e.nativeEvent.contentOffset.y;
+    setShowTopButton(y > 200);
+  }, []);
   const previewPhotos = reviewPhotos;
   const photoMap = useMemo(
     () =>
@@ -128,6 +133,9 @@ export default function ProductDetail() {
         />
 
         <FlatList
+          ref={listRef}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
           data={listData}
           keyExtractor={(_, index) => String(index)}
           showsVerticalScrollIndicator={false}
@@ -405,7 +413,15 @@ export default function ProductDetail() {
           confirmText='확인'
           onConfirm={() => setShowIsMyReviewModal(false)}
           singleButton={true}
-          // 필요하면 onClose/onCancel도 동일하게 닫기
+        />
+        <ScrollToTopButton
+          scrollRef={{
+            current: {
+              scrollTo: ({ y, animated }: any) =>
+                listRef.current?.scrollToOffset({ offset: y, animated }),
+            },
+          }}
+          visible={showTopButton}
         />
       </SafeAreaView>
     </PortalProvider>

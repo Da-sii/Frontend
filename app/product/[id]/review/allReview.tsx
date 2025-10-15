@@ -1,6 +1,7 @@
 import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
 import StarIcon from '@/assets/icons/ic_star.svg';
 import ArrowDownIcon from '@/assets/icons/product/productDetail/ic_arrow_down.svg';
+import { ScrollToTopButton } from '@/components/common/buttons/ScrollToTopButton';
 import Navigation from '@/components/layout/Navigation';
 import BottomSheetLayout from '@/components/page/product/productDetail/BottomSeetLayout';
 import PhotoCard from '@/components/page/product/productDetail/PhotoCard';
@@ -12,7 +13,7 @@ import BottomSheet from '@gorhom/bottom-sheet';
 import { PortalProvider } from '@gorhom/portal';
 import { useQueryClient } from '@tanstack/react-query';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { FlatList, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
@@ -28,6 +29,8 @@ const SORT_OPTIONS: {
 
 export default function allReview() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const listRef = useRef<FlatList<any>>(null);
+  const [showTopButton, setShowTopButton] = useState(false);
   const idNum = Number(id);
   const qc = useQueryClient();
   const [sort, setSort] = useState<'time' | 'high' | 'low'>('high');
@@ -91,6 +94,10 @@ export default function allReview() {
     () => photoMap.map((p) => p.url),
     [photoMap],
   );
+  const handleScroll = useCallback((e: any) => {
+    const y = e.nativeEvent.contentOffset.y;
+    setShowTopButton(y > 200);
+  }, []);
 
   return (
     <SafeAreaView className='flex-1 bg-white'>
@@ -105,6 +112,9 @@ export default function allReview() {
         />
 
         <FlatList
+          ref={listRef}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
           key={sort}
           data={items ?? []}
           keyExtractor={(it, i) => String(it?.review_id ?? `p-${i}`)}
@@ -268,6 +278,15 @@ export default function allReview() {
           }
         />
       </PortalProvider>
+      <ScrollToTopButton
+          scrollRef={{
+            current: {
+              scrollTo: ({ y, animated }: any) =>
+                listRef.current?.scrollToOffset({ offset: y, animated }),
+            },
+          }}
+          visible={showTopButton}
+        />
     </SafeAreaView>
   );
 }
