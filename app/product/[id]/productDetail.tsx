@@ -18,6 +18,7 @@ import CustomTabs from '@/components/page/product/productDetail/tab';
 import colors from '@/constants/color';
 import { useIsLoggedIn } from '@/hooks/auth/useIsLoggedIn';
 import { useGetReviewImageList } from '@/hooks/product/review/image/useGetReviewImageList';
+import { useParseReviewIdFromImage } from '@/hooks/product/review/image/useParseReviewIdFromImage';
 import { useProductReviewsPreview } from '@/hooks/product/review/useGetProductReview';
 import { useProductRatingStats } from '@/hooks/product/review/useProductRatingStats';
 import { useProductDetail } from '@/hooks/product/useProductDetail';
@@ -50,7 +51,7 @@ export default function ProductDetail() {
   const { data: ratingStats, refetch: refetchRatingStats } =
     useProductRatingStats(id);
   const { data: reviewImageList } = useGetReviewImageList(idNum, 0);
-
+  const { parseReviewId } = useParseReviewIdFromImage();
   const qc = useQueryClient();
   const router = useRouter();
 
@@ -58,34 +59,21 @@ export default function ProductDetail() {
     'ingredient',
   );
   const listData = activeTab === 'review' ? reviews : [];
-  const reviewPhotos = useMemo(
-    () => reviews.flatMap((r) => (Array.isArray(r.images) ? r.images : [])),
-    [reviews],
-  );
   // 스크롤 200px 넘으면 버튼 보이기
   const handleScroll = useCallback((e: any) => {
     const y = e.nativeEvent.contentOffset.y;
     setShowTopButton(y > 200);
   }, []);
-  const previewPhotos = reviewPhotos;
-  const photoMap = useMemo(
-    () =>
-      reviews.flatMap((r) =>
-        (Array.isArray(r.images) ? r.images : []).map((img, i) => ({
-          reviewId: r.review_id,
-          url: img, // 원본 서버 URL (cdn 변환 전)
-          indexInReview: i, // 선택: 상세에서 바로 쓸 수도 있음
-        })),
-      ),
-    [reviews],
-  );
-
   const previewPhotoUrls = useMemo(
-    () => photoMap.map((p) => p.url), // toCdnUrl(p.url)로 바꿔도 OK
-    [photoMap],
+    () =>
+      (data?.reviewImages ?? [])
+        .map((r) => r?.url)
+        .filter((u): u is string => typeof u === 'string' && u.length > 0),
+    [data?.reviewImages],
   );
 
   console.log('previewPhotoUrls', previewPhotoUrls);
+
   // 화면이 다시 포커스될 때마다 최신화
   useFocusEffect(
     useCallback(() => {
@@ -102,14 +90,6 @@ export default function ProductDetail() {
   );
 
   const [coupangProduct, setCoupangProduct] = useState(null);
-  useEffect(() => {
-    // const productKeyword = '영양제';
-    // const loadProduct = async () => {
-    //   const data = await searchCoupangProduct(productKeyword);
-    //   setCoupangProduct(data);
-    // };
-    // loadProduct();
-  }, []);
 
   if (!data) return <Text>제품을 찾을 수 없습니다.</Text>;
 
@@ -245,7 +225,7 @@ export default function ProductDetail() {
                             ratingStats,
                           );
                           qc.setQueryData(['product', 'photo-preview', idNum], {
-                            previewPhotos,
+                            previewPhotos: previewPhotoUrls ?? [],
                             total_photo:
                               reviewImageList?.pages[0]?.total_images ?? 0,
                           });
@@ -317,23 +297,20 @@ export default function ProductDetail() {
                       {/* 사진 그리드(주의: 내부가 세로 FlatList면 View+map 버전으로 바꾸기) */}
                       <View className='mt-4 pb-5'>
                         <PhotoCard
-                          images={previewPhotoUrls}
+                          images={previewPhotoUrls ?? []}
                           maxPreview={6}
                           onPressPhoto={(idx) => {
-                            const entry = photoMap[idx];
-                            if (!entry) return;
-                            // 상세 뷰 라우팅: reviewId + imageUrl을 넘긴다
-                            qc.setQueryData(['product', 'detail', idNum], {
-                              reviewAvg: data?.reviewAvg,
-                              reviewCount: data?.reviewCount,
-                            });
+                            const imageUrl = previewPhotoUrls?.[idx];
+                            if (!imageUrl) return;
+                          
                             router.push({
                               pathname:
                                 '/product/[id]/review/[reviewId]/photoReviewDetail',
                               params: {
                                 id: String(id),
-                                reviewId: String(entry.reviewId),
-                                imageUrl: entry.url,
+                                reviewId: String(parseReviewId(imageUrl)),
+                                imageUrl,
+                                index: idx,
                               },
                             });
                           }}
@@ -387,7 +364,7 @@ export default function ProductDetail() {
                       ratingStats,
                     );
                     qc.setQueryData(['product', 'photo-preview', idNum], {
-                      previewPhotos,
+                      previewPhotos: previewPhotoUrls ?? [],
                       total_photo: reviewImageList?.pages[0]?.total_images ?? 0,
                     });
                     qc.setQueryData(['product', 'detail', idNum], {

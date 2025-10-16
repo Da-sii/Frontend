@@ -18,12 +18,11 @@ export default function PhotoCard({
   onPressMore,
   total_photo,
 }: PhotoCardProps) {
-  const preview = images.slice(0, maxPreview);
-  const remain = images.length - preview.length;
+  const remain =  total_photo ? total_photo - images.length : 0;
 
   return (
     <FlatList
-      data={preview}
+      data={images}
       numColumns={3}
       keyExtractor={(_, idx) => String(idx)}
       columnWrapperStyle={{
@@ -32,7 +31,7 @@ export default function PhotoCard({
         justifyContent: 'flex-start',
       }}
       renderItem={({ item, index }) => {
-        const isLastOverlay = remain > 0 && index === preview.length - 1;
+        const isLastOverlay = remain > 0 && index === images.length - 1;
 
         return (
           <Pressable

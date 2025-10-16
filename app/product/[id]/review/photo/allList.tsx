@@ -1,3 +1,9 @@
+import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
+import Navigation from '@/components/layout/Navigation';
+import colors from '@/constants/color';
+import { useGetReviewImageList } from '@/hooks/product/review/image/useGetReviewImageList';
+import { useParseReviewIdFromImage } from '@/hooks/product/review/image/useParseReviewIdFromImage';
+import { toCdnUrl } from '@/utils/cdn';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useMemo } from 'react';
 import {
@@ -9,11 +15,6 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { toCdnUrl } from '@/utils/cdn';
-import { useGetReviewImageList } from '@/hooks/product/review/image/useGetReviewImageList';
-import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
-import Navigation from '@/components/layout/Navigation';
-import colors from '@/constants/color';
 
 const COLS = 3;
 const GAP = 3;
@@ -31,16 +32,12 @@ type Photo = {
   rawPath: string; // ← 원본 경로(파싱용)
 };
 
-const parseReviewId = (path: string) => {
-  const m = path.match(/^(\d+)\/(\d+)\//);
-  return m ? Number(m[2]) : -1;
-};
-
 export default function allList() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const productId = Number(id);
 
+  const { parseReviewId } = useParseReviewIdFromImage();
   const {
     data,
     fetchNextPage,

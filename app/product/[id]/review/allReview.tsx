@@ -7,8 +7,8 @@ import BottomSheetLayout from '@/components/page/product/productDetail/BottomSee
 import PhotoCard from '@/components/page/product/productDetail/PhotoCard';
 import ReviewItems from '@/components/page/product/productDetail/reviewItem';
 import colors from '@/constants/color';
+import { useParseReviewIdFromImage } from '@/hooks/product/review/image/useParseReviewIdFromImage';
 import { useProductReviewsInfinite } from '@/hooks/product/review/useGetProductReview';
-import { mockProductData } from '@/mocks/data/productDetail';
 import BottomSheet from '@gorhom/bottom-sheet';
 import { PortalProvider } from '@gorhom/portal';
 import { useQueryClient } from '@tanstack/react-query';
@@ -34,12 +34,8 @@ export default function allReview() {
   const idNum = Number(id);
   const qc = useQueryClient();
   const [sort, setSort] = useState<'time' | 'high' | 'low'>('high');
+  const { parseReviewId } = useParseReviewIdFromImage();
 
-  // const cachedRatingStats = qc.getQueryData<ProductRatingStatsDTO>([
-  //   'product',
-  //   'ratingStats',
-  //   idNum,
-  // ]);
   const cachedRatingStats = qc.getQueryData<{
     reviewAvg: number;
     reviewCount: number;
@@ -54,8 +50,6 @@ export default function allReview() {
     useProductReviewsInfinite(idNum, sort);
 
   const router = useRouter();
-  const product = mockProductData.find((item) => item.id === id);
-  if (!product) return <Text>제품을 찾을 수 없습니다.</Text>;
 
   // ===== BottomSheet =====
   const sheetRef = useRef<BottomSheet>(null);
@@ -65,35 +59,11 @@ export default function allReview() {
   };
   const closeSheet = () => sheetRef.current?.close();
 
-  // 리뷰 탭에서 상단 사진 그리드에 쓸 사진 모음(예: 상품/리뷰 이미지 합치기 원하면 여기서 처리)
-  const reviewPhotos = useMemo(
-    () => items.flatMap((r) => r.images ?? []) ?? [],
-    [product.review?.reviewList],
-  );
-
-  console.log('reviewPhotos', reviewPhotos);
-
   const onEndReached = () => {
     if (hasNextPage && !isFetchingNextPage) fetchNextPage();
   };
-  // const listData = product.review?.reviewList;
 
-  const photoMap = useMemo(
-    () =>
-      (items ?? []).flatMap((r) =>
-        (Array.isArray(r.images) ? r.images : []).map((url, i) => ({
-          reviewId: r.review_id,
-          url,
-          indexInReview: i, // 필요시 사용
-        })),
-      ),
-    [items],
-  );
 
-  const previewPhotoUrls = useMemo(
-    () => photoMap.map((p) => p.url),
-    [photoMap],
-  );
   const handleScroll = useCallback((e: any) => {
     const y = e.nativeEvent.contentOffset.y;
     setShowTopButton(y > 200);
@@ -142,22 +112,12 @@ export default function allReview() {
               <View>
                 <View className='pb-5'>
                   <PhotoCard
-                    images={previewPhotoUrls}
-                    total_photo={
-                      cachedPhotoPreview?.total_photo ?? photoMap.length
-                    }
+                    images={cachedPhotoPreview?.previewPhotos ?? []}
+                    total_photo={cachedPhotoPreview?.total_photo}
                     maxPreview={6}
                     onPressPhoto={(idx) => {
-                      const entry = photoMap[idx];
-                      if (!entry) return;
-
-                      // (선택) 상세 화면에서 상단 평균/카운트가 필요하면 캐시에 심어둠
-                      if (cachedRatingStats) {
-                        qc.setQueryData(['product', 'detail', idNum], {
-                          reviewAvg: cachedRatingStats.reviewAvg,
-                          reviewCount: cachedRatingStats.reviewCount,
-                        });
-                      }
+                      const imageUrl = cachedPhotoPreview?.previewPhotos?.[idx];
+                      if (!imageUrl) return;
 
                       // 사진 상세로 이동 (ProductDetail에서 쓰던 라우트와 동일)
                       router.push({
@@ -165,8 +125,9 @@ export default function allReview() {
                           '/product/[id]/review/[reviewId]/photoReviewDetail',
                         params: {
                           id: String(id),
-                          reviewId: String(entry.reviewId),
-                          imageUrl: entry.url,
+                          reviewId: parseReviewId(imageUrl),
+                          imageUrl,
+                          index: idx,
                         },
                       });
                     }}
@@ -279,14 +240,14 @@ export default function allReview() {
         />
       </PortalProvider>
       <ScrollToTopButton
-          scrollRef={{
-            current: {
-              scrollTo: ({ y, animated }: any) =>
-                listRef.current?.scrollToOffset({ offset: y, animated }),
-            },
-          }}
-          visible={showTopButton}
-        />
+        scrollRef={{
+          current: {
+            scrollTo: ({ y, animated }: any) =>
+              listRef.current?.scrollToOffset({ offset: y, animated }),
+          },
+        }}
+        visible={showTopButton}
+      />
     </SafeAreaView>
   );
 }
