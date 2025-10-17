@@ -227,7 +227,7 @@ export default function Search() {
           keyExtractor={(item) => item.id.toString()}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
-            paddingHorizontal: 20,
+            paddingHorizontal: 17,
             paddingTop: 8,
           }}
           columnWrapperStyle={

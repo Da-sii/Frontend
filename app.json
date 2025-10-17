@@ -1,17 +1,17 @@
 {
   "expo": {
-    "name": "dassi",
-    "slug": "dassi",
+    "name": "dasii",
+    "slug": "dasii",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/img_logo.png",
-    "scheme": "dassi",
+    "scheme": "dasii",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
       "buildNumber": "1.0.0",
-      "bundleIdentifier": "com.dassi.app"
+      "bundleIdentifier": "com.dasii.app"
     },
     "android": {
       "adaptiveIcon": {
@@ -19,7 +19,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.dassi.app",
+      "package": "com.dasii.app",
       "versionCode": 1
     },
     "web": {
@@ -46,7 +46,7 @@
         {
           "url": "https://sentry.io/",
           "project": "react-native",
-          "organization": "dassi-qh"
+          "organization": "dasii-qh"
         }
       ]
     ],

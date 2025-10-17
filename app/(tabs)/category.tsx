@@ -20,7 +20,7 @@ export default function Category() {
   const { categories, fetchCategories } = useCategory();
 
   const [selectedBigCategory, setSelectedBigCategory] = useState('');
-  const [colWidth, setColWidth] = useState<number>(0);
+  const [colWidth, setColWidth] = useState<number>(100);
 
   useEffect(() => {
     fetchCategories();
