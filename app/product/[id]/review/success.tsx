@@ -8,8 +8,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function sucess() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>(); // 제품 id
-  const { data: randomProducts } = useGetThreeRandomProduct();
-  console.log('randomProducts', randomProducts);
+  const { data: randomProducts, isLoading, isError } = useGetThreeRandomProduct();
+
+  const products = randomProducts?.products ?? []; // <= 안전한 기본값
+
   return (
     <SafeAreaView className='flex-1 bg-white'>
       <Stack.Screen options={{ headerShown: false }} />
@@ -27,72 +29,31 @@ export default function sucess() {
           이 제품을 써 봤다면 리뷰를 남겨주세요!
         </Text>
 
+        {isLoading && <Text className='text-g-sm'>추천 상품을 불러오는 중…</Text>}
+        {isError && <Text className='text-g-sm'>불러오기에 실패했어요.</Text>}
+
         <View style={{ rowGap: 20 }}>
-          <ProductCard
-            brand={randomProducts?.products[0].company || ''}
-            name={randomProducts?.products[0].name || ''}
-            image={randomProducts?.products[0].image || ''}
-            onPress={() => {
-              router.push({
-                pathname:
-                  `/product/${randomProducts?.products[0].id}/review/write` as any,
-                params: {
-                  id: String(randomProducts?.products[0].id), // 제품아이디
-                  name: randomProducts?.products[0].name ?? '', // 제품명
-                  brand: randomProducts?.products[0].company ?? '', // 회사명
-                  image:
-                    typeof randomProducts?.products[0].image === 'string'
-                      ? randomProducts?.products[0].image
-                      : '', // URL만 보내기
-                },
-              });
-            }}
-            buttonName='리뷰쓰기'
-          />
-
-          <ProductCard
-            brand={randomProducts?.products[1].company || ''}
-            name={randomProducts?.products[1].name || ''}
-            image={randomProducts?.products[1].image || ''}
-            onPress={() => {
-              router.push({
-                pathname:
-                  `/product/${randomProducts?.products[1].id}/review/write` as any,
-                params: {
-                  id: String(randomProducts?.products[1].id), // 제품아이디
-                  name: randomProducts?.products[1].name ?? '', // 제품명
-                  brand: randomProducts?.products[1].company ?? '', // 회사명
-                  image:
-                    typeof randomProducts?.products[1].image === 'string'
-                      ? randomProducts?.products[1].image
-                      : '', // URL만 보내기
-                },
-              });
-            }}
-            buttonName='리뷰쓰기'
-          />
-
-          <ProductCard
-            brand={randomProducts?.products[2].company || ''}
-            name={randomProducts?.products[2].name || ''}
-            image={randomProducts?.products[2].image || ''}
-            onPress={() => {
-              router.push({
-                pathname:
-                  `/product/${randomProducts?.products[2].id}/review/write` as any,
-                params: {
-                  id: String(randomProducts?.products[2].id), // 제품아이디
-                  name: randomProducts?.products[2].name ?? '', // 제품명
-                  brand: randomProducts?.products[2].company ?? '', // 회사명
-                  image:
-                    typeof randomProducts?.products[2].image === 'string'
-                      ? randomProducts?.products[2].image
-                      : '', // URL만 보내기
-                },
-              });
-            }}
-            buttonName='리뷰쓰기'
-          />
+          {products.slice(0, 3).map((p, i) => (
+            <ProductCard
+              key={p?.id ?? `placeholder-${i}`}
+              brand={p?.company ?? ''}
+              name={p?.name ?? ''}
+              image={typeof p?.image === 'string' ? p.image : ''}
+              buttonName='리뷰쓰기'
+              onPress={() => {
+                if (!p?.id) return; // 안전 가드
+                router.push({
+                  pathname: `/product/${p.id}/review/write` as any,
+                  params: {
+                    id: String(p.id),
+                    name: p?.name ?? '',
+                    brand: p?.company ?? '',
+                    image: typeof p?.image === 'string' ? p.image : '',
+                  },
+                });
+              }}
+            />
+          ))}
         </View>
       </View>
     </SafeAreaView>
