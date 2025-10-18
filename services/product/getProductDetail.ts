@@ -27,6 +27,7 @@ export type ProductDetailDTO = {
   reviewAvg: number | null; // null 가능
   ranking: any[]; // 서버에서 배열 내려줌
   images: ProductImage[];
+  reviewImages: ProductImage[];
   ingredientsCount: number;
   ingredients: ProductIngredient[];
 };
