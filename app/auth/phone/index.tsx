@@ -26,16 +26,18 @@ export default function Index() {
   const [authNumber, setAuthNumber] = useState('');
   const [requestAuthNumber, setRequestAuthNumber] = useState(false);
   const [visibleModal, setVisibleModal] = useState(false);
+  const [modalSecondMessage, setModalSecondMessage] = useState('');
   const [disabledButton, setDisabledButton] = useState(false);
   const [verificationToken, setVerificationToken] = useState<string | null>(
     null,
   );
+  const [singleButton, setSingleButton] = useState(true);
   const setAccountPhone = useFoundAccounts((s) => s.setFound);
 
   const [remainSec, setRemainSec] = useState(0);
 
   const [modalMessage, setModalMessage] =
-    useState('인증번호가 일치하지 않습니다');
+    useState('인증 번호가 일치하지 않습니다');
   const EXPIRE_SECONDS = 180;
 
   const formatPhoneNumber = (phone: string) => {
@@ -51,8 +53,7 @@ export default function Index() {
     data: findData,
     refetch: refetchFindId,
     isFetching: isFinding,
-  } = useFindIDWithPhone(formatPhoneNumber(phone), { enabled: false });
-
+  } = useFindIDWithPhone(phone, { enabled: false });
   // 1) 인증번호 발송 훅
   const sendPhoneAuthMutation = useSendPhoneAuth({
     onSuccess: (res) => {
@@ -142,13 +143,16 @@ export default function Index() {
       // router.push('/auth/find/result');
     } else if (menu === 'findId') {
       const { data: res } = await refetchFindId();
-
-      if (!res || !Array.isArray(res.accounts)) {
-        setModalMessage('해당 번호로 등록된 계정을 찾을 수 없습니다.');
+      console.log('res', res);
+      if (res?.message === '해당 핸드폰번호로 등록된 계정이 없습니다.') {
+        setModalMessage('계정을 찾을 수 없습니다.');
+        setModalSecondMessage(
+          '해당 정보로 가입된 계정을 찾을 수 없습니다. 다시 한번 확인해주시거나, 회원가입을 진행해 주세요',
+        );
         setVisibleModal(true);
         return;
       }
-      setAccountPhone(formatPhoneNumber(phone), res.accounts);
+      setAccountPhone(formatPhoneNumber(phone), res?.accounts || []);
 
       // ✅ 결과 페이지로 전달 (예: params 또는 state)
       router.push({
@@ -303,8 +307,10 @@ export default function Index() {
         onConfirm={() => setVisibleModal(false)}
         onCancel={() => setVisibleModal(false)}
         message={modalMessage}
+        secondMessage={modalSecondMessage}
         confirmText='확인'
-        singleButton
+        cancelText='취소'
+        singleButton={singleButton}
       />
     </SafeAreaView>
   );

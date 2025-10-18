@@ -22,7 +22,7 @@ export default function Mypage() {
   const [isLogin, setIsLogin] = useState(true);
 
   const handleOAuthPasswordPress = () => {
-    router.replace('/mypage/password');
+    router.push('/mypage/password');
   };
 
   const handleOAuthModalConfirm = () => {
