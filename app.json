@@ -12,6 +12,7 @@
       "supportsTablet": true,
       "buildNumber": "1.0.0",
       "bundleIdentifier": "com.dasii.app"
+
     },
     "android": {
       "adaptiveIcon": {
