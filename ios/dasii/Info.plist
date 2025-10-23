@@ -28,7 +28,7 @@
         <key>CFBundleURLSchemes</key>
         <array>
           <string>dasii</string>
-          <string>com.dasii.app</string>
+          <string>com.podostore.dasii</string>
         </array>
       </dict>
     </array>

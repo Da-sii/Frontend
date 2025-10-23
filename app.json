@@ -11,8 +11,7 @@
     "ios": {
       "supportsTablet": true,
       "buildNumber": "1.0.0",
-      "bundleIdentifier": "com.dasii.app"
-
+      "bundleIdentifier": "com.podostore.dasii"
     },
     "android": {
       "adaptiveIcon": {

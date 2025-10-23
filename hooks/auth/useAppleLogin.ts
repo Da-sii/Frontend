@@ -1,44 +1,62 @@
+import { setTokens } from '@/lib/authToken';
+import { axiosInstance } from '@/services/index';
 import appleAuth from '@invertase/react-native-apple-authentication';
+import { router } from 'expo-router';
+import { Alert } from 'react-native';
 
 async function handleSignInApple() {
   try {
-    // 1. 로그인 요청
     const appleAuthRequestResponse = await appleAuth.performRequest({
       requestedOperation: appleAuth.Operation.LOGIN,
       requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
     });
 
-    // 2. 인증 상태 가져오기
-    // (실제 기기에서만 테스트해야 함)
     const credentialState = await appleAuth.getCredentialStateForUser(
       appleAuthRequestResponse.user,
     );
 
-    // 3. 인증 완료 확인
     if (credentialState === appleAuth.State.AUTHORIZED) {
-      // 인증 성공!
-      console.log('Apple 로그인 성공:', appleAuthRequestResponse);
-      return appleAuthRequestResponse; // 성공 시 결과 반환
-    }
+      const identityToken = appleAuthRequestResponse.identityToken;
 
-    // 인증되었지만 상태가 정상이 아닐 수 있음
+      if (!identityToken) {
+        console.error('Apple 로그인 응답에 identityToken이 없습니다.');
+        Alert.alert('오류', 'Apple 로그인 정보를 가져오지 못했습니다.');
+        return null;
+      }
+
+      // console.log('Apple ID Token:', identityToken);
+
+      try {
+        const backendResponse = await axiosInstance.post('/auth/apple/', {
+          identityToken: identityToken,
+        });
+
+        console.log('백엔드 Apple 로그인 성공:', backendResponse.data);
+        setTokens(backendResponse.data.access);
+        router.replace('/home');
+      } catch (backendError: any) {
+        console.error(
+          '백엔드 Apple 로그인 실패:',
+          backendError.response?.data || backendError.message,
+        );
+        Alert.alert('로그인 실패', '서버 통신 중 오류가 발생했습니다.');
+        return null;
+      }
+    }
     return null;
   } catch (error: any) {
-    // 4. 에러 처리
     if (error.code === appleAuth.Error.CANCELED) {
-      // error.code '1001' - 사용자가 '취소' 버튼을 누름
       console.log('사용자가 Apple 로그인을 취소했습니다.');
     } else if (error.code === appleAuth.Error.UNKNOWN) {
-      // error.code '1000' - 알 수 없는 에러 (아마도 Capability 문제)
       console.error('Apple 로그인 에러 (1000):', error);
-      alert(
+      Alert.alert(
         'Apple 로그인 설정에 실패했습니다. Xcode에서 "Sign in with Apple" Capability를 확인하세요.',
       );
     } else {
-      // 기타 에러
       console.error('Apple 로그인 에러:', error);
+      Alert.alert('로그인 오류', 'Apple 로그인 중 문제가 발생했습니다.'); // 사용자 친화적 메시지
     }
-    return null; // 실패 시 null 반환
+    return null;
   }
 }
 

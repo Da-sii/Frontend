@@ -3,12 +3,13 @@ import { TextField } from '@/components/common/Inputs/TextField';
 import { LongButton } from '@/components/common/buttons/LongButton';
 import DefaultModal from '@/components/common/modals/DefaultModal';
 import Navigation from '@/components/layout/Navigation';
+import { userAPI } from '@/services/user';
+import { InquiryPayload } from '@/types/payloads/post';
 import { isEmail } from '@/utils/validation';
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 import {
   Alert,
-  Linking,
   Modal,
   SafeAreaView,
   ScrollView,
@@ -38,7 +39,7 @@ export const HomeFooterRequestModal = ({ visible, onClose }: ModalProps) => {
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (
       !requestType ||
       !brandName ||
@@ -52,49 +53,40 @@ export const HomeFooterRequestModal = ({ visible, onClose }: ModalProps) => {
       return;
     }
 
-    const requestTypeText = {
-      1: '국내 광고 문의',
-      2: '글로벌 광고 문의',
-      3: '기타 문의 (제휴 등)',
-    }[requestType];
-    const brandReleaseText = {
-      1: '출시 완료',
-      2: '미출시 (1개월 내)',
-      3: '미출시 (3개월 내)',
-      4: '미출시 (3개월 이상)',
-    }[brandRelease];
+    const inquiryTypeMap: { [key: number]: string } = {
+      1: 'domestic',
+      2: 'global',
+      3: 'etc',
+    };
+    const launchStatusMap: { [key: number]: string } = {
+      1: 'launched',
+      2: '1month',
+      3: '3months',
+      4: 'over3months',
+    };
 
-    const to = 'podostore1111@gmail.com';
-    const subject = `[광고/제휴 문의] ${brandName} 브랜드`;
-    const body = `
-  안녕하세요, 광고/제휴 관련하여 문의 드립니다.
-  
-  ---------------------------------
-  
-  [문의 정보]
-  - 문의 유형: ${requestTypeText}
-  - 담당 브랜드명: ${brandName}
-  - 브랜드 출시 여부: ${brandReleaseText}
-  - 문의 내용:
-  ${content}
-  
-  [담당자 정보]
-  - 성함: ${name}
-  - 연락처: ${phone}
-  - 이메일: ${email}
-  - 개인정보 수집 동의: ${privacyAgree ? '완료' : '미동의'}
-  
-  ---------------------------------
-    `;
+    const payload: InquiryPayload = {
+      inquiry_type: inquiryTypeMap[requestType],
+      brand_name: brandName,
+      launch_status: launchStatusMap[brandRelease],
+      inquiry_content: content,
+      name: name,
+      contact_number: phone,
+      email: email,
+    };
 
-    const url = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    try {
+      await userAPI.submitInquiry(payload);
 
-    Linking.openURL(url).catch(() => {
+      onClose();
+      Alert.alert('성공', '문의가 성공적으로 접수되었습니다.');
+    } catch (error) {
+      console.error('문의 제출 실패:', error);
       Alert.alert(
         '오류',
-        '메일 앱을 열 수 없습니다. 기기에 이메일 앱이 설치되어 있는지 확인해주세요.',
+        '문의 제출 중 오류가 발생했습니다. 다시 시도해주세요.',
       );
-    });
+    }
   };
 
   return (
@@ -304,7 +296,7 @@ export const HomeFooterRequestModal = ({ visible, onClose }: ModalProps) => {
       </SafeAreaView>
 
       <HomeFooterModal
-        type='inquiryAppUsage'
+        type='adInquiry'
         visible={showPrivacyAgree}
         onClose={() => setShowPrivacyAgree(false)}
       />
