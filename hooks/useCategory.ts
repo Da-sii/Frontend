@@ -13,6 +13,7 @@ export const useCategory = () => {
     try {
       const data = await categoryAPI.getCategory();
       setCategories(data);
+      console.log(data);
       return true;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 401) {

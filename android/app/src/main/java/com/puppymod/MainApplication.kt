@@ -1,4 +1,4 @@
-package com.puppymod
+package com.dasii
 
 import android.app.Application
 import android.content.res.Configuration
