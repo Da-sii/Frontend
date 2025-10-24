@@ -262,7 +262,7 @@ export const TextField: React.FC<TextFieldProps> = ({
   return (
     <View>
       <View
-        className={`flex-row items-center w-full h-[60px] rounded-xl py-[21px] px-4 border ${borderColorClass} ${disabled ? 'bg-gray-50' : ''}`}
+        className={`flex-row items-center w-full h-[60px] rounded-xl px-4 border ${borderColorClass} ${disabled ? 'bg-gray-50' : ''}`}
       >
         <TextInput
           className={`flex-1 text-b-sm font-bold text-gray-900 ${disabled ? 'text-gray-400' : ''}  ${
@@ -288,7 +288,7 @@ export const TextField: React.FC<TextFieldProps> = ({
               name={showPassword ? 'eye-off' : 'eye'}
               size={20}
               color='#9ca3af'
-              style={{ paddingBottom: 20 }}
+              style={{}}
             />
           </TouchableOpacity>
         )}
