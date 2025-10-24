@@ -14,8 +14,13 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import 'react-native-url-polyfill/auto';
 
-SplashScreen.preventAutoHideAsync();
+// Splash 화면 자동 숨김 방지 (1회)
+SplashScreen.preventAutoHideAsync().catch(() => {});
 
+// React Query 클라이언트는 1회 생성
+const queryClient = new QueryClient();
+
+// 프로덕션에서만 Sentry 활성화
 if (!__DEV__) {
   Sentry.init({
     dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
@@ -28,25 +33,36 @@ if (!__DEV__) {
 }
 
 function RootLayout() {
-  const queryClient = new QueryClient();
-
   const [loaded, error] = useFonts({
     NanumSquareNeo: require('@/assets/fonts/NanumSquareNeo-Variable.ttf'),
   });
 
   const [isUpdateRequired, setIsUpdateRequired] = useState(false);
   const [storeUrl, setStoreUrl] = useState('');
+  const [rootMounted, setRootMounted] = useState(false);
 
+  // 루트가 실제로 그려졌는지 플래그
+  const onLayoutRootView = useCallback(() => {
+    setRootMounted(true);
+  }, []);
+
+  // 루트가 렌더됨 + 폰트가 로드(or 에러) 되었을 때 스플래시 숨김
+  useEffect(() => {
+    if (rootMounted && (loaded || error)) {
+      SplashScreen.hideAsync().catch(() => {});
+    }
+  }, [rootMounted, loaded, error]);
+
+  // 앱 최소 버전 체크
   useEffect(() => {
     const checkAppVersion = async () => {
       try {
         const response = await fetch(
-          'https://raw.githubusercontent.com/Da-sii/app-config/refs/heads/main/version.json',
+          'https://raw.githubusercontent.com/Da-sii/app-config/main/version.json',
         );
         const remoteConfig = await response.json();
 
         const currentVersion = Constants.expoConfig?.version;
-
         const platformConfig =
           Platform.OS === 'ios' ? remoteConfig.ios : remoteConfig.android;
         const minimumVersion = platformConfig.minimumVersion;
@@ -63,40 +79,43 @@ function RootLayout() {
     checkAppVersion();
   }, []);
 
-  const onLayoutRootView = useCallback(async () => {
-    if (loaded || error) {
-      await SplashScreen.hideAsync();
-    }
-  }, [loaded, error]);
-
-  if (!loaded && !error) {
-    return null;
-  }
-
   const handleUpdatePress = () => {
-    Linking.openURL(storeUrl);
+    if (storeUrl) Linking.openURL(storeUrl);
   };
+  useEffect(() => {
+    const t = setTimeout(() => {
+      SplashScreen.hideAsync().catch(() => {});
+    }, 500);
+    return () => clearTimeout(t);
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
-      <GestureHandlerRootView onLayout={onLayoutRootView}>
+      <GestureHandlerRootView onLayout={onLayoutRootView} style={{ flex: 1 }}>
         <BottomSheetModalProvider>
-          <Stack>
-            <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
-            <Stack.Screen name='+not-found' />
-            <Stack.Screen name='home/search' options={{ headerShown: false }} />
-          </Stack>
-          <StatusBar style='auto' />
+          {loaded || error ? (
+            <>
+              <Stack initialRouteName='index'>
+                <Stack.Screen
+                  name='home/search'
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
+                <Stack.Screen name='+not-found' />
+              </Stack>
+              <StatusBar style='auto' />
+            </>
+          ) : null}
         </BottomSheetModalProvider>
-      </GestureHandlerRootView>
 
-      <DefaultModal
-        visible={isUpdateRequired}
-        onConfirm={handleUpdatePress}
-        singleButton
-        title={`“다시” 서비스가 새로워졌어요!${`\n`}업데이트하고, 더 편해진 기능을 만나보세요.`}
-        confirmText='확인'
-      />
+        <DefaultModal
+          visible={isUpdateRequired}
+          onConfirm={handleUpdatePress}
+          singleButton
+          title={`“다시” 서비스가 새로워졌어요!\n업데이트하고, 더 편해진 기능을 만나보세요.`}
+          confirmText='확인'
+        />
+      </GestureHandlerRootView>
     </QueryClientProvider>
   );
 }
