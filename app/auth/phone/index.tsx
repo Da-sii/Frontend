@@ -15,7 +15,8 @@ import { usePasswordReset } from '@/store/usePasswordReset';
 import { useSignupDraft } from '@/store/useSignupDraft';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
-import { Pressable, SafeAreaView, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Index() {
   const { menu } = useLocalSearchParams<{ menu?: string }>();

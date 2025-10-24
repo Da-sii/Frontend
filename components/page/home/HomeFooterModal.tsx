@@ -1,7 +1,8 @@
 import Navigation from '@/components/layout/Navigation';
 import { TERMS } from '@/constants/terms';
 import { Ionicons } from '@expo/vector-icons';
-import { Modal, SafeAreaView, ScrollView, Text } from 'react-native';
+import { Modal, ScrollView, Text } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Markdown from 'react-native-markdown-display';
 interface ModalProps {
   type:

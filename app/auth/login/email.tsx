@@ -7,8 +7,8 @@ import { useSignin } from '@/hooks/useSignIn';
 import { isEmail } from '@/utils/validation';
 import { Stack, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, SafeAreaView, Text, View } from 'react-native';
-
+import { Pressable, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 export default function Email() {
   const router = useRouter();
   const [email, setEmail] = useState('');

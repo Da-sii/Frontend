@@ -8,18 +8,10 @@ import { InquiryPayload } from '@/types/payloads/post';
 import { isEmail } from '@/utils/validation';
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
-import {
-  Alert,
-  Modal,
-  SafeAreaView,
-  ScrollView,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { Alert, Modal, ScrollView, Text, TextInput, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import CheckboxInput from './CheckboxInput';
 import { HomeFooterModal } from './HomeFooterModal';
-
 interface ModalProps {
   visible: boolean;
   onClose: () => void;
