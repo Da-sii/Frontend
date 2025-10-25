@@ -33,7 +33,9 @@ export default function DefaultModal({
       <View className='flex-1 bg-black/60 items-center justify-center px-4'>
         <View className='bg-white rounded-[12px] items-center justify-center max-w-xs pt-7 overflow-hidden'>
           {title && (
-            <Text className='font-extrabold text-b-md text-gray-900 mb-[15px] text-center'>
+            <Text
+              className={`font-extrabold text-b-md text-gray-900 text-center ${message ? 'mb-[15px]' : ''}`}
+            >
               {title}
             </Text>
           )}

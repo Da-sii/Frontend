@@ -1,13 +1,13 @@
 // hooks/usePhoneAuth.ts
-import { useMutation } from '@tanstack/react-query';
 import {
   sendPhoneAuth,
-  verifyAuthCode,
-  verifyAuthToken,
   sendPhoneAuthResponse,
+  verifyAuthCode,
   verifyAuthCodeResponse,
+  verifyAuthToken,
   verifyAuthTokenResponse,
 } from '@/services/auth/phone/phoneAuth';
+import { useMutation } from '@tanstack/react-query';
 
 // 전화번호 인증 발송 훅
 export const useSendPhoneAuth = (opts?: {
@@ -20,7 +20,6 @@ export const useSendPhoneAuth = (opts?: {
       opts?.onSuccess?.(data);
     },
     onError: (err: any) => {
-      console.log('인증번호 발송 실패:', err.response?.data);
       opts?.onError?.(err);
     },
   });
@@ -41,8 +40,6 @@ export const useVerifyAuthCode = (opts?: {
       opts?.onSuccess?.(data);
     },
     onError: (err: any) => {
-      console.log('인증 실패:', err.response?.data);
-
       opts?.onError?.(err);
     },
   });
@@ -59,7 +56,6 @@ export const useVerifyAuthToken = (opts?: {
       opts?.onSuccess?.(data);
     },
     onError: (err: any) => {
-      console.log('토큰 검증 실패:', err.response?.data);
       opts?.onError?.(err);
     },
   });

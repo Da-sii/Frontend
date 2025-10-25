@@ -9,6 +9,7 @@ import { ReviewButton } from '@/components/common/buttons/ReviewButton';
 import { ScrollToTopButton } from '@/components/common/buttons/ScrollToTopButton';
 import DefaultModal from '@/components/common/modals/DefaultModal';
 import Navigation from '@/components/layout/Navigation';
+// import CoupangTabBar from '@/components/page/product/productDetail/CoupangTabBar';
 import MaterialInfo from '@/components/page/product/productDetail/materialInfo';
 import PhotoCard from '@/components/page/product/productDetail/PhotoCard';
 import ReviewCard from '@/components/page/product/productDetail/ReviewCard';
@@ -72,8 +73,6 @@ export default function ProductDetail() {
         .filter((u): u is string => typeof u === 'string' && u.length > 0),
     [data?.reviewImages],
   );
-
-  console.log('previewPhotoUrls', previewPhotoUrls);
 
   // 화면이 다시 포커스될 때마다 최신화
   useFocusEffect(

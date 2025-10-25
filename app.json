@@ -2,15 +2,15 @@
   "expo": {
     "name": "다시",
     "slug": "dasii",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/img_logo.png",
     "scheme": "dasii",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true,
-      "buildNumber": "1.0.0",
+      "supportsTablet": false,
+      "buildNumber": "1.0.1",
       "bundleIdentifier": "com.podostore.dasii"
     },
     "android": {
@@ -21,6 +21,7 @@
       "edgeToEdgeEnabled": true,
       "package": "com.dasii",
       "versionCode": 3
+
     },
     "web": {
       "bundler": "metro",

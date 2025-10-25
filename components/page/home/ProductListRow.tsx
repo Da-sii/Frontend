@@ -63,9 +63,24 @@ export default function ProductListRow({ item, onPress }: Props) {
             <Text className='text-xs text-gray-300'>({item.reviewCount})</Text>
           </View>
 
-          <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
-            <Text className='mr-1 text-xs'>정가</Text>
-            <Text className='text-base text-gray-900 mr-1'>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'baseline',
+            }}
+          >
+            <Text
+              style={{ fontSize: 13, color: colors.gray[900], marginRight: 2 }}
+            >
+              정가
+            </Text>
+            <Text
+              style={{
+                fontSize: 14,
+                fontWeight: '400',
+                color: colors.gray[900],
+              }}
+            >
               {item.price.toLocaleString('ko-KR')}원
             </Text>
             <Text className='text-xs text-gray-300'>/ {item.unit}</Text>

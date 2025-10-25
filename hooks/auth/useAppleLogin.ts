@@ -24,14 +24,11 @@ async function handleSignInApple() {
         return null;
       }
 
-      // console.log('Apple ID Token:', identityToken);
-
       try {
         const backendResponse = await axiosInstance.post('/auth/apple/', {
           identityToken: identityToken,
         });
 
-        console.log('백엔드 Apple 로그인 성공:', backendResponse.data);
         setTokens(backendResponse.data.access);
         router.replace('/home');
       } catch (backendError: any) {
@@ -46,7 +43,7 @@ async function handleSignInApple() {
     return null;
   } catch (error: any) {
     if (error.code === appleAuth.Error.CANCELED) {
-      console.log('사용자가 Apple 로그인을 취소했습니다.');
+      // console.log('사용자가 Apple 로그인을 취소했습니다.');
     } else if (error.code === appleAuth.Error.UNKNOWN) {
       console.error('Apple 로그인 에러 (1000):', error);
       Alert.alert(
