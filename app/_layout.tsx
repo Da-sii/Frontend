@@ -58,7 +58,7 @@ function RootLayout() {
     const checkAppVersion = async () => {
       try {
         const response = await fetch(
-          'https://raw.githubusercontent.com/Da-sii/app-config/main/version.json',
+          'https://raw.githubusercontent.com/Da-sii/app-config/refs/heads/main/version.json',
         );
         const remoteConfig = await response.json();
 
