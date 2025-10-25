@@ -1,11 +1,10 @@
 // hooks/auth/useCheckEmail.ts
-import { useMutation } from '@tanstack/react-query';
-import { Alert } from 'react-native';
 import {
   checkEmailExists,
   CheckEmailRequest,
   CheckEmailResponse,
 } from '@/services/auth/checkEmailExists';
+import { useMutation } from '@tanstack/react-query';
 
 /**
  * 이메일 중복/존재 여부 확인 훅
@@ -26,7 +25,6 @@ export const useCheckEmailExists = (opts?: {
         err?.response?.data?.message ||
         err?.response?.data?.detail ||
         '이메일 확인 중 오류가 발생했어요.';
-      console.log('msg', msg);
       opts?.onError?.(err);
     },
   });

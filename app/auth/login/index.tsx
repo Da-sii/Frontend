@@ -55,9 +55,7 @@ export default function Index({ emergency }: { emergency?: string }) {
           <LoginButton
             label='Apple로 로그인'
             onPress={() => {
-              appleLogin().then((res) => {
-                console.log(res);
-              });
+              appleLogin();
             }}
             color='bg-[#000]'
             Icon={AppleIcon}

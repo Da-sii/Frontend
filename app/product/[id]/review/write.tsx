@@ -4,16 +4,19 @@ import { LongButton } from '@/components/common/buttons/LongButton';
 import Navigation from '@/components/layout/Navigation';
 import ReviewStar from '@/components/page/product/productDetail/ReviewStar';
 import colors from '@/constants/color';
+import useEditMyReview from '@/hooks/my/useEditMyReview';
+import { useDeleteReviewImage } from '@/hooks/product/review/image/useDeleteReviewImage';
 import { useReviewImageUpload } from '@/hooks/product/review/image/useReviewImageUpload';
 import useCreateReview from '@/hooks/product/review/useCreateReview';
+import { toCdnUrl } from '@/utils/cdn';
 import * as ImagePicker from 'expo-image-picker';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { toCdnUrl } from '@/utils/cdn';
 import {
   ActionSheetIOS,
   Alert,
   Image,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -23,9 +26,6 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Keyboard } from 'react-native';
-import useEditMyReview from '@/hooks/my/useEditMyReview';
-import { useDeleteReviewImage } from '@/hooks/product/review/image/useDeleteReviewImage';
 
 type ExistingImage = { id: number; url: string };
 
@@ -167,9 +167,7 @@ export default function ReviewWritePage() {
       }
 
       router.back();
-    } catch (e) {
-      // console.log('리뷰업로드실패: ', e);
-    }
+    } catch (e) {}
   };
 
   const openPicker = async () => {

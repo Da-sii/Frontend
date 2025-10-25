@@ -109,7 +109,6 @@ export default function MyReviews() {
             }`}
             disabled={!canDelete}
             onPress={() => {
-              console.log('삭제:', item.nickname);
               setShowDeleteCheckModal(true);
               setTargetReviewId(item.review_id!);
             }}

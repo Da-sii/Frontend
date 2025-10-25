@@ -61,7 +61,7 @@ export default function Index() {
       setRemainSec(180); // 5분
     },
     onError: (err: any) =>
-      console.log('[sendPhoneAuth error]', err?.response?.data),
+      console.error('[sendPhoneAuth error]', err?.response?.data),
   });
 
   // 2) 인증번호 검증 훅
@@ -70,7 +70,6 @@ export default function Index() {
       const token = data.verification_token;
       setVerificationToken(token);
       setResetPwToken(token);
-      console.log('token', token);
       onVerified(token);
     },
     onError: () => {
@@ -143,7 +142,7 @@ export default function Index() {
       // router.push('/auth/find/result');
     } else if (menu === 'findId') {
       const { data: res } = await refetchFindId();
-      console.log('res', res);
+
       if (res?.message === '해당 핸드폰번호로 등록된 계정이 없습니다.') {
         setModalMessage('계정을 찾을 수 없습니다.');
         setModalSecondMessage(

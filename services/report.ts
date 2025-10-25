@@ -25,7 +25,6 @@ export async function reportReview(
   reviewId: number,
   req: ReportRequest,
 ): Promise<ReportResponse> {
-  console.log('[reportReview] POST', `/review/${reviewId}/report/`, req);
   const { data } = await axiosInstance.post<ReportResponse>(
     `/review/${reviewId}/report/`,
     req,
