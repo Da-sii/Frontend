@@ -13,6 +13,7 @@ import { useLogout } from '../../hooks/useLogout';
 export default function Mypage() {
   const router = useRouter();
   const logout = useLogout();
+  const { deleteUser } = useUser();
   const { mypageInfo, fetchMypage } = useUser();
 
   const [showPasswordModal, setShowPasswordModal] = useState(false);
@@ -129,7 +130,7 @@ export default function Mypage() {
 
       <DefaultModal
         visible={showLogoutModal}
-        message={'로그아웃 하시겠습니까?'}
+        title={'로그아웃 하시겠습니까?'}
         onConfirm={() => {
           setShowLogoutModal(false);
           logout.mutate();
@@ -147,6 +148,7 @@ export default function Mypage() {
         }
         onConfirm={() => {
           setShowWithdrawModal(false);
+          deleteUser();
           router.replace('/mypage/completion?action=withdraw');
         }}
         onCancel={() => setShowWithdrawModal(false)}

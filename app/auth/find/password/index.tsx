@@ -1,14 +1,14 @@
 import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
 import { LongButton } from '@/components/common/buttons/LongButton';
 import { TextField } from '@/components/common/Inputs/TextField';
-import Navigation from '@/components/layout/Navigation';
 import DefaultModal from '@/components/common/modals/DefaultModal';
+import Navigation from '@/components/layout/Navigation';
+import { useCheckEmailExists } from '@/hooks/auth/useCheckExistsEmail';
+import { usePasswordReset } from '@/store/usePasswordReset';
 import { isEmail } from '@/utils/validation';
 import { Stack, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Pressable, SafeAreaView, Text, View } from 'react-native';
-import { usePasswordReset } from '@/store/usePasswordReset';
-import { useCheckEmailExists } from '@/hooks/auth/useCheckExistsEmail';
 
 export default function Index() {
   const router = useRouter();
@@ -28,7 +28,6 @@ export default function Index() {
       const msg =
         // @ts-ignore
         err?.response?.data?.message || '이메일 확인 중 오류가 발생했습니다.';
-      console.log(msg);
     },
   });
 

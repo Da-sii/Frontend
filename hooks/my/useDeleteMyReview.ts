@@ -1,11 +1,10 @@
 // features/review/useDeleteReview.ts
+import { deleteReview } from '@/services/my/deleteReview';
 import {
   QueryFilters,
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
-import { deleteReview } from '@/services/my/deleteReview';
-import { Alert } from 'react-native';
 
 type Opts = {
   // 목록 재조회가 필요한 경우 사용 (예: 상세 페이지에서 해당 상품 리뷰 쿼리키를 쓰는 경우)
@@ -25,7 +24,6 @@ export function useDeleteReview(opts?: Opts) {
       const prev = qc.getQueriesData<any>(
         key as QueryFilters<readonly unknown[]>,
       );
-      console.log('prev', prev);
       return { prev };
     },
 
@@ -60,7 +58,6 @@ export function useDeleteReview(opts?: Opts) {
             : err?.response?.status === 404
               ? '해당 리뷰를 찾을 수 없어요.'
               : '리뷰 삭제 중 오류가 발생했어요.');
-      console.log('삭제실패', msg);
 
       opts?.onError?.(err);
     },

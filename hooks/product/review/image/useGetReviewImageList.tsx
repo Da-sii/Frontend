@@ -32,7 +32,6 @@ export const useGetReviewImageList = (
 
       const nextCursor = Number((lastItem as any)?.id);
       if (!Number.isFinite(nextCursor)) return undefined;
-      console.log('[getNextPageParam] nextCursor =', nextCursor);
       return nextCursor;
     },
     enabled: !!productId,

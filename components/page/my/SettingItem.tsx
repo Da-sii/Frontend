@@ -20,7 +20,9 @@ export function SettingItem({ label, subLabel, value, onPress }: ItemProps) {
       <View className='flex flex-row gap-1 items-center'>
         <Text className='text-base text-gray-800 font-bold'>{label}</Text>
         {subLabel && (
-          <Text className='text-xs text-bold text-green-600'>{subLabel}</Text>
+          <Text style={{ fontWeight: 700 }} className='text-xs text-green-600'>
+            {subLabel}
+          </Text>
         )}
       </View>
 

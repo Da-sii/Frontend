@@ -54,4 +54,9 @@ export const userAPI = {
     const response = await axiosInstance.post('/auth/advertisement/', payload);
     return response.data;
   },
+
+  deleteUser: async () => {
+    const response = await axiosInstance.delete('/auth/delete/');
+    return response.data;
+  },
 };

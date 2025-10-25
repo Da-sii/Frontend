@@ -13,8 +13,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 interface BannerDetailModalProps {
   visible: boolean;
   onClose: () => void;
@@ -26,6 +25,7 @@ export default function BannerDetailModal({
   onClose,
   bannerItem,
 }: BannerDetailModalProps) {
+  const insets = useSafeAreaInsets();
   if (!bannerItem) {
     return null;
   }
@@ -46,12 +46,20 @@ export default function BannerDetailModal({
   if (!detailData) {
     return (
       <Modal visible={visible} onRequestClose={onClose}>
-        <SafeAreaView className='flex-1 justify-center items-center'>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingTop: insets.top,
+            paddingBottom: insets.bottom,
+          }}
+        >
           <Text>상세 정보를 불러올 수 없습니다.</Text>
           <Pressable onPress={onClose}>
             <Text>돌아가기</Text>
           </Pressable>
-        </SafeAreaView>
+        </View>
       </Modal>
     );
   }
@@ -63,7 +71,14 @@ export default function BannerDetailModal({
       visible={visible}
       onRequestClose={onClose}
     >
-      <SafeAreaView className='flex-1 bg-white'>
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: 'white',
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom,
+        }}
+      >
         <Navigation
           left={<GoBackIcon width={17} height={17} />}
           onLeftPress={onClose}
@@ -87,7 +102,7 @@ export default function BannerDetailModal({
             ))}
           </View>
         </ScrollView>
-      </SafeAreaView>
+      </View>
     </Modal>
   );
 }

@@ -2,7 +2,10 @@ import XIcon from '@/assets/icons/ic_x.svg';
 import { ReviewButton } from '@/components/common/buttons/ReviewButton';
 import Navigation from '@/components/layout/Navigation';
 import ReviewItems from '@/components/page/product/productDetail/reviewItem';
+import { useGetPhotoReviewDetail } from '@/hooks/product/review/image/useGetPhotoReviewDetail';
+import { toCdnUrl } from '@/utils/cdn';
 import { PortalProvider } from '@gorhom/portal';
+import { useQueryClient } from '@tanstack/react-query';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -15,10 +18,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { useGetPhotoReviewDetail } from '@/hooks/product/review/image/useGetPhotoReviewDetail';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { toCdnUrl } from '@/utils/cdn';
-import { useQueryClient } from '@tanstack/react-query';
 export default function PhotoReviewDetail() {
   const router = useRouter();
 
@@ -36,8 +36,6 @@ export default function PhotoReviewDetail() {
   const reviewCount = qc.getQueryData<{
     reviewCount: number;
   }>(['product', 'detail', idNum]);
-
-  console.log('reviewCount', reviewCount);
 
   const SCREEN_W = Dimensions.get('window').width;
 
