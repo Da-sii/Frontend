@@ -50,7 +50,7 @@ export default function SearchBar({
   };
 
   return (
-    <View>
+    <View className='pt-1.5'>
       <View className='px-4'>
         <View className='flex-row items-center bg-gray-50 rounded-full pb-2 px-4 mb-4'>
           <TextInput

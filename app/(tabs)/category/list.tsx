@@ -148,7 +148,10 @@ export default function List() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: '#fff' }}
+      edges={['top', 'left', 'right']}
+    >
       <Navigation
         left={<ArrowLeftIcon width={20} height={20} fill={colors.gray[900]} />}
         onLeftPress={() => {
@@ -171,7 +174,7 @@ export default function List() {
         }
       />
 
-      <View className='w-full border-y-[1px] border-gray-50 px-2'>
+      <View className='mt-1 w-full border-y-[1px] border-gray-50 px-2'>
         <TabSwitcher
           items={itemsWithAll}
           activeKey={tab}
@@ -188,7 +191,7 @@ export default function List() {
       </View>
 
       <View className='px-4 py-3 pb-1 mb-2 flex-row justify-between items-center'>
-        <Text className='text-sm text-gray-900 font-semibold'>
+        <Text className='pt-1 text-sm text-gray-900 font-semibold'>
           총 {productList?.results.length}개
         </Text>
         <View className='flex-row items-center'>
@@ -346,7 +349,10 @@ export default function List() {
             />
           </View>
 
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+          <View
+            style={{ flexDirection: 'row', flexWrap: 'wrap' }}
+            className='mt-1'
+          >
             {bigCategories.map((cat) => (
               <Pressable
                 key={cat}
@@ -361,7 +367,14 @@ export default function List() {
                   paddingLeft: 30,
                 }}
               >
-                <Text style={{ fontSize: 16, color: '#333' }}>{cat}</Text>
+                <Text
+                  className={`text-lg font-semibold ${
+                    bigCategory === cat ? 'text-gray-900' : 'text-gray-400'
+                  }`}
+                  style={{ fontSize: 16, color: '#333' }}
+                >
+                  {cat}
+                </Text>
               </Pressable>
             ))}
           </View>
@@ -376,7 +389,7 @@ export default function List() {
         enablePanDownToClose
       >
         <BottomSheetView className='flex-1 px-6 py-4 rounded-2xl'>
-          <View className='pb-10'>
+          <View className='pt-2 pb-10'>
             {sortOptions.map((option) => (
               <Pressable
                 key={option.id}

@@ -1,6 +1,6 @@
+import { handelError } from '@/services/handelErrors';
 import { mainAPI } from '@/services/home';
 import { MainScreenInfo } from '@/types/models/main';
-import axios from 'axios';
 import { useState } from 'react';
 
 export const useMain = () => {
@@ -16,11 +16,7 @@ export const useMain = () => {
       setMainScreenInfo(data);
       return true;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 401) {
-        //console.log('잘못된 핀번호입니다.');
-      } else {
-        // console.log('500');
-      }
+      handelError(error);
       return false;
     } finally {
       setIsLoading(false);

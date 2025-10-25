@@ -3,6 +3,7 @@ import {
   UpdatePasswordPayload,
   VerifyCurrentPasswordPayload,
 } from '@/types/payloads/fetch';
+import { InquiryPayload } from '@/types/payloads/post';
 import { VerifyCurrentPasswordResponse } from '@/types/responses/my';
 import {
   MypageResponse,
@@ -47,5 +48,15 @@ export const userAPI = {
       payload,
     );
     return data;
+  },
+
+  submitInquiry: async (payload: InquiryPayload) => {
+    const response = await axiosInstance.post('/auth/advertisement/', payload);
+    return response.data;
+  },
+
+  deleteUser: async () => {
+    const response = await axiosInstance.delete('/auth/delete/');
+    return response.data;
   },
 };

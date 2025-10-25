@@ -6,6 +6,7 @@ import LoginButton from '@/components/common/buttons/LoginButton';
 import Navigation from '@/components/layout/Navigation';
 import KakaoLogin from '@/components/page/login/kakaoLogin';
 import KakaoLoginWebView from '@/components/page/login/KakaoLoginWebView';
+import { useAppleLogin } from '@/hooks/auth/useAppleLogin';
 import { useKakaoLogin } from '@/hooks/useKakaoLogin';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Stack, useRouter } from 'expo-router';
@@ -15,7 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Index({ emergency }: { emergency?: string }) {
   const router = useRouter();
-
+  const appleLogin = useAppleLogin();
   const [showKakao, setShowKakao] = useState(false);
   const [forceReauth, setForceReauth] = useState(false);
   const kakaoLogin = useKakaoLogin();
@@ -53,7 +54,9 @@ export default function Index({ emergency }: { emergency?: string }) {
           <KakaoLogin onPress={() => setShowKakao(true)} />
           <LoginButton
             label='Apple로 로그인'
-            onPress={() => {}}
+            onPress={() => {
+              appleLogin();
+            }}
             color='bg-[#000]'
             Icon={AppleIcon}
             textColor='text-white'

@@ -1,9 +1,9 @@
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import {
   fetchProductReviews,
   ProductReview,
   ReviewSort,
 } from '@/services/product/review/getReviewList';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
 type NumLike = number | undefined;
 const PAGE_SIZE = 21;
@@ -75,7 +75,6 @@ export function useProductReviewsInfinite(
       const lastItem = lastPage[size - 1];
       const nextCursor = Number((lastItem as any)?.review_id);
       if (!Number.isFinite(nextCursor)) return undefined;
-      console.log('[getNextPageParam] nextCursor =', nextCursor);
       return nextCursor;
     },
 
