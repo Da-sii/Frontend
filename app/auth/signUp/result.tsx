@@ -1,5 +1,6 @@
 import { Stack } from 'expo-router';
-import { View, Text, SafeAreaView } from 'react-native';
+import { View, Text } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Logo from '@/assets/icons/ic_logo_start.svg';
 import { LongButton } from '@/components/common/buttons/LongButton';
 import { useRouter } from 'expo-router';

@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "dasii",
+    "name": "다시",
     "slug": "dasii",
     "version": "1.0.1",
     "orientation": "portrait",
@@ -19,8 +19,9 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.dasii.app",
-      "versionCode": 2
+      "package": "com.dasii",
+      "versionCode": 3
+
     },
     "web": {
       "bundler": "metro",

@@ -8,7 +8,10 @@ import { usePasswordReset } from '@/store/usePasswordReset';
 import { isEmail } from '@/utils/validation';
 import { Stack, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Pressable, SafeAreaView, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { usePasswordReset } from '@/store/usePasswordReset';
+import { useCheckEmailExists } from '@/hooks/auth/useCheckExistsEmail';
 
 export default function Index() {
   const router = useRouter();

@@ -20,7 +20,8 @@ import BottomSheet from '@gorhom/bottom-sheet';
 import { PortalProvider } from '@gorhom/portal';
 import { Stack, useRouter } from 'expo-router';
 import { useMemo, useRef, useState } from 'react';
-import { Pressable, SafeAreaView, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
 
 const TERMS: { id: string; terms: string; essential: boolean }[] = [

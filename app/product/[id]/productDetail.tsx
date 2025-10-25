@@ -34,6 +34,8 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import { FlatList, Image, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+const fallbackPath = (id: string) => `/product/${id}`;
+
 const tabs = [
   { key: 'ingredient', label: '성분 정보' },
   { key: 'review', label: '리뷰' },
@@ -217,21 +219,28 @@ export default function ProductDetail() {
                     </View>
                     {(ratingStats?.total_reviews ?? 0) > 0 && (
                       <Pressable
-                        onPress={() => {
-                          qc.setQueryData(
-                            ['product', 'ratingStats', Number(id)],
-                            ratingStats,
-                          );
-                          qc.setQueryData(['product', 'photo-preview', idNum], {
-                            previewPhotos: previewPhotoUrls ?? [],
-                            total_photo:
-                              reviewImageList?.pages[0]?.total_images ?? 0,
-                          });
-                          qc.setQueryData(['product', 'detail', idNum], {
-                            reviewAvg: data?.reviewAvg,
-                            reviewCount: data?.reviewCount,
-                          });
-                          router.push(`/product/${id}/review/allReview`);
+                        onPress={async () => {
+                          if (await isLoggedIn()) {
+                            qc.setQueryData(
+                              ['product', 'ratingStats', Number(id)],
+                              ratingStats,
+                            );
+                            qc.setQueryData(
+                              ['product', 'photo-preview', idNum],
+                              {
+                                previewPhotos: previewPhotoUrls ?? [],
+                                total_photo:
+                                  reviewImageList?.pages[0]?.total_images ?? 0,
+                              },
+                            );
+                            qc.setQueryData(['product', 'detail', idNum], {
+                              reviewAvg: data?.reviewAvg,
+                              reviewCount: data?.reviewCount,
+                            });
+                            router.push(`/product/${id}/review/allReview`);
+                          } else {
+                            router.push('/auth/login/emergency');
+                          }
                         }}
                       >
                         <ArrowRightIcon />
@@ -297,24 +306,34 @@ export default function ProductDetail() {
                         <PhotoCard
                           images={previewPhotoUrls ?? []}
                           maxPreview={6}
-                          onPressPhoto={(idx) => {
-                            const imageUrl = previewPhotoUrls?.[idx];
-                            if (!imageUrl) return;
+                          onPressPhoto={async (idx) => {
+                            if (await isLoggedIn()) {
+                              const imageUrl = previewPhotoUrls?.[idx];
+                              if (!imageUrl) return;
 
-                            router.push({
-                              pathname:
-                                '/product/[id]/review/[reviewId]/photoReviewDetail',
-                              params: {
-                                id: String(id),
-                                reviewId: String(parseReviewId(imageUrl)),
-                                imageUrl,
-                                index: idx,
-                              },
-                            });
+                              router.push({
+                                pathname:
+                                  '/product/[id]/review/[reviewId]/photoReviewDetail',
+                                params: {
+                                  id: String(id),
+                                  reviewId: String(parseReviewId(imageUrl)),
+                                  imageUrl,
+                                  index: idx,
+                                },
+                              });
+                            } else {
+                              router.push('/auth/login/emergency');
+                            }
                           }}
-                          onPressMore={() =>
-                            router.push(`/product/${id}/review/photo/allList`)
-                          }
+                          onPressMore={async () => {
+                            if (await isLoggedIn()) {
+                              router.push(
+                                `/product/${id}/review/photo/allList`,
+                              );
+                            } else {
+                              router.push('/auth/login/emergency');
+                            }
+                          }}
                           total_photo={
                             reviewImageList?.pages[0]?.total_images ?? 0
                           }

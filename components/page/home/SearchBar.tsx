@@ -52,10 +52,10 @@ export default function SearchBar({
   return (
     <View className='pt-1.5'>
       <View className='px-4'>
-        <View className='flex-row items-center bg-gray-50 rounded-full pb-2 px-4 mb-4'>
+        <View className='flex-row items-center bg-gray-50 rounded-full py-[9px] px-[20px] mb-[15px]'>
           <TextInput
             ref={inputRef}
-            className='flex-1 text-base pt-1'
+            className='flex-1 text-b-sm font-regular'
             placeholder={placeholder}
             placeholderTextColor={colors.gray[400]}
             value={value}
@@ -78,7 +78,7 @@ export default function SearchBar({
           />
           {value.length > 0 && (
             <Pressable
-              className='ml-2 bg-gray-400 rounded-full p-[3px] mt-2'
+              className='ml-2 bg-gray-400 rounded-full p-[3px]'
               onPress={() => {
                 onChangeText('');
               }}
@@ -86,7 +86,7 @@ export default function SearchBar({
               <CloseIcon width={13} height={13} color={colors.gray[0]} />
             </Pressable>
           )}
-          <Pressable className='ml-4 mt-2' onPress={handleSearchSubmit}>
+          <Pressable className='ml-4' onPress={handleSearchSubmit}>
             <MagnifierIcon
               width={18}
               height={18}

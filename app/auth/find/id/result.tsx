@@ -2,9 +2,9 @@ import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
 import { LongButton } from '@/components/common/buttons/LongButton';
 import Navigation from '@/components/layout/Navigation';
 import { Stack, useNavigation, useRouter } from 'expo-router';
-import { SafeAreaView, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useFoundAccounts } from '@/store/useFoundAccounts';
-
+import { SafeAreaView } from 'react-native-safe-area-context';
 const formatDate = (iso: string | null) => {
   if (!iso) return '-';
   const d = new Date(iso);

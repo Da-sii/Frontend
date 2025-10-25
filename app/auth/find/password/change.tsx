@@ -9,7 +9,8 @@ import {
 } from '@/utils/validation';
 import { Stack, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { SafeAreaView, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { usePasswordReset } from '@/store/usePasswordReset';
 import { useResetPassword } from '@/hooks/auth/useFindAccount';
 
