@@ -63,6 +63,18 @@ export const useUser = () => {
     }
   };
 
+  const deleteUser = async () => {
+    setIsLoading(true);
+    try {
+      const data = await userAPI.deleteUser();
+      return data;
+    } catch (error) {
+      handelError(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     fetchMypage,
     mypageInfo,
@@ -71,5 +83,6 @@ export const useUser = () => {
     verifyCurrentPassword,
     isLoading,
     setIsLoading,
+    deleteUser,
   };
 };

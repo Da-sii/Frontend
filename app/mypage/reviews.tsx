@@ -1,13 +1,13 @@
-// app/mypage/review.tsx
 import BackIcon from '@/assets/icons/ic_arrow_left.svg';
 import DefaultModal from '@/components/common/modals/DefaultModal';
+import Navigation from '@/components/layout/Navigation';
 import ReviewItems from '@/components/page/product/productDetail/reviewItem'; // 실제 경로로 수정
 import { useDeleteReview } from '@/hooks/my/useDeleteMyReview';
 import { useGetMyReview } from '@/hooks/my/useGetMyReview';
 import { useState } from 'react';
 
 import { MyReview } from '@/services/my/getReviewList';
-import { Stack, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useCallback } from 'react';
 import {
   ActivityIndicator,
@@ -36,7 +36,6 @@ export default function MyReviews() {
       ['my', 'reviews'], // ← 실제 키와 일치시키기
     ],
   });
-  console.log('myReviews', myReviews);
 
   const keyExtractor = useCallback((item: MyReview, idx: number) => {
     // review_id가 있으면 그걸로만
@@ -51,7 +50,6 @@ export default function MyReviews() {
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const flatReviews = myReviews?.pages?.flat() ?? [];
-  console.log('flatReviews', flatReviews);
 
   const renderItem = ({ item }: { item: MyReview }) => {
     const images: string[] = Array.isArray(item.images)
@@ -147,24 +145,17 @@ export default function MyReviews() {
 
   return (
     <View className='flex-1 bg-white px-4'>
-      <Stack.Screen
-        options={{
-          headerTitle: '내가 쓴 리뷰',
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => router.back()}>
-              <BackIcon width={17} height={17} />
-            </TouchableOpacity>
-          ),
-          headerTitleAlign: 'center',
-          headerShadowVisible: false,
-        }}
+      <Navigation
+        title='내가 쓴 리뷰'
+        left={<BackIcon width={17} height={17} />}
+        onLeftPress={() => router.back()}
       />
 
       <FlatList
         data={flatReviews}
         keyExtractor={keyExtractor}
         ListHeaderComponent={
-          <Text className='px-1 pt-4 pb-2 text-base font-medium'>
+          <Text className='px-1 pt-4 pb-2 text-base font-bold'>
             {flatReviews.length ?? 0}개의 리뷰를 작성했어요!
           </Text>
         }

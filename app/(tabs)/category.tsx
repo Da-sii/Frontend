@@ -20,7 +20,7 @@ export default function Category() {
   const { categories, fetchCategories } = useCategory();
 
   const [selectedBigCategory, setSelectedBigCategory] = useState('');
-  const [colWidth, setColWidth] = useState<number>(100);
+  const [colWidth, setColWidth] = useState<number>();
 
   useEffect(() => {
     fetchCategories();
@@ -57,7 +57,7 @@ export default function Category() {
 
   const onTextLayout = (e: LayoutChangeEvent) => {
     const w = e.nativeEvent.layout.width;
-    if (w > colWidth) {
+    if (w > (colWidth || 0)) {
       setColWidth(w);
     }
   };
@@ -99,7 +99,7 @@ export default function Category() {
               }`}
             >
               <Text
-                className={`text-md pl-6 ${
+                className={`text-md pl-3 pr-3 ${
                   selectedBigCategory === cat
                     ? 'text-gray-900 font-semibold'
                     : 'text-gray-400 font-semibold'
@@ -119,12 +119,9 @@ export default function Category() {
             </Text>
             <Pressable
               onPress={() => goToList()}
-              className='flex-row items-center'
+              className='flex-row items-center pr-1'
             >
-              <Text className='text-xs text-gray-500 mr-1 font-semibold'>
-                전체보기
-              </Text>
-              <ViewAllIcon width={10} height={10} color={colors.gray[900]} />
+              <ViewAllIcon width={13} height={13} color={colors.gray[900]} />
             </Pressable>
           </View>
 
