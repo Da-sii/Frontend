@@ -8,6 +8,11 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
+import {
+  getTrackingPermissionsAsync,
+  requestTrackingPermissionsAsync,
+} from 'expo-tracking-transparency';
+
 import { useCallback, useEffect, useState } from 'react';
 import { Linking, Platform } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -20,8 +25,8 @@ SplashScreen.preventAutoHideAsync().catch(() => {});
 // React Query 클라이언트는 1회 생성
 const queryClient = new QueryClient();
 
-// 프로덕션에서만 Sentry 활성화
-if (!__DEV__) {
+async function initSentry() {
+  if (__DEV__) return;
   Sentry.init({
     dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
     sendDefaultPii: true,
@@ -31,6 +36,19 @@ if (!__DEV__) {
     integrations: [Sentry.mobileReplayIntegration()],
   });
 }
+
+
+// 프로덕션에서만 Sentry 활성화
+// if (!__DEV__) {
+//   Sentry.init({
+//     dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
+//     sendDefaultPii: true,
+//     enableLogs: true,
+//     replaysSessionSampleRate: 0.1,
+//     replaysOnErrorSampleRate: 1,
+//     integrations: [Sentry.mobileReplayIntegration()],
+//   });
+// }
 
 function RootLayout() {
   const [loaded, error] = useFonts({
@@ -77,6 +95,25 @@ function RootLayout() {
     };
 
     checkAppVersion();
+  }, []);
+
+  // 앱 추적 허용/거부 요청
+  useEffect(() => {
+    (async () => {
+      if (Platform.OS !== 'ios') {
+        // iOS 외 플랫폼은 바로 초기화(추적 개념 X)
+        await initSentry();
+        return;
+      }
+  
+      const { status } = await getTrackingPermissionsAsync();
+      if (status === 'undetermined') {
+        const res = await requestTrackingPermissionsAsync();
+        if (res.status === 'granted') await initSentry();
+      } else if (status === 'granted') {
+        await initSentry();
+      }
+    })();
   }, []);
 
   const handleUpdatePress = () => {
