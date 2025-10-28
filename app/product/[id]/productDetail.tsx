@@ -9,7 +9,9 @@ import { ReviewButton } from '@/components/common/buttons/ReviewButton';
 import { ScrollToTopButton } from '@/components/common/buttons/ScrollToTopButton';
 import DefaultModal from '@/components/common/modals/DefaultModal';
 import Navigation from '@/components/layout/Navigation';
+import BottomSheetLayout from '@/components/page/product/productDetail/BottomSeetLayout';
 // import CoupangTabBar from '@/components/page/product/productDetail/CoupangTabBar';
+import InfoIcon from '@/assets/icons/ic_info.svg';
 import MaterialInfo from '@/components/page/product/productDetail/materialInfo';
 import PhotoCard from '@/components/page/product/productDetail/PhotoCard';
 import ReviewCard from '@/components/page/product/productDetail/ReviewCard';
@@ -22,6 +24,7 @@ import { useParseReviewIdFromImage } from '@/hooks/product/review/image/useParse
 import { useProductReviewsPreview } from '@/hooks/product/review/useGetProductReview';
 import { useProductRatingStats } from '@/hooks/product/review/useProductRatingStats';
 import { useProductDetail } from '@/hooks/product/useProductDetail';
+import BottomSheet from '@gorhom/bottom-sheet';
 import { PortalHost, PortalProvider } from '@gorhom/portal';
 import { useQueryClient } from '@tanstack/react-query';
 import {
@@ -56,6 +59,13 @@ export default function ProductDetail() {
   const { parseReviewId } = useParseReviewIdFromImage();
   const qc = useQueryClient();
   const router = useRouter();
+
+  const sheetRef = useRef<BottomSheet>(null);
+  const snapPoints = useMemo(() => [300], []);
+  const openSheet = () => {
+    sheetRef.current?.snapToIndex?.(0);
+  };
+  const closeSheet = () => sheetRef.current?.close();
 
   const [activeTab, setActiveTab] = useState<'ingredient' | 'review'>(
     'ingredient',
@@ -207,7 +217,7 @@ export default function ProductDetail() {
 
               {/* 탭별 상단 콘텐츠 */}
               {activeTab === 'ingredient' ? (
-                <IngredientSection product={data} />
+                <IngredientSection product={data} openSheet={openSheet} />
               ) : (
                 <View className='px-5 mt-5'>
                   <View className='flex-row items-center justify-between mb-5'>
@@ -418,19 +428,44 @@ export default function ProductDetail() {
           visible={showTopButton}
         />
       </SafeAreaView>
+      <BottomSheetLayout snapPoints={snapPoints} sheetRef={sheetRef}>
+        <View className='px-[30px] mt-[30px] mb-[44px]'>
+          <Text className='text-b-sm font-extrabold text-gray-900 mb-[25px]'>
+            성분 정보의 출처
+          </Text>
+          <Text className='text-c2 font-bold text-gray-400 mb-[11px]'>
+            본 정보는 식품의약품안전처 건강기능식품 및 영양성분 기준을
+            참고했습니다.
+          </Text>
+          <Text className='text-c2 font-bold text-gray-400'>
+            (https://www.foodsafetykorea.go.kr)
+          </Text>
+        </View>
+      </BottomSheetLayout>
     </PortalProvider>
   );
 }
 
 /* 그대로 사용 */
-function IngredientSection({ product }: { product: any }) {
+function IngredientSection({
+  product,
+  openSheet,
+}: {
+  product: any;
+  openSheet: () => void;
+}) {
   return (
     <View className='p-5'>
-      <View className='flex-row mb-[10px]'>
-        <Text className='text-b-lg font-bold'>기능성 원료 </Text>
-        <Text className='text-b-lg font-extrabold text-green-500'>
-          {product?.ingredientsCount ?? 0}개
-        </Text>
+      <View className='flex-row items-center justify-between mb-[10px]'>
+        <View className='flex-row'>
+          <Text className='text-b-lg font-bold'>기능성 원료 </Text>
+          <Text className='text-b-lg font-extrabold text-green-500'>
+            {product?.ingredientsCount ?? 0}개
+          </Text>
+        </View>
+        <Pressable onPress={openSheet}>
+          <InfoIcon />
+        </Pressable>
       </View>
       {product?.ingredients.map((item: any, index: any) => (
         <MaterialInfo key={index} materialInfo={item} />
