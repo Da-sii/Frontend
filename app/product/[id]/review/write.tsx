@@ -1,6 +1,7 @@
 import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
 import PhotoCameraIcon from '@/assets/icons/product/review/ic_blue_camera.svg';
 import { LongButton } from '@/components/common/buttons/LongButton';
+import DefaultModal from '@/components/common/modals/DefaultModal';
 import Navigation from '@/components/layout/Navigation';
 import ReviewStar from '@/components/page/product/productDetail/ReviewStar';
 import colors from '@/constants/color';
@@ -8,6 +9,7 @@ import useEditMyReview from '@/hooks/my/useEditMyReview';
 import { useDeleteReviewImage } from '@/hooks/product/review/image/useDeleteReviewImage';
 import { useReviewImageUpload } from '@/hooks/product/review/image/useReviewImageUpload';
 import useCreateReview from '@/hooks/product/review/useCreateReview';
+import useProfanity from '@/hooks/useProfanity';
 import { toCdnUrl } from '@/utils/cdn';
 import * as ImagePicker from 'expo-image-picker';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
@@ -99,6 +101,8 @@ export default function ReviewWritePage() {
     reviewId: reviewIdNum, // ✅ 훅 옵션으로 기본값 제공
   });
 
+  const { check } = useProfanity();
+  const [profanityOpen, setProfanityOpen] = useState(false);
   const productImage = (() => {
     try {
       return image
@@ -139,6 +143,12 @@ export default function ReviewWritePage() {
     Number.isFinite(rate) && rate >= 1 && rate <= 5 && isReviewValid(review);
 
   const onSubmit = async () => {
+    const { isProfane } = check(review);
+    if (isProfane) {
+      setProfanityOpen(true); // 모달 오픈
+      return; // 등록 막기
+    }
+
     if (!canSubmit) return;
     try {
       if (!isEdit) {
@@ -541,6 +551,13 @@ export default function ReviewWritePage() {
               disabled={!canSubmit || isPending || isUpdating || isUploading}
             />
           </View>
+          <DefaultModal
+            visible={profanityOpen}
+            title='리뷰 등록이 불가합니다.'
+            message='비속어 또는 부적절한 표현이 포함되어 있습니다. 수정 후 다시 시도해주세요.'
+            onConfirm={() => setProfanityOpen(false)}
+            singleButton
+          />
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
