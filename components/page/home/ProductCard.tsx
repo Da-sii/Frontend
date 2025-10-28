@@ -38,7 +38,7 @@ export default function ProductCard({
           style,
         ]}
       >
-        {!isValidImage ? (
+        {isValidImage ? (
           <Image
             source={{ uri: item.image }}
             style={[{ width: '100%', aspectRatio: 1 }, imageStyle]}

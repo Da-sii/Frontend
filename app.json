@@ -11,7 +11,10 @@
     "ios": {
       "supportsTablet": false,
       "buildNumber": "1.0.1",
-      "bundleIdentifier": "com.podostore.dasii"
+      "bundleIdentifier": "com.podostore.dasii",
+      "infoPlist": {
+        "NSUserTrackingUsageDescription": "맞춤형 콘텐츠/광고 및 앱 품질 개선을 위해 사용자 활동 데이터를 사용할 수 있도록 허용해 주세요."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -21,7 +24,6 @@
       "edgeToEdgeEnabled": true,
       "package": "com.dasii",
       "versionCode": 3
-
     },
     "web": {
       "bundler": "metro",
