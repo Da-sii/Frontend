@@ -77,7 +77,7 @@ export default function HomeFooter() {
       />
 
       <HomeFooterModal
-        type='footerPrivacy'
+        type='footerPrivacyUsage'
         visible={isPrivacyModalVisible}
         onClose={() => setIsPrivacyModalVisible(false)}
       />

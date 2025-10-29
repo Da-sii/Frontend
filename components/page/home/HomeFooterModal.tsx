@@ -1,9 +1,9 @@
 import Navigation from '@/components/layout/Navigation';
 import { TERMS } from '@/constants/terms';
 import { Ionicons } from '@expo/vector-icons';
-import { Modal, ScrollView, Text } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Modal, ScrollView, Text, View } from 'react-native';
 import Markdown from 'react-native-markdown-display';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 interface ModalProps {
   type:
     | 'terms'
@@ -13,7 +13,10 @@ interface ModalProps {
     | 'adInquiry'
     | 'age'
     | 'appUsage'
-    | 'notification';
+    | 'notification'
+    | 'footerService'
+    | 'footerPrivacyUsage'
+    | 'footerReviewPolicy';
 
   visible: boolean;
   onClose: () => void;
@@ -21,7 +24,7 @@ interface ModalProps {
 
 export const HomeFooterModal = ({ type, visible, onClose }: ModalProps) => {
   const term = TERMS.find((t) => t.id === type);
-
+  const insets = useSafeAreaInsets();
   // 1) \n(문자) -> 실제 개행 치환
   // 2) 모든 개행을 "마크다운 줄바꿈(공백2 + \n)"으로 변환
   const mdContent = (term?.content ?? '')
@@ -37,18 +40,23 @@ export const HomeFooterModal = ({ type, visible, onClose }: ModalProps) => {
       visible={visible}
       onRequestClose={onClose}
     >
-      <SafeAreaView className='flex-1'>
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: 'white',
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom,
+        }}
+      >
         <Navigation
           right={<Ionicons name='close' size={25} color='black' />}
           onRightPress={onClose}
           title={TERMS.find((term) => term.id === type)?.title}
         />
 
-
         <ScrollView className='p-4'>
           <Text className='font-bold'>
             {TERMS.find((term) => term.id === type)?.subTitle} {'\n'}
-
           </Text>
           <Markdown
             style={{
@@ -72,7 +80,7 @@ export const HomeFooterModal = ({ type, visible, onClose }: ModalProps) => {
             {mdContent}
           </Markdown>
         </ScrollView>
-      </SafeAreaView>
+      </View>
     </Modal>
   );
 };

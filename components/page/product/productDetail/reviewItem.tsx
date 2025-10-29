@@ -1,5 +1,7 @@
+import MoreIcon from '@/assets/icons/product/productDetail/ic_more_line.svg';
+import DefaultModal from '@/components/common/modals/DefaultModal';
 import BottomSheet from '@gorhom/bottom-sheet';
-import { useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import {
@@ -13,12 +15,11 @@ import {
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
-import MoreIcon from '@/assets/icons/product/productDetail/ic_more_line.svg';
-
 import { LongButton } from '@/components/common/buttons/LongButton';
 import BottomSheetLayout from '@/components/page/product/productDetail/BottomSeetLayout';
 import { useIsLoggedIn } from '@/hooks/auth/useIsLoggedIn';
 import { useReportReview } from '@/hooks/useReportReview';
+import { useUser } from '@/hooks/useUser';
 import { ReportReason } from '@/services/report';
 import { toCdnUrl } from '@/utils/cdn';
 import ReviewStar from './ReviewStar';
@@ -73,7 +74,10 @@ export default function ReviewItems({
 }: reviewItemProups) {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { blockReview } = useUser();
+  const idNum = Number(id);
   const [isOpen, setIsOpen] = useState(false);
+  const [isBlockModalVisible, setIsBlockModalVisible] = useState(false);
   const [measured, setMeasured] = useState(false);
   const [needsClamp, setNeedsClamp] = useState(false);
   const [sheetView, setSheetView] = useState<SheetView>('menu');
@@ -87,7 +91,7 @@ export default function ReviewItems({
 
   // ===== BottomSheet =====
   const sheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => [154], [414]);
+  const snapPoints = useMemo(() => [300], [414]);
 
   const navigateToEmergencyLogin = (href: string) => {
     closeSheet();
@@ -109,6 +113,14 @@ export default function ReviewItems({
     }
     setSheetView('report');
     sheetRef.current?.snapToIndex(1);
+  };
+
+  const goBlock = () => {
+    if (!isLoggedIn) {
+      navigateToEmergencyLogin('/auth/login/emergency');
+      return;
+    }
+    setIsBlockModalVisible(true);
   };
 
   const submitReport = async () => {
@@ -134,6 +146,30 @@ export default function ReviewItems({
 
     closeSheet();
   };
+
+  const { mutate: blockUserMutate, isPending: isBlocking } = useMutation({
+    mutationFn: (reviewId: number) => blockReview(reviewId),
+    onSuccess: () => {
+      setIsBlockModalVisible(false);
+
+      queryClient.invalidateQueries({
+        queryKey: ['product', 'reviews', idNum, 'time'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['product', 'ratingStats', idNum],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['product', 'detail', idNum],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['review', 'imageList', idNum],
+      });
+    },
+    onError: (error) => {
+      console.error('리뷰 차단 실패:', error);
+      setIsBlockModalVisible(false);
+    },
+  });
 
   const onTextLayout = useCallback(
     (e: NativeSyntheticEvent<TextLayoutEventData>) => {
@@ -285,6 +321,11 @@ export default function ReviewItems({
             <Pressable onPress={goReport} hitSlop={8}>
               <Text className='text-b-sm font-bold mb-[25px]'>신고하기</Text>
             </Pressable>
+            <Pressable onPress={goBlock} hitSlop={8}>
+              <Text className='text-b-sm font-bold mb-[25px]'>
+                리뷰 차단하기
+              </Text>
+            </Pressable>
             <Pressable onPress={closeSheet} hitSlop={8}>
               <Text className='text-b-sm font-bold text-gray-400'>닫기</Text>
             </Pressable>
@@ -337,6 +378,21 @@ export default function ReviewItems({
           </View>
         )}
       </BottomSheetLayout>
+
+      <DefaultModal
+        visible={isBlockModalVisible}
+        onConfirm={() => {
+          if (isBlocking) return;
+          blockUserMutate(reviewItem.id);
+        }}
+        onCancel={() => {
+          setIsBlockModalVisible(false);
+        }}
+        title='리뷰 차단'
+        message='리뷰를 차단하면 해당 리뷰는 볼 수 없게 돼요.'
+        confirmText='확인'
+        cancelText='취소'
+      />
     </View>
   );
 }

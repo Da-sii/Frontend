@@ -94,7 +94,7 @@ export default function Mypage() {
             </SettingSection>
 
             <SettingSection title='도움말' topBorder>
-              <SettingItem label='버전 정보' value='V 1.0.0' />
+              <SettingItem label='버전 정보' value='V 1.0.1' />
               <SettingItem label='문의 메일' value='podostore1111@gmail.com' />
             </SettingSection>
 
@@ -113,7 +113,7 @@ export default function Mypage() {
             </SettingSection>
 
             <SettingSection title='도움말' topBorder>
-              <SettingItem label='버전 정보' value='V 1.0' />
+              <SettingItem label='버전 정보' value='V 1.0.1' />
               <SettingItem label='문의 메일' value='podostore1111@gmail.com' />
             </SettingSection>
           </>

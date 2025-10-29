@@ -99,7 +99,7 @@ export default function ProductDetail() {
     }, [qc, idNum, refetchRatingStats]),
   );
 
-  const [coupangProduct, setCoupangProduct] = useState(null);
+  // const [coupangProduct, setCoupangProduct] = useState(null);
 
   if (!data) return <Text>제품을 찾을 수 없습니다.</Text>;
 

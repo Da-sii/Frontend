@@ -59,4 +59,9 @@ export const userAPI = {
     const response = await axiosInstance.delete('/auth/delete/');
     return response.data;
   },
+
+  blockReview: async (reviewId: number) => {
+    const response = await axiosInstance.post(`/review/${reviewId}/block/`, {});
+    return response.data;
+  },
 };

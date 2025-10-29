@@ -288,7 +288,7 @@ export const HomeFooterRequestModal = ({ visible, onClose }: ModalProps) => {
       </SafeAreaView>
 
       <HomeFooterModal
-        type='adInquiry'
+        type='privacy'
         visible={showPrivacyAgree}
         onClose={() => setShowPrivacyAgree(false)}
       />
