@@ -75,6 +75,18 @@ export const useUser = () => {
     }
   };
 
+  const blockReview = async (reviewId: number) => {
+    setIsLoading(true);
+    try {
+      const data = await userAPI.blockReview(reviewId);
+      return data;
+    } catch (error) {
+      handelError(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     fetchMypage,
     mypageInfo,
@@ -84,5 +96,6 @@ export const useUser = () => {
     isLoading,
     setIsLoading,
     deleteUser,
+    blockReview,
   };
 };
