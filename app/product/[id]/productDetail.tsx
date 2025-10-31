@@ -135,25 +135,36 @@ export default function ProductDetail() {
             <View>
               {/* 상품 이미지 */}
               <View className='h-[390px] w-full'>
-                {data?.images.length > 0 ? (
-                  typeof data.images === 'string' ? (
+                {(() => {
+                  const img = data?.images;
+                  let imageSource: { uri: string } | undefined;
+
+                  if (Array.isArray(img) && img.length > 0) {
+                    const first = img[0];
+                    if (typeof first === 'string') {
+                      imageSource = { uri: first };
+                    } else if (
+                      first &&
+                      typeof first === 'object' &&
+                      typeof first.url === 'string'
+                    ) {
+                      imageSource = { uri: first.url };
+                    }
+                  }
+                  return imageSource ? (
                     <Image
-                      source={{ uri: data.images }}
+                      source={imageSource}
                       className='w-full h-full'
+                      resizeMode='cover'
                     />
                   ) : (
-                    <Image
-                      source={data.images as any}
-                      className='w-full h-full'
-                    />
-                  )
-                ) : (
-                  <View className='border-gray-100 border w-full h-full items-center justify-center'>
-                    <Text className='text-b-lg font-bold text-gray-500'>
-                      상품 이미지를 준비중입니다.
-                    </Text>
-                  </View>
-                )}
+                    <View className='border-gray-100 border w-full h-full items-center justify-center'>
+                      <Text className='text-b-lg font-bold text-gray-500'>
+                        상품 이미지를 준비중입니다.
+                      </Text>
+                    </View>
+                  );
+                })()}
               </View>
 
               {/* 상품 정보 헤더 */}
