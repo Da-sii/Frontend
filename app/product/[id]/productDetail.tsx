@@ -112,6 +112,7 @@ export default function ProductDetail() {
 
   if (!data) return <Text>제품을 찾을 수 없습니다.</Text>;
 
+
   return (
     <PortalProvider>
       <SafeAreaView className='flex-1 bg-white'>
