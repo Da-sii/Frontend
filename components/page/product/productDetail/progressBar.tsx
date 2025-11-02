@@ -31,7 +31,7 @@ export default function ProgressBar({
             transform: [{ translateX: -textWidth / 2 }],
           }}
         >
-          하루 최대치 {amount}
+          하루 최대치 {recommended}
         </Text>
       </View>
 
@@ -54,11 +54,23 @@ export default function ProgressBar({
           }
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
-          style={{ width: `${percent}%`, height: '100%', borderRadius: 9999 }}
-        />
-        <View className='absolute top-0 left-0 right-0 h-5 items-center justify-center'>
-          <Text className='text-white text-c3 font-extrabold'>{amount}</Text>
-        </View>
+          style={{
+            width: `${percent}%`,
+            minWidth: '15%',
+            height: '100%',
+            borderRadius: 9999,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Text
+            className='text-white text-c3 font-extrabold '
+            numberOfLines={1}
+            adjustsFontSizeToFit
+          >
+            {amount}
+          </Text>
+        </LinearGradient>
       </View>
     </View>
   );
