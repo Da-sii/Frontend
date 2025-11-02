@@ -2,13 +2,13 @@ import DefaultModal from '@/components/common/modals/DefaultModal';
 import Navigation from '@/components/layout/Navigation';
 import { SettingItem } from '@/components/page/my/SettingItem';
 import { SettingSection } from '@/components/page/my/SettingSection';
+import { useLogout } from '@/hooks/useLogout';
 import { useUser } from '@/hooks/useUser';
 import { getAccessToken } from '@/lib/authToken';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLogout } from '../../hooks/useLogout';
 
 export default function Mypage() {
   const router = useRouter();

@@ -24,6 +24,7 @@ import { useParseReviewIdFromImage } from '@/hooks/product/review/image/useParse
 import { useProductReviewsPreview } from '@/hooks/product/review/useGetProductReview';
 import { useProductRatingStats } from '@/hooks/product/review/useProductRatingStats';
 import { useProductDetail } from '@/hooks/product/useProductDetail';
+import { useUser } from '@/hooks/useUser';
 import BottomSheet from '@gorhom/bottom-sheet';
 import { PortalHost, PortalProvider } from '@gorhom/portal';
 import { useQueryClient } from '@tanstack/react-query';
@@ -33,7 +34,7 @@ import {
   useLocalSearchParams,
   useRouter,
 } from 'expo-router';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FlatList, Image, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -59,6 +60,11 @@ export default function ProductDetail() {
   const { parseReviewId } = useParseReviewIdFromImage();
   const qc = useQueryClient();
   const router = useRouter();
+  const { mypageInfo, fetchMypage } = useUser();
+
+  useEffect(() => {
+    fetchMypage();
+  }, [fetchMypage]);
 
   const sheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => [300], []);
@@ -375,6 +381,9 @@ export default function ProductDetail() {
                         images: item.images ?? [],
                       }}
                       id={id}
+                      enableBottomSheet={
+                        !mypageInfo?.nickname === item.user_nickname
+                      }
                     />
                     <View className='w-[200%] h-[1px] left-[-50%] bg-gray-50' />
                   </View>

@@ -85,7 +85,7 @@ export default function Home() {
         <BannerDetailModal
           visible={isBannerModalVisible}
           onClose={handleModalClose}
-          bannerItem={bannerData[selectedBannerIndex]} // 선택된 배너 데이터 전달
+          bannerItem={bannerData[selectedBannerIndex]}
         />
       )}
     </SafeAreaView>

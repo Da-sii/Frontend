@@ -83,7 +83,7 @@ export default function ProductListRow({ item, onPress }: Props) {
             >
               {item.price.toLocaleString('ko-KR')}원
             </Text>
-            <Text className='text-xs text-gray-300'>/ {item.unit}</Text>
+            <Text className='text-xs text-gray-300'> / {item.unit}</Text>
           </View>
         </View>
       </View>

@@ -4,7 +4,7 @@ import {
 } from '@/assets/icons/ic_arrow_down.svg';
 import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
 import LessIcon from '@/assets/icons/ic_arrow_up.svg';
-import CheckIcon from '@/assets/icons/ic_check.svg';
+import CheckIcon from '@/assets/icons/ic_bold_check.svg';
 import ViewTypeIcon from '@/assets/icons/ic_grid.svg';
 import ListTypeIcon from '@/assets/icons/ic_list.svg';
 import SearchIcon from '@/assets/icons/ic_magnifier.svg';
@@ -164,7 +164,7 @@ export default function List() {
             style={{ flexDirection: 'row', alignItems: 'center' }}
           >
             <Text className='text-lg font-semibold mr-1'>{bigCategory} </Text>
-            <MoreIcon />
+            <MoreIcon width={13} height={13} fill={colors.gray[900]} />
           </Pressable>
         }
         right={
@@ -182,10 +182,6 @@ export default function List() {
             setTab(key as ListTab);
             setBigCategory(bigCategory);
             setActiveSub(key as string);
-            router.replace({
-              pathname: '/(tabs)/category/list',
-              params: { main: bigCategory, sub: key },
-            });
           }}
         />
       </View>
@@ -332,13 +328,13 @@ export default function List() {
               }}
               center={
                 <Pressable
-                  onPress={() => setTopModalVisible(true)}
+                  onPress={() => setTopModalVisible(false)}
                   style={{ flexDirection: 'row', alignItems: 'center' }}
                 >
-                  <Text className='text-lg font-semibold mr-1'>
+                  <Text className='text-lg font-semibold mr-2'>
                     {bigCategory}
                   </Text>
-                  <LessIcon />
+                  <LessIcon width={13} height={13} fill={colors.gray[900]} />
                 </Pressable>
               }
               right={
@@ -394,7 +390,7 @@ export default function List() {
               <Pressable
                 key={option.id}
                 onPress={() => handleSortSelect(option.id)}
-                className='flex-row items-center justify-between px-8 py-2'
+                className='flex-row items-center justify-between px-8 py-3'
               >
                 <Text
                   className={`text-base ${
@@ -406,7 +402,7 @@ export default function List() {
                   {option.label}
                 </Text>
                 {selectedSort === option.id && (
-                  <CheckIcon width={14} height={14} />
+                  <CheckIcon width={18} height={18} />
                 )}
               </Pressable>
             ))}
