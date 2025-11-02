@@ -66,7 +66,7 @@ export default function RankingItem({
             className='absolute'
             fill={index < 3 ? colors.green[500] : colors.gray[400]}
           />
-          <Text className='text-white text-sm font-semibold'>{index + 1}</Text>
+          <Text className='text-white text-sm font-n-bd'>{index + 1}</Text>
         </View>
 
         <View className='flex-1 ml-3 space-y-1'>
@@ -91,7 +91,7 @@ export default function RankingItem({
           </View>
 
           <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
-            <Text className='mr-1 text-xs'>정가</Text>
+            <Text className='mr-1 text-sm'>정가</Text>
             <Text className='text-base text-gray-900 mr-1'>
               {item.price.toLocaleString('ko-KR')}원
             </Text>
@@ -100,7 +100,7 @@ export default function RankingItem({
         </View>
 
         {showDiff && (
-          <View style={{ alignItems: 'flex-end' }} className='pr-2'>
+          <View style={{ alignItems: 'flex-end' }} className='pl-3 pr-2'>
             {Number(item.rankDiff) === 0 ? (
               <BarIcon />
             ) : (

@@ -104,7 +104,7 @@ export default function ProductCard({
 
           <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
             <Text
-              style={{ fontSize: 13, color: colors.gray[900], marginRight: 2 }}
+              style={{ fontSize: 12, color: colors.gray[900], marginRight: 2 }}
             >
               정가
             </Text>

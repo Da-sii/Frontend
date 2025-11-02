@@ -57,7 +57,7 @@ export default function SearchBar({
         <View className='flex-row items-center bg-gray-50 rounded-full py-[9px] px-[20px] mb-[15px]'>
           <TextInput
             ref={inputRef}
-            className='flex-1 text-b-sm font-regular'
+            className='flex-1 text-b-sm font-n-rg py-0'
             placeholder={placeholder}
             placeholderTextColor={colors.gray[400]}
             value={value}
@@ -108,7 +108,7 @@ export default function SearchBar({
           <View className='px-4 mb-4'>
             <View>
               <View className='flex-row justify-between items-center mb-3'>
-                <Text className='text-base font-semibold text-gray-900'>
+                <Text className='text-base font-n-bd text-gray-900'>
                   최근 검색
                 </Text>
                 <Pressable onPress={onClearAllRecentSearches}>

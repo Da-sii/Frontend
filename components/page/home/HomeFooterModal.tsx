@@ -37,7 +37,7 @@ export const HomeFooterModal = ({ type, visible, onClose }: ModalProps) => {
   return (
     <Modal
       animationType='slide'
-      transparent={false}
+      transparent={true}
       visible={visible}
       onRequestClose={onClose}
     >
@@ -77,6 +77,7 @@ export const HomeFooterModal = ({ type, visible, onClose }: ModalProps) => {
           >
             {mdContent}
           </Markdown>
+          <View className='h-[50px]' />
         </ScrollView>
       </View>
     </Modal>

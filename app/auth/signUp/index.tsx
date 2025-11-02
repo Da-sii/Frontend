@@ -20,7 +20,7 @@ import BottomSheet from '@gorhom/bottom-sheet';
 import { PortalProvider } from '@gorhom/portal';
 import { Stack, useRouter } from 'expo-router';
 import { useMemo, useRef, useState } from 'react';
-import { Pressable, Text, View } from 'react-native'
+import { Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
 
@@ -143,13 +143,13 @@ export default function Index() {
         />
 
         <View className='p-5'>
-          <Text className='text-h-lg font-extrabold text-gray-700 mb-[12px]'>
+          <Text className='text-h-lg font-n-eb text-gray-700 mb-[12px]'>
             회원가입
           </Text>
-          <Text className='text-b-md font-bold text-gray-700 mb-[8px]'>
+          <Text className='text-b-md font-n-bd text-gray-700 mb-[8px]'>
             계정 생성 후,
           </Text>
-          <Text className='text-b-md font-bold text-gray-700 mb-[25px]'>
+          <Text className='text-b-md font-n-bd text-gray-700 mb-[25px]'>
             휴대폰 본인인증을 완료하면 가입이 완료됩니다.
           </Text>
 
@@ -214,7 +214,7 @@ export default function Index() {
                 <CircleCheckGrayIcon className='mr-[11px]' />
               )}
 
-              <Text className='text-b-md font-extrabold text-gray-700 items-center'>
+              <Text className='text-b-md font-n-eb text-gray-700 items-center'>
                 서비스 이용 약관 동의(전체)
               </Text>
             </Pressable>
@@ -249,19 +249,19 @@ export default function Index() {
                       </Svg>
                       {essential ? (
                         <Text
-                          className={`text-b-sm font-bold text-gray-400 ${checked ? 'text-gray-700' : 'text-gray-400'}`}
+                          className={`text-b-sm font-n-bd text-gray-400 ${checked ? 'text-gray-700' : 'text-gray-400'}`}
                         >
                           [필수]
                         </Text>
                       ) : (
                         <Text
-                          className={`text-b-sm font-bold text-gray-400 ${checked ? 'text-gray-700' : 'text-gray-400'}`}
+                          className={`text-b-sm font-n-bd text-gray-400 ${checked ? 'text-gray-700' : 'text-gray-400'}`}
                         >
                           [선택]
                         </Text>
                       )}
                       <Text
-                        className={`ml-[2px] font-bold text-b-sm ${
+                        className={`ml-[2px] font-n-bd text-b-sm ${
                           !checked && 'text-b-sm text-gray-400'
                         }`}
                       >

@@ -344,7 +344,7 @@ export default function ReviewWritePage() {
                   />
                 ) : (
                   <View className='border-gray-100 w-full h-full items-center justify-center'>
-                    <Text className='text-b-lg font-bold text-gray-500'>?</Text>
+                    <Text className='text-b-lg font-n-bd text-gray-500'>?</Text>
                   </View>
                 )}
               </View>
@@ -358,7 +358,7 @@ export default function ReviewWritePage() {
                   {brand}
                 </Text>
                 <Text
-                  className='text-b-sm font-bold'
+                  className='text-b-sm font-n-bd'
                   ellipsizeMode='tail'
                   numberOfLines={1}
                 >
@@ -369,10 +369,10 @@ export default function ReviewWritePage() {
 
             <View className='border-y border-gray-100 py-5 flex-col items-center'>
               <View className='flex-row'>
-                <Text className='text-b-sm font-bold text-[#FF3A4A] mr-1'>
+                <Text className='text-b-sm font-n-bd text-[#FF3A4A] mr-1'>
                   *
                 </Text>
-                <Text className='text-h-md font-extrabold mb-[15px]'>
+                <Text className='text-h-md font-n-eb mb-[15px]'>
                   제품은 어떠셨나요?
                 </Text>
               </View>
@@ -387,13 +387,13 @@ export default function ReviewWritePage() {
                   setShowMinError(!isReviewValid(review));
                 }}
               />
-              <Text className='mt-[10px] text-c2 font-regular'>
+              <Text className='mt-[10px] text-c2 font-n-rg'>
                 {startContent[rate as keyof typeof startContent]}
               </Text>
             </View>
 
             <View>
-              <Text className='text-b-sm font-extrabold mb-[20px]'>
+              <Text className='text-b-sm font-n-eb mb-[20px]'>
                 자세한 제품 리뷰를 남겨주세요
               </Text>
               {/* 내용 입력 */}
@@ -421,17 +421,17 @@ export default function ReviewWritePage() {
                   multiline
                 />
                 {touched && showMinError && (
-                  <Text className='mt-2 text-c3 font-regular text-[#FF3A4A] absolute bottom-[15px] left-[20px]'>
+                  <Text className='mt-2 text-c3 font-n-rg text-[#FF3A4A] absolute bottom-[15px] left-[20px]'>
                     최소 20자 이상 입력해 주세요.
                   </Text>
                 )}
               </View>
 
               <View className='flex-row items-center absolute bottom-[15px] right-5'>
-                <Text className='text-c3 font-bold text-gray-700'>
+                <Text className='text-c3 font-n-bd text-gray-700'>
                   {review.length}
                 </Text>
-                <Text className='text-c3 font-regular text-gray-400'>
+                <Text className='text-c3 font-n-rg text-gray-400'>
                   {' '}
                   / 1,000 (최소 20자)
                 </Text>
@@ -443,7 +443,7 @@ export default function ReviewWritePage() {
               className='h-[50px] rounded-[12px] items-center justify-center bg-white border border-blue-600 flex-row'
             >
               <PhotoCameraIcon className='mr-2' />
-              <Text className='text-b-md font-bold text-blue-600'>
+              <Text className='text-b-md font-n-bd text-blue-600'>
                 사진 첨부하기
               </Text>
             </Pressable>
@@ -523,19 +523,15 @@ export default function ReviewWritePage() {
 
             <View className='p-[13px] bg-gray-50 rounded-[12px] '>
               <View className='flex-row items-start mb-[5px]'>
-                <Text className='mr-1 text-c3 font-regular text-gray-400'>
-                  •
-                </Text>
-                <Text className='flex-1 text-c3 font-regular text-gray-400'>
+                <Text className='mr-1 text-c3 font-n-rg text-gray-400'>•</Text>
+                <Text className='flex-1 text-c3 font-n-rg text-gray-400'>
                   상품과 무관하거나 비속어 및 음란물이 포함된 사진 및 리뷰는
                   통보 없이 삭제처리 될 수 있으며 고지 없이 경고 조치 됩니다.
                 </Text>
               </View>
               <View className='flex-row items-start'>
-                <Text className='mr-1 text-c3 font-regular text-gray-400'>
-                  •
-                </Text>
-                <Text className='flex-1 text-c3 font-regular text-gray-400'>
+                <Text className='mr-1 text-c3 font-n-rg text-gray-400'>•</Text>
+                <Text className='flex-1 text-c3 font-n-rg text-gray-400'>
                   경고 누적 시 리뷰 작성이 제한될 수 있습니다.
                 </Text>
               </View>

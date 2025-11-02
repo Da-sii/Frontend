@@ -23,9 +23,7 @@ export default function ReviewCard({
     <View className='bg-[#F6F5FA] h-[140px] rounded-[12px] flex-row items-center '>
       {/* 왼쪽 영역 */}
       <View className='flex-1 h-[100px] border-r border-gray-200 items-center justify-center'>
-        <Text className='text-[28px] font-extrabold'>
-          {reviewRank.toFixed(2)}
-        </Text>
+        <Text className='text-[28px] font-n-eb'>{reviewRank.toFixed(2)}</Text>
         <ReviewStar reviewRank={reviewRank} height={16} />
       </View>
 
@@ -42,7 +40,7 @@ export default function ReviewCard({
                 <Text
                   numberOfLines={1}
                   ellipsizeMode='clip'
-                  className={`absolute top-[0%] text-center text-c3 ${isTop ? 'text-green-500 font-extrabold' : ' text-gray-700 font-bold'}`}
+                  className={`absolute top-[0%] text-center text-c3 ${isTop ? 'text-green-500 font-n-eb' : ' text-gray-700 font-n-bd'}`}
                 >
                   {percent}%
                 </Text>
@@ -53,7 +51,7 @@ export default function ReviewCard({
                   />
                 </View>
 
-                <Text className='text-gray-700 text-c3 font-bold'>
+                <Text className='text-gray-700 text-c3 font-n-bd'>
                   {score}점
                 </Text>
               </View>

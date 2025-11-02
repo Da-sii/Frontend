@@ -34,7 +34,7 @@ export default function TextInput({
   return (
     <View className='w-full items-center'>
       {title ? (
-        <Text className='self-start mb-2 text-base font-medium'>{title}</Text>
+        <Text className='self-start mb-2 text-base font-n-rg'>{title}</Text>
       ) : null}
 
       <TextField

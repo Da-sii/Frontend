@@ -124,7 +124,7 @@ export default function ChangePassword() {
         {step === 'new' && (
           <View className='mb-2'>
             <View>
-              <Text className='mb-3 font-semibold'>
+              <Text className='mb-3 font-n-bd'>
                 새로운 비밀번호를 입력해주세요
               </Text>
             </View>
@@ -162,7 +162,7 @@ export default function ChangePassword() {
         {step === 'current' && (
           <View className='mb-6'>
             <View>
-              <Text className='mb-3 font-semibold'>
+              <Text className='mb-3 font-n-bd'>
                 현재 비밀번호를 입력해주세요
               </Text>
             </View>

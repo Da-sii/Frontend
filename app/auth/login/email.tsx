@@ -44,7 +44,7 @@ export default function Email() {
       />
 
       <View className='p-5'>
-        <Text className='text-h-lg font-extrabold text-gray-700 mb-[25px]'>
+        <Text className='text-h-lg font-n-eb text-gray-700 mb-[25px]'>
           이메일로 계속
         </Text>
         <View className='space-y-[12px] mb-[25px]'>
@@ -76,17 +76,17 @@ export default function Email() {
         <View className='items-center'>
           <View className='mt-[25px] flex-row justify-between  w-[265px]'>
             <Pressable onPress={() => router.push('/auth/find/id')}>
-              <Text className='text-b-sm font-regular text-gray-500'>
+              <Text className='text-b-sm font-n-rg text-gray-500'>
                 계정 찾기
               </Text>
             </Pressable>
             <Pressable onPress={() => router.push('/auth/find/password')}>
-              <Text className='text-b-sm font-regular text-gray-500 border-x-[2px] px-[15px] border-gray-300 '>
+              <Text className='text-b-sm font-n-rg text-gray-500 border-x-[2px] px-[15px] border-gray-300 '>
                 비밀번호 변경
               </Text>
             </Pressable>
             <Pressable onPress={() => router.push('/auth/signUp')}>
-              <Text className='text-b-sm font-regular text-gray-500'>
+              <Text className='text-b-sm font-n-rg text-gray-500'>
                 회원가입
               </Text>
             </Pressable>

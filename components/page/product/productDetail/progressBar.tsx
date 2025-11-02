@@ -24,7 +24,7 @@ export default function ProgressBar({
           transform: [{ translateX: -50 }],
         }}
       >
-        <Text className='text-gray-400 text-c3 font-bold mb-1'>
+        <Text className='text-gray-400 text-c3 font-n-bd mb-1'>
           하루 최대치 {recommended}mg
         </Text>
         <View className='w-[5px] h-[5px] rounded-full bg-gray-400 mb-1' />
@@ -37,7 +37,7 @@ export default function ProgressBar({
           style={{ width: `${percent}%`, height: '100%', borderRadius: 9999 }}
         />
         <View className='absolute top-0 left-0 right-0 h-5 items-center justify-center'>
-          <Text className='text-white text-c3 font-extrabold'>{current}mg</Text>
+          <Text className='text-white text-c3 font-n-eb'>{current}mg</Text>
         </View>
       </View>
     </View>

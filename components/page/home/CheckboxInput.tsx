@@ -30,7 +30,7 @@ export default function CheckboxInput({
       <View className='flex flex-row gap-1 items-center'>
         {icon}
         <Text
-          className={`text-sm ${isSelected ? 'text-green-500 ' : 'text-gray-400 '} : font-semibold`}
+          className={`text-sm ${isSelected ? 'text-green-500 ' : 'text-gray-400 '} : font-n-bd`}
         >
           {label}
         </Text>

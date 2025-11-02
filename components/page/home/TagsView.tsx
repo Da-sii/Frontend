@@ -28,7 +28,7 @@ export default function TagsView({
 
   return (
     <View>
-      <Text className='text-base font-semibold mb-3'>{title}</Text>
+      <Text className='text-base font-n-bd mb-3'>{title}</Text>
       <View className='flex-row flex-wrap gap-2 mb-1'>
         {isLoading ? (
           <View className='flex-row flex-wrap gap-2 mb-3'>

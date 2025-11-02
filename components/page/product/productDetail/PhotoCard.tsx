@@ -1,7 +1,6 @@
 // src/components/common/PhotoCard.tsx
-import React from 'react';
-import { FlatList, Image, Pressable, Text } from 'react-native';
 import { toCdnUrl } from '@/utils/cdn';
+import { FlatList, Image, Pressable, Text } from 'react-native';
 
 interface PhotoCardProps {
   images: string[]; // 이미지 URL 배열
@@ -13,12 +12,11 @@ interface PhotoCardProps {
 
 export default function PhotoCard({
   images,
-  maxPreview = 6,
   onPressPhoto,
   onPressMore,
   total_photo,
 }: PhotoCardProps) {
-  const remain =  total_photo ? total_photo - images.length : 0;
+  const remain = total_photo ? total_photo - images.length : 0;
 
   return (
     <FlatList
@@ -52,10 +50,10 @@ export default function PhotoCard({
                 className='absolute w-full h-full inset-0 bg-black/50 items-center justify-center'
                 onPress={onPressMore}
               >
-                <Text className='text-white font-extrabold text-b-sm'>
+                <Text className='text-white font-n-eb text-b-sm'>
                   +{total_photo ? total_photo - 5 : 0}
                 </Text>
-                <Text className='text-white font-extrabold text-b-sm mt-[7px]'>
+                <Text className='text-white font-n-eb text-b-sm mt-[7px]'>
                   사진 더보기
                 </Text>
               </Pressable>

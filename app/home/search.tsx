@@ -196,7 +196,7 @@ export default function Search() {
             searchData?.results && (
               <View className='mb-3 mt-[-10px]'>
                 <View className='flex-row justify-between items-center'>
-                  <Text className='text-sm text-gray-900 font-semibold'>
+                  <Text className='text-sm text-gray-900 font-n-bd'>
                     총 {searchData?.results.length}개
                   </Text>
                   <View className='flex-row items-center'>
@@ -204,7 +204,7 @@ export default function Search() {
                       className='flex-row items-center mr-2'
                       onPress={() => bottomSheetRef.current?.expand()}
                     >
-                      <Text className='text-sm font-semibold text-gray-900 mr-1'>
+                      <Text className='text-sm font-n-bd text-gray-900 mr-1'>
                         {sortOptions.find(
                           (option) => option.id === selectedSort,
                         )?.label || '랭킹순'}
@@ -275,7 +275,7 @@ export default function Search() {
         searchQuery && (
           <View className='flex-1 items-center py-10'>
             <Text className='text-gray-400 font-medium text-center'>
-              {`'${inputValue}'에 대한\n검색 결과가 없습니다.`}
+              {`'${searchQuery}'에 대한\n검색 결과가 없습니다.`}
             </Text>
           </View>
         )

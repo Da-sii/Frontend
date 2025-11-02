@@ -265,8 +265,8 @@ export const TextField: React.FC<TextFieldProps> = ({
         className={`flex-row items-center w-full h-[60px] rounded-xl px-4 border ${borderColorClass} ${disabled ? 'bg-gray-50' : ''}`}
       >
         <TextInput
-          className={`flex-1 text-b-sm font-bold text-gray-900 ${disabled ? 'text-gray-400' : ''}  ${
-            value.length === 0 ? 'font-normal' : 'font-bold'
+          className={`flex-1 text-b-sm font-n-bd text-gray-900 ${disabled ? 'text-gray-400' : ''}  ${
+            value.length === 0 ? 'font-n-rg' : 'font-n-bd'
           }`}
           value={value}
           onChangeText={handleChangeText}
@@ -298,7 +298,7 @@ export const TextField: React.FC<TextFieldProps> = ({
         {shouldShowFirst && firstMessage && (
           <View className='flex-row items-center mt-2'>
             <Text
-              className={`text-c2 font-bold ml-[17px] mr-[2px] ${firstState.color}`}
+              className={`text-c2 font-n-bd ml-[17px] mr-[2px] ${firstState.color}`}
             >
               {firstMessage}
             </Text>
@@ -309,7 +309,7 @@ export const TextField: React.FC<TextFieldProps> = ({
         {shouldShowSecond && secondMessage && (
           <View className='flex-row items-center mt-2'>
             <Text
-              className={`text-c2 font-bold ml-[15px] mr-[2px] ${secondState.color}`}
+              className={`text-c2 font-n-bd ml-[15px] mr-[2px] ${secondState.color}`}
             >
               {secondMessage}
             </Text>

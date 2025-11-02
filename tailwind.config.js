@@ -92,7 +92,13 @@ module.exports = {
         },
       },
       fontFamily: {
+        sans: ['NanumSquareNeo'],
+
         NanumSquareNeo: ['NanumSquareNeo'],
+        'n-lt': ['NanumSquareNeo-Light'],
+        'n-rg': ['NanumSquareNeo-Regular'],
+        'n-bd': ['NanumSquareNeo-Bold'],
+        'n-eb': ['NanumSquareNeo-ExtraBold'],
       },
       fontSize: {
         '15px': ['15px', { lineHeight: 'normal' }],

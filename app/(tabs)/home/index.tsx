@@ -61,7 +61,7 @@ export default function Home() {
 
         <View className='mt-2 mb-12'>
           <View className='mx-6 flex-row justify-between items-center'>
-            <Text className='text-base font-semibold'>현재 급상승 랭킹</Text>
+            <Text className='text-base font-n-bd'>현재 급상승 랭킹</Text>
             <GoRankingIcon
               onPress={() =>
                 router.push({

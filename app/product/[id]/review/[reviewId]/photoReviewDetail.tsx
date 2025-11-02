@@ -145,7 +145,7 @@ export default function PhotoReviewDetail() {
             >
               {/* FlatList의 onViewableItemsChanged로 실시간 인덱스 추적하려면 상태 추가 */}
               <Text
-                className='text-white text-c3 font-bold'
+                className='text-white text-c3 font-n-bd'
                 style={{ color: 'white', fontSize: 12 }}
               >
                 {currentIndex + 1} / {reviewDetail?.images.length ?? 0}

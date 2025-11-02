@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 interface NavigationProps {
@@ -23,14 +23,23 @@ export default function Navigation({
   onRightPress,
 }: NavigationProps) {
   return (
-    <View className='flex-row items-center justify-between px-4 py-3'>
+    <View className='flex-row items-center justify-between px-4 py-3 mt-2'>
       <Pressable onPress={onLeftPress} className='p-1'>
         {left || <Text></Text>}
       </Pressable>
 
-      <Pressable onPress={onCenterPress} className='flex-1 items-center'>
-        {center || <Text className='text-lg font-extrabold'>{title}</Text>}
-      </Pressable>
+      <View
+        className='absolute left-0 right-0 top-0 bottom-0 flex-1 items-center justify-center'
+        pointerEvents='box-none'
+      >
+        <Pressable onPress={onCenterPress} className='items-center'>
+          {center || (
+            <Text className='text-lg font-n-bd text-gray-900' numberOfLines={1}>
+              {title}
+            </Text>
+          )}
+        </Pressable>
+      </View>
 
       <Pressable
         onPress={onRightPress}

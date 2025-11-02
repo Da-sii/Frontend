@@ -114,7 +114,7 @@ export default function Ranking() {
             className='text-xs'
             style={{
               textAlign: 'center',
-              color: tab === 'daily' ? colors.gray[900] : colors.gray[500],
+              color: tab === 'daily' ? colors.gray[900] : colors.gray[400],
             }}
           >
             현재 급상승 랭킹
@@ -164,8 +164,8 @@ export default function Ranking() {
                   <Text
                     className={`text-sm ${
                       selected
-                        ? 'text-white font-extrabold'
-                        : 'text-gray-700 font-medium'
+                        ? 'text-white font-n-eb'
+                        : 'text-gray-700 font-n-rg'
                     }`}
                   >
                     {cat}

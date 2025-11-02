@@ -41,10 +41,10 @@ export default function Index({ emergency }: { emergency?: string }) {
         <View className='items-center w-full justify-center h-[64.98%]'>
           <Logo width={112} height={33} />
           <View className='flex-col items-center mt-[18px] '>
-            <Text className='text-b-sm font-regular text-gray-900'>
+            <Text className='text-b-sm font-n-rg text-gray-900'>
               다이어트 필수 정보,
             </Text>
-            <Text className='text-b-sm font-regular text-gray-900'>
+            <Text className='text-b-sm font-n-rg text-gray-900'>
               보조제 성분부터 후기까지 한번에
             </Text>
           </View>
@@ -81,7 +81,7 @@ export default function Index({ emergency }: { emergency?: string }) {
 
         {!emergency && (
           <View className='flex-row items-center justify-center mt-[10px]'>
-            <Text className='text-b-sm font-bold text-gray-500'>
+            <Text className='text-b-sm font-n-rg text-gray-500'>
               서비스가 궁금하시다면?
             </Text>
 
@@ -90,7 +90,7 @@ export default function Index({ emergency }: { emergency?: string }) {
                 router.push('/home');
               }}
             >
-              <Text className='text-b-md font-extrabold text-[#19B375] ml-1'>
+              <Text className='text-b-md font-n-eb text-[#19B375] ml-1'>
                 둘러보기
               </Text>
             </Pressable>

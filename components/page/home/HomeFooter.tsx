@@ -8,8 +8,8 @@ import { HomeFooterRequestModal } from './HomeFooterRequestModal';
 
 const InfoRow = ({ label, value }: { label: string; value: string }) => (
   <View className='flex-row mb-2'>
-    <Text className='w-28 text-sm font-regular text-gray-400'>{label}</Text>
-    <Text className='flex-1 text-sm font-light text-gray-500'>{value}</Text>
+    <Text className='w-28 text-sm font-n-rg text-gray-400'>{label}</Text>
+    <Text className='flex-1 text-sm font-n-lt text-gray-500'>{value}</Text>
   </View>
 );
 
@@ -30,9 +30,7 @@ export default function HomeFooter() {
         onPress={() => setIsExpanded(!isExpanded)}
         activeOpacity={0.7}
       >
-        <Text className='text-sm text-gray-700 font-light mr-1'>
-          사업자정보
-        </Text>
+        <Text className='text-sm text-gray-700 font-n-lt mr-1'>사업자정보</Text>
         {isExpanded ? <LessIcon color='gray' /> : <MoreIcon color='gray' />}
       </TouchableOpacity>
 

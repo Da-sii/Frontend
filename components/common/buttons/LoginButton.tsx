@@ -35,7 +35,7 @@ export default function LoginButton({
         height={IconHeight}
         className='absolute left-[17px]'
       />
-      <Text className={`text-b-sm font-bold ${textColor} `}>{label}</Text>
+      <Text className={`text-b-sm font-n-bd ${textColor} `}>{label}</Text>
     </Pressable>
   );
 }
