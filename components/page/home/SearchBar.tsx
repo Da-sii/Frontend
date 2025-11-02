@@ -22,6 +22,7 @@ interface SearchBarProps {
   onRecentSearchPress?: (search: string) => void;
   onRemoveRecentSearch?: (search: string) => void;
   onClearAllRecentSearches?: () => void;
+  onClearList?: () => void;
 }
 
 export default function SearchBar({
@@ -35,6 +36,7 @@ export default function SearchBar({
   onRecentSearchPress,
   onRemoveRecentSearch,
   onClearAllRecentSearches,
+  onClearList,
 }: SearchBarProps) {
   const inputRef = useRef<TextInput>(null);
   const [isFocused, setIsFocused] = useState(false);
@@ -75,12 +77,15 @@ export default function SearchBar({
               onBlur?.();
             }}
             autoFocus={true}
+            onSubmitEditing={handleSearchSubmit}
+            returnKeyType='search'
           />
           {value.length > 0 && (
             <Pressable
               className='ml-2 bg-gray-400 rounded-full p-[3px]'
               onPress={() => {
                 onChangeText('');
+                onClearList?.();
               }}
             >
               <CloseIcon width={13} height={13} color={colors.gray[0]} />

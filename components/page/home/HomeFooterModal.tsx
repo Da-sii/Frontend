@@ -1,7 +1,8 @@
 import Navigation from '@/components/layout/Navigation';
+import colors from '@/constants/color';
 import { TERMS } from '@/constants/terms';
 import { Ionicons } from '@expo/vector-icons';
-import { Modal, ScrollView, Text, View } from 'react-native';
+import { Modal, ScrollView, View } from 'react-native';
 import Markdown from 'react-native-markdown-display';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 interface ModalProps {
@@ -54,21 +55,18 @@ export const HomeFooterModal = ({ type, visible, onClose }: ModalProps) => {
           title={TERMS.find((term) => term.id === type)?.title}
         />
 
-        <ScrollView className='p-4'>
-          <Text className='font-bold'>
-            {TERMS.find((term) => term.id === type)?.subTitle} {'\n'}
-          </Text>
+        <ScrollView className='px-4'>
           <Markdown
             style={{
-              body: { fontSize: 14, color: '#333', lineHeight: 22 },
+              body: { fontSize: 15, color: colors.gray[700], lineHeight: 22 },
               heading1: {
-                fontSize: 20,
+                fontSize: 15,
                 fontWeight: 'bold',
-                marginTop: 12,
-                marginBottom: 6,
+                marginTop: 10,
+                marginBottom: 4,
               },
               heading2: {
-                fontSize: 18,
+                fontSize: 15,
                 fontWeight: 'bold',
                 marginTop: 10,
                 marginBottom: 4,

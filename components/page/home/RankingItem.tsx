@@ -20,6 +20,7 @@ export default function RankingItem({
   showDiff = false,
 }: Props) {
   const isValidImage = item.image !== null;
+  const left = index > 8 ? 22 : 25;
 
   return (
     <Pressable onPress={onPress}>
@@ -33,7 +34,7 @@ export default function RankingItem({
         }}
         className='relative py-3 '
       >
-        <View className='h-full overflow-hidden rounded-xl aspect-square bg-gray-box '>
+        <View className='h-full overflow-hidden rounded-xl aspect-square bg-gray-box border border-gray-100 '>
           {isValidImage ? (
             <Image
               source={{ uri: item.image }}
@@ -54,8 +55,8 @@ export default function RankingItem({
         <View
           style={{
             position: 'absolute',
-            top: 17,
-            left: 25,
+            top: 15,
+            left: left,
 
             justifyContent: 'center',
             alignItems: 'center',
@@ -65,7 +66,7 @@ export default function RankingItem({
             className='absolute'
             fill={index < 3 ? colors.green[500] : colors.gray[400]}
           />
-          <Text className='text-white text-xs font-semibold'>{index + 1}</Text>
+          <Text className='text-white text-sm font-semibold'>{index + 1}</Text>
         </View>
 
         <View className='flex-1 ml-3 space-y-1'>

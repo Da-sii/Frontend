@@ -29,81 +29,91 @@ export default function ProductRankingCarousel({ data, isLoading }: Props) {
   }: {
     item: IRankingProduct;
     index: number;
-  }) => (
-    <Pressable
-      onPress={() =>
-        router.push({
-          pathname: '/product/[id]/productDetail',
-          params: { id: item.id },
-        })
-      }
-    >
-      <View
-        key={item.id}
-        className='mr-1 rounded-xl bg-white py-3 max-w-[144px]'
-        style={{ width: cardWidth, marginLeft: index === 0 ? 0 : 8 }}
+  }) => {
+    const left = index > 8 ? 6 : 9;
+    return (
+      <Pressable
+        onPress={() =>
+          router.push({
+            pathname: '/product/[id]/productDetail',
+            params: { id: item.id },
+          })
+        }
       >
-        <View className='w-full aspect-square rounded-xl bg-gray-box'>
-          {item.image !== null ? (
-            <Image
-              source={{ uri: item.image }}
-              style={{
-                width: '100%',
-                height: '100%',
-              }}
-              resizeMode='cover'
-            />
-          ) : (
-            <View className='w-full h-full bg-white items-center justify-center border border-gray-100 rounded-xl'>
-              <Text className='text-gray-500 text-xs'>상품 이미지를</Text>
-              <Text className='text-gray-500 text-xs'>준비중입니다</Text>
-            </View>
-          )}
-        </View>
         <View
-          style={{
-            position: 'absolute',
-            top: 18,
-            left: 10,
-
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
+          key={item.id}
+          className='mr-1 rounded-xl bg-white py-3 max-w-[144px]'
+          style={{ width: cardWidth, marginLeft: index === 0 ? 0 : 8 }}
         >
-          <IndexIcon
-            className='absolute'
-            fill={index < 3 ? colors.green[500] : colors.gray[400]}
-          />
-          <Text className='text-white text-xs font-semibold'>{index + 1}</Text>
-        </View>
-        <View className='flex-col ml-0.5'>
-          <Text className='text-xs mt-1 text-gray-400' numberOfLines={1}>
-            {item.company}
-          </Text>
-          <Text className='text-sm font-medium text-gray-800' numberOfLines={1}>
-            {item.name}
-          </Text>
+          <View className='w-full aspect-square rounded-xl bg-gray-box border border-gray-100'>
+            {item.image !== null ? (
+              <Image
+                source={{ uri: item.image }}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                }}
+                resizeMode='cover'
+                className='rounded-xl'
+              />
+            ) : (
+              <View className='w-full h-full bg-white items-center justify-center border border-gray-100 rounded-xl'>
+                <Text className='text-gray-500 text-xs'>상품 이미지를</Text>
+                <Text className='text-gray-500 text-xs'>준비중입니다</Text>
+              </View>
+            )}
+          </View>
           <View
-            style={{ flexDirection: 'row', alignItems: 'center' }}
-            className='mb-1'
+            style={{
+              position: 'absolute',
+              top: 16,
+              left: left,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
           >
-            <Text className='mr-0.5 text-yellow-star text-xs'>★</Text>
-            <Text className='text-gray-500 mr-0.5 text-xs'>
-              {item.reviewAvg || (0).toFixed(2)}
+            <IndexIcon
+              className='absolute'
+              fill={index < 3 ? colors.green[500] : colors.gray[400]}
+            />
+            <Text className='text-white text-sm font-semibold'>
+              {index + 1}
             </Text>
-            <Text className='text-xs text-gray-300'>({item.reviewCount})</Text>
           </View>
-
-          <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
-            <Text className='mr-1 text-sm font-regular'>정가</Text>
-            <Text className='text-base text-gray-900 mr-1 font-regular'>
-              {item.price.toLocaleString('ko-KR')}원
+          <View className='flex-col ml-0.5'>
+            <Text className='text-xs mt-1 text-gray-400' numberOfLines={1}>
+              {item.company}
             </Text>
+            <Text
+              className='text-sm font-medium text-gray-800'
+              numberOfLines={1}
+            >
+              {item.name}
+            </Text>
+            <View
+              style={{ flexDirection: 'row', alignItems: 'center' }}
+              className='mb-1'
+            >
+              <Text className='mr-0.5 text-yellow-star text-xs'>★</Text>
+              <Text className='text-gray-500 mr-0.5 text-xs'>
+                {Number(item.reviewAvg || 0).toFixed(2)}
+              </Text>
+              <Text className='text-xs text-gray-300'>
+                ({item.reviewCount})
+              </Text>
+            </View>
+
+            <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
+              <Text className='mr-1 text-sm font-regular'>정가</Text>
+              <Text className='text-base text-gray-900 mr-1 font-regular'>
+                {item.price.toLocaleString('ko-KR')}원
+              </Text>
+            </View>
           </View>
         </View>
-      </View>
-    </Pressable>
-  );
+      </Pressable>
+    );
+  };
 
   if (isLoading) {
     return (

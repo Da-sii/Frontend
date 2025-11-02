@@ -2,14 +2,14 @@ import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
 import ListIcon from '@/assets/icons/ic_clock.svg';
 import SearchIcon from '@/assets/icons/ic_magnifier.svg';
 import ResetIcon from '@/assets/icons/ic_refresh.svg';
+import SkeletonRankingItem from '@/components/common/skeleton/ProductListItemSkeleton';
 import Navigation from '@/components/layout/Navigation';
 import RankingItem from '@/components/page/home/RankingItem';
 import colors from '@/constants/color';
-import { IRankingProduct } from '@/types/models/product';
-
-import SkeletonRankingItem from '@/components/common/skeleton/ProductListItemSkeleton';
 import { useCategory } from '@/hooks/useCategory';
 import { useFetchRankingQuery } from '@/hooks/useProductQueries';
+import { IRankingProduct } from '@/types/models/product';
+import { formatCurrentTime } from '@/utils/date';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { FlatList, Pressable, ScrollView, Text, View } from 'react-native';
@@ -32,8 +32,13 @@ export default function Ranking() {
   });
 
   const allSmallCategories = useMemo(() => {
-    if (!categories) return [];
-    return categories.flatMap((category) => category.smallCategories);
+    if (!categories) {
+      return ['전체'];
+    }
+    const flattenedCategories = categories.flatMap(
+      (category) => category.smallCategories,
+    );
+    return ['전체', ...flattenedCategories];
   }, [categories]);
 
   useEffect(() => {
@@ -74,7 +79,7 @@ export default function Ranking() {
     <RankingItem
       item={item}
       index={index}
-      showDiff={tab === 'monthly'}
+      showDiff={true}
       onPress={() =>
         router.push({
           pathname: '/product/[id]/productDetail',
@@ -99,7 +104,10 @@ export default function Ranking() {
 
       <View className='flex-row w-full border-t-[0.5px] border-b-[0.5px] border-gray-200'>
         <Pressable
-          onPress={() => onChangeTab('daily')}
+          onPress={() => {
+            setFilter('전체');
+            onChangeTab('daily');
+          }}
           className='px-2 py-3 mx-2'
         >
           <Text
@@ -112,7 +120,13 @@ export default function Ranking() {
             현재 급상승 랭킹
           </Text>
         </Pressable>
-        <Pressable onPress={() => onChangeTab('monthly')} className='px-2 py-3'>
+        <Pressable
+          onPress={() => {
+            setFilter('전체');
+            onChangeTab('monthly');
+          }}
+          className='px-2 py-3'
+        >
           <Text
             className='text-xs'
             style={{
@@ -176,7 +190,7 @@ export default function Ranking() {
           <View className='flex-row items-center'>
             <ListIcon width={12} height={12} className='mr-1' />
             <Text className='text-gray-200 text-xs'>
-              MM.DD{tab === 'daily' && ' 18:00'} 기준
+              {formatCurrentTime(tab)}
             </Text>
           </View>
         </View>

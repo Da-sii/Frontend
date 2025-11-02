@@ -153,6 +153,11 @@ export default function Search() {
     bottomSheetRef.current?.close();
   };
 
+  const handleClearSearch = () => {
+    setSearchQuery('');
+    setHasSearched(false);
+  };
+
   const renderBackdrop = useCallback(
     (props: BottomSheetBackdropProps) => (
       <BottomSheetBackdrop
@@ -183,6 +188,7 @@ export default function Search() {
         onRecentSearchPress={handleRecentSearchPress}
         onRemoveRecentSearch={removeRecentSearch}
         onClearAllRecentSearches={clearAllRecentSearches}
+        onClearList={handleClearSearch}
       />
       {hasResults ? (
         <FlatList

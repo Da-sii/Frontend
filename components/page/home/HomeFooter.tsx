@@ -49,7 +49,7 @@ export default function HomeFooter() {
         </View>
       )}
 
-      <View className='flex-row items-center space-x-2'>
+      <View className='flex-row items-center justify-between'>
         <TouchableOpacity onPress={() => setIsTermsModalVisible(true)}>
           <Text className='text-xs text-gray-600 underline'>
             서비스 이용 약관

@@ -44,6 +44,7 @@ interface reviewItemProups {
   isMore?: boolean;
   id?: string;
   isMyReview?: boolean;
+  enableBottomSheet?: boolean;
 }
 
 type SheetView = 'menu' | 'report';
@@ -71,6 +72,7 @@ export default function ReviewItems({
   isMore = true,
   id,
   isMyReview,
+  enableBottomSheet,
 }: reviewItemProups) {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -225,11 +227,12 @@ export default function ReviewItems({
             </View>
           )}
         </View>
-        {!isMyReview && (
-          <Pressable onPress={openSheet} hitSlop={8} className='my-auto'>
-            <MoreIcon className='my-auto' />
-          </Pressable>
-        )}
+        {!isMyReview ||
+          (!enableBottomSheet && (
+            <Pressable onPress={openSheet} hitSlop={8} className='my-auto'>
+              <MoreIcon className='my-auto' />
+            </Pressable>
+          ))}
       </View>
       {isMyReview && (
         <View className='flex-row items-center pb-2'>
@@ -388,8 +391,8 @@ export default function ReviewItems({
         onCancel={() => {
           setIsBlockModalVisible(false);
         }}
-        title='리뷰 차단'
-        message='리뷰를 차단하면 해당 리뷰는 볼 수 없게 돼요.'
+        title='해당 리뷰를 차단하시겠습니까?'
+        message={`해당 유저가 작성한 모든 리뷰를 \n 더 이상 확인할 수 없습니다.`}
         confirmText='확인'
         cancelText='취소'
       />
