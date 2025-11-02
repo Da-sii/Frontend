@@ -30,10 +30,10 @@ export default function Index() {
       />
 
       <View className='p-5'>
-        <Text className='text-h-lg font-extrabold text-gray-700 mb-[12px]'>
+        <Text className='text-h-lg font-n-eb text-gray-700 mb-[12px]'>
           계정 찾기
         </Text>
-        <Text className='text-b-md font-bold text-gray-700 mb-[40px]'>
+        <Text className='text-b-md font-n-bd text-gray-700 mb-[40px]'>
           휴대폰 본인인증이 필요합니다.
         </Text>
         <LongButton

@@ -167,7 +167,7 @@ export default function ProductDetail() {
                     />
                   ) : (
                     <View className='border-gray-100 border w-full h-full items-center justify-center'>
-                      <Text className='text-b-lg font-bold text-gray-500'>
+                      <Text className='text-b-lg font-n-bd text-gray-500'>
                         상품 이미지를 준비중입니다.
                       </Text>
                     </View>
@@ -178,10 +178,10 @@ export default function ProductDetail() {
               {/* 상품 정보 헤더 */}
               <View className='flex-col border-gray-100 border-b h-[172px] py-[20px]'>
                 <View className='flex-col px-[20px] h-full '>
-                  <Text className='text-b-sm font-bold  mb-[15px]'>
+                  <Text className='text-b-sm font-n-bd  mb-[15px]'>
                     {data?.company}
                   </Text>
-                  <Text className='text-h-md font-bold  mb-[15px]'>
+                  <Text className='text-h-md font-n-bd  mb-[15px]'>
                     {data?.name}
                   </Text>
                   <View className='flex-row items-center mb-[20px]'>
@@ -191,11 +191,11 @@ export default function ProductDetail() {
                     </Text>
                   </View>
                   <View className='flex-row items-center'>
-                    <Text className='text-b-lg font-bold'>정가 </Text>
-                    <Text className='text-h-md font-extrabold'>
+                    <Text className='text-b-lg font-n-bd'>정가 </Text>
+                    <Text className='text-h-md font-n-eb'>
                       {data?.price.toLocaleString('ko-KR') ?? 0}원{' '}
                     </Text>
-                    <Text className='text-c1 font-bold text-gray-300'>
+                    <Text className='text-c1 font-n-bd text-gray-300'>
                       / {data?.unit ?? ''}
                     </Text>
                   </View>
@@ -206,7 +206,7 @@ export default function ProductDetail() {
               <View className='flex-col gap-y-4 border-gray-100 border-b-[3px] py-5 px-5 '>
                 <View className='flex-row w-full'>
                   <View className='flex-[0.2]'>
-                    <Text className='text-c2 font-normal text-gray-400'>
+                    <Text className='text-c2 font-n-rg text-gray-400'>
                       랭킹
                     </Text>
                   </View>
@@ -220,8 +220,8 @@ export default function ProductDetail() {
                         <Text className='text-c2 font-normal h-[16px]'>
                           {item.bigCategory}
                         </Text>
-                        <Text className='text-c2 font-normal'> / </Text>
-                        <Text className='text-c2 font-normal'>
+                        <Text className='text-c2 font-n-rg'> / </Text>
+                        <Text className='text-c2 font-n-rg'>
                           {item.smallCategory} {item.monthlyRank}위
                         </Text>
                       </View>
@@ -230,13 +230,13 @@ export default function ProductDetail() {
                 </View>
                 <View className='flex-row w-full'>
                   <View className='flex-[0.2]'>
-                    <Text className='text-c2 font-normal text-gray-400'>
+                    <Text className='text-c2 font-n-rg text-gray-400'>
                       식품 유형
                     </Text>
                   </View>
 
                   <View className='flex-[0.8]'>
-                    <Text className='text-c2 font-normal'>
+                    <Text className='text-c2 font-n-rg'>
                       {data?.productType}
                     </Text>
                   </View>
@@ -257,8 +257,8 @@ export default function ProductDetail() {
                 <View className='px-5 mt-5'>
                   <View className='flex-row items-center justify-between mb-5'>
                     <View className='flex-row items-center'>
-                      <Text className='text-b-lg font-bold'>리뷰 </Text>
-                      <Text className='text-b-lg font-bold text-gray-400'>
+                      <Text className='text-b-lg font-n-bd'>리뷰 </Text>
+                      <Text className='text-b-lg font-n-bd text-gray-400'>
                         ({ratingStats?.total_reviews ?? 0})
                       </Text>
                     </View>
@@ -322,10 +322,10 @@ export default function ProductDetail() {
                     <View className='items-center mt-[60px]'>
                       <EmptyReviewIcon />
                       <View className='flex-col items-center mt-[15px]'>
-                        <Text className='text-b-md font-bold text-gray-600 mb-[7px]'>
+                        <Text className='text-b-md font-n-bd text-gray-600 mb-[7px]'>
                           아직 작성된 리뷰가 없어요.
                         </Text>
-                        <Text className='text-b-md font-bold text-gray-600'>
+                        <Text className='text-b-md font-n-bd text-gray-600'>
                           첫번째 리뷰를 작성해주세요!
                         </Text>
                       </View>
@@ -465,14 +465,14 @@ export default function ProductDetail() {
       </SafeAreaView>
       <BottomSheetLayout snapPoints={snapPoints} sheetRef={sheetRef}>
         <View className='px-[30px] mt-[30px] mb-[44px]'>
-          <Text className='text-b-sm font-extrabold text-gray-900 mb-[25px]'>
+          <Text className='text-b-sm font-n-eb text-gray-900 mb-[25px]'>
             성분 정보의 출처
           </Text>
-          <Text className='text-c2 font-bold text-gray-400 mb-[11px]'>
+          <Text className='text-c2 font-n-bd text-gray-400 mb-[11px]'>
             본 정보는 식품의약품안전처 건강기능식품 및 영양성분 기준을
             참고했습니다.
           </Text>
-          <Text className='text-c2 font-bold text-gray-400'>
+          <Text className='text-c2 font-n-bd text-gray-400'>
             (https://www.foodsafetykorea.go.kr)
           </Text>
         </View>

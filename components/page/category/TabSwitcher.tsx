@@ -28,15 +28,15 @@ export default function TabSwitcher<T extends string>({
           <Pressable
             onPress={() => onChangeTab(item.key)}
             style={{ flex: undefined }}
-            className={`mx-2 py-3 border-b-2 ${
+            className={`mx-1 py-3 border-b-2 px-1.5 ${
               isActive ? 'border-gray-900' : 'border-transparent'
             }`}
           >
             <Text
               className={`text-center ${
                 activeKey === item.key
-                  ? 'text-gray-900 font-semibold'
-                  : 'text-gray-500 font-normal'
+                  ? 'text-gray-900 font-n-bd'
+                  : 'text-gray-500 font-n-rg'
               }`}
             >
               {item.label}

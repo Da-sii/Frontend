@@ -34,18 +34,18 @@ export default function DefaultModal({
         <View className='bg-white rounded-[12px] items-center justify-center max-w-xs pt-7 overflow-hidden'>
           {title && (
             <Text
-              className={`font-extrabold text-b-md text-gray-900 text-center ${message ? 'mb-[15px]' : ''}`}
+              className={`font-n-eb text-b-md text-gray-900 text-center ${message ? 'mb-[15px]' : ''}`}
             >
               {title}
             </Text>
           )}
           {message && (
-            <Text className='text-b-sm text-gray-500 font-regular text-center leading-5'>
+            <Text className='text-b-sm text-gray-500 font-n-rg text-center leading-5'>
               {message}
             </Text>
           )}
           {secondMessage && (
-            <Text className='text-c2 text-gray-500 font-bold text-center'>
+            <Text className='text-c2 text-gray-500 font-n-bd text-center'>
               {secondMessage}
             </Text>
           )}
@@ -62,7 +62,7 @@ export default function DefaultModal({
                 onPress={onCancel}
                 activeOpacity={0.7}
               >
-                <Text className='text-b-md text-gray-500 font-bold'>
+                <Text className='text-b-md text-gray-500 font-n-bd'>
                   {cancelText}
                 </Text>
               </TouchableOpacity>
@@ -72,7 +72,7 @@ export default function DefaultModal({
               onPress={onConfirm}
               activeOpacity={0.7}
             >
-              <Text className='text-b-md text-green-600 font-bold'>
+              <Text className='text-b-md text-green-600 font-n-bd'>
                 {confirmText}
               </Text>
             </TouchableOpacity>

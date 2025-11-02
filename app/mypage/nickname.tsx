@@ -64,7 +64,7 @@ export default function ChangeNickname() {
 
       <View className='px-5 py-3 pb-5'>
         <View>
-          <Text className='mb-3 font-semibold'>닉네임</Text>
+          <Text className='mb-3 font-n-bd'>닉네임</Text>
         </View>
         <TextField
           menu={1}

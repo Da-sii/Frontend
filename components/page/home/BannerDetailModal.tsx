@@ -67,7 +67,7 @@ export default function BannerDetailModal({
   return (
     <Modal
       animationType='slide'
-      transparent={false}
+      transparent={true}
       visible={visible}
       onRequestClose={onClose}
     >

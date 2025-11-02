@@ -154,7 +154,7 @@ export default function MyReviews() {
         data={flatReviews}
         keyExtractor={keyExtractor}
         ListHeaderComponent={
-          <Text className='px-1 pt-4 pb-2 text-base font-bold'>
+          <Text className='px-1 pt-4 pb-2 text-base font-n-bd'>
             {flatReviews.length ?? 0}개의 리뷰를 작성했어요!
           </Text>
         }

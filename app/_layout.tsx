@@ -37,7 +37,6 @@ async function initSentry() {
   });
 }
 
-
 // 프로덕션에서만 Sentry 활성화
 // if (!__DEV__) {
 //   Sentry.init({
@@ -52,7 +51,22 @@ async function initSentry() {
 
 function RootLayout() {
   const [loaded, error] = useFonts({
+    // 1. 기존 가변 폰트 항목을 삭제하거나 주석 처리합니다.
     NanumSquareNeo: require('@/assets/fonts/NanumSquareNeo-Variable.ttf'),
+
+    // 2. 굵기별 정적 폰트 파일을 개별적으로 로드합니다.
+
+    // Light (300) - NanumSquareNeo-aLt.ttf
+    'NanumSquareNeo-Light': require('@/assets/fonts/NanumSquareNeo-aLt.ttf'),
+
+    // Regular (400) - NanumSquareNeo-bRg.ttf
+    'NanumSquareNeo-Regular': require('@/assets/fonts/NanumSquareNeo-bRg.ttf'),
+
+    // Bold (700) - NanumSquareNeo-cBd.ttf
+    'NanumSquareNeo-Bold': require('@/assets/fonts/NanumSquareNeo-cBd.ttf'),
+
+    // ExtraBold (800) - NanumSquareNeo-dEb.ttf
+    'NanumSquareNeo-ExtraBold': require('@/assets/fonts/NanumSquareNeo-dEb.ttf'),
   });
 
   const [isUpdateRequired, setIsUpdateRequired] = useState(false);
@@ -105,7 +119,7 @@ function RootLayout() {
         await initSentry();
         return;
       }
-  
+
       const { status } = await getTrackingPermissionsAsync();
       if (status === 'undetermined') {
         const res = await requestTrackingPermissionsAsync();

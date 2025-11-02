@@ -64,7 +64,7 @@ export default function ProgressBar({
           }}
         >
           <Text
-            className='text-white text-c3 font-extrabold '
+            className='text-white text-c3 font-n-eb '
             numberOfLines={1}
             adjustsFontSizeToFit
           >

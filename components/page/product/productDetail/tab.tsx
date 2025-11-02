@@ -1,4 +1,3 @@
-import React from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 interface Tab {
@@ -27,8 +26,8 @@ export default function CustomTabs({ tabs, value, onChange }: CustomTabsProps) {
               <Text
                 className={`text-b-lg my-3 mx-1 ${
                   active
-                    ? 'text-black font-extrabold text-gray-900'
-                    : 'text-gray-400 font-bold'
+                    ? 'text-black font-n-eb text-gray-900'
+                    : 'text-gray-400 font-n-bd'
                 }`}
               >
                 {tab.label}

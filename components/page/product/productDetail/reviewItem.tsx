@@ -220,7 +220,7 @@ export default function ReviewItems({
           {!isMyReview && (
             <View className='flex-row items-center'>
               <ReviewStar height={12} reviewRank={reviewItem.rating} />
-              <Text className='border-l ml-1 pl-1 border-[#E4E6E7] text-c3 font-bold text-gray-300'>
+              <Text className='border-l ml-1 pl-1 border-[#E4E6E7] text-c3 font-n-bd text-gray-300'>
                 {reviewItem.date}
                 {reviewItem.isEdited && '  수정됨'}
               </Text>
@@ -237,7 +237,7 @@ export default function ReviewItems({
       {isMyReview && (
         <View className='flex-row items-center pb-2'>
           <ReviewStar height={12} reviewRank={reviewItem.rating} />
-          <Text className='border-l ml-1 pl-1 border-[#E4E6E7] text-c3 font-normal text-gray-300'>
+          <Text className='border-l ml-1 pl-1 border-[#E4E6E7] text-c3 font-n-rg text-gray-300'>
             {reviewItem.date}
             {reviewItem.isEdited && ' 수정됨'}
           </Text>
@@ -245,7 +245,7 @@ export default function ReviewItems({
       )}
       <View>
         <Text
-          className='text-[13px] font-normal'
+          className='text-[13px] font-n-rg'
           numberOfLines={
             isMore && !isOpen && needsClamp ? MAX_LINES : undefined
           }
@@ -322,22 +322,22 @@ export default function ReviewItems({
           // ===== 메뉴 화면 =====
           <View className='px-5 pt-[30px] pb-[44px]'>
             <Pressable onPress={goReport} hitSlop={8}>
-              <Text className='text-b-sm font-bold mb-[25px]'>신고하기</Text>
+              <Text className='text-b-sm font-n-bd mb-[25px]'>신고하기</Text>
             </Pressable>
             <Pressable onPress={goBlock} hitSlop={8}>
-              <Text className='text-b-sm font-bold mb-[25px]'>
+              <Text className='text-b-sm font-n-bd mb-[25px]'>
                 리뷰 차단하기
               </Text>
             </Pressable>
             <Pressable onPress={closeSheet} hitSlop={8}>
-              <Text className='text-b-sm font-bold text-gray-400'>닫기</Text>
+              <Text className='text-b-sm font-n-bd text-gray-400'>닫기</Text>
             </Pressable>
           </View>
         ) : (
           // ===== 신고 사유 선택 화면 =====
           <View className='px-5 pt-[30px] pb-[45px]'>
             <View className='flex-row items-center justify-between'>
-              <Text className='text-b-md font-extrabold text-gray-700 mb-[25px]'>
+              <Text className='text-b-md font-n-eb text-gray-700 mb-[25px]'>
                 이 리뷰를 신고하는 이유가 무엇인가요?
               </Text>
             </View>
@@ -363,7 +363,7 @@ export default function ReviewItems({
                     </Svg>
 
                     <Text
-                      className={`ml-[13px] font-bold text-b-sm ${
+                      className={`ml-[13px] font-n-bd text-b-sm ${
                         !checked && 'text-b-sm text-gray-400'
                       }`}
                     >

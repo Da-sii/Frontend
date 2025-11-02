@@ -90,7 +90,7 @@ export const HomeFooterRequestModal = ({ visible, onClose }: ModalProps) => {
   return (
     <Modal
       animationType='slide'
-      transparent={false}
+      transparent={true}
       visible={visible}
       onRequestClose={onClose}
     >
@@ -110,8 +110,8 @@ export const HomeFooterRequestModal = ({ visible, onClose }: ModalProps) => {
 
         <ScrollView className='p-4 pt-0'>
           <View className='text-base text-gray-800 leading-6'>
-            <Text className='text-2xl font-bold mb-2'>다시, 광고 문의하기</Text>
-            <Text className='text-[13px] font-regular'>
+            <Text className='text-2xl font-n-bd mb-2'>다시, 광고 문의하기</Text>
+            <Text className='text-[13px] font-n-rg leading-5'>
               광고 및 제휴 관련 문의사항이 있으신 경우, 하기 폼을 입력해주시면{' '}
               {'\n'}
               담당자가 확인 후 영업일 기준 1일 내로 답변드리겠습니다.
@@ -120,8 +120,8 @@ export const HomeFooterRequestModal = ({ visible, onClose }: ModalProps) => {
 
           <View className='py-3 pb-3'>
             <View className='flex-row mb-1'>
-              <Text className='font-semibold text-red-500'>*</Text>
-              <Text className='font-semibold'> 문의 유형</Text>
+              <Text className='font-n-bd text-red-500'>*</Text>
+              <Text className='font-n-bd'> 문의 유형</Text>
             </View>
 
             <View className=''>
@@ -147,8 +147,8 @@ export const HomeFooterRequestModal = ({ visible, onClose }: ModalProps) => {
 
           <View className='py-3 pb-3'>
             <View className='flex-row mb-3'>
-              <Text className='font-semibold text-red-500'>*</Text>
-              <Text className='font-semibold'> 담당 브랜드명</Text>
+              <Text className='font-n-bd text-red-500'>*</Text>
+              <Text className='font-n-bd'> 담당 브랜드명</Text>
             </View>
 
             <TextField
@@ -165,8 +165,8 @@ export const HomeFooterRequestModal = ({ visible, onClose }: ModalProps) => {
 
           <View className='py-3 pb-3'>
             <View className='flex-row mb-1'>
-              <Text className='font-semibold text-red-500'>*</Text>
-              <Text className='font-semibold'> 브랜드 출시 여부</Text>
+              <Text className='font-n-bd text-red-500'>*</Text>
+              <Text className='font-n-bd'> 브랜드 출시 여부</Text>
             </View>
             <View className=''>
               <CheckboxInput
@@ -199,8 +199,8 @@ export const HomeFooterRequestModal = ({ visible, onClose }: ModalProps) => {
 
           <View className='py-3 pb-5'>
             <View className='flex-row mb-3'>
-              <Text className='font-semibold text-red-500'>*</Text>
-              <Text className='font-semibold'> 문의 내용</Text>
+              <Text className='font-n-bd text-red-500'>*</Text>
+              <Text className='font-n-bd'> 문의 내용</Text>
             </View>
 
             <View className='border border-gray-100 rounded-[12px] p-[15px] pb-[40px] h-[150px] text-b-md relative'>
@@ -214,10 +214,10 @@ export const HomeFooterRequestModal = ({ visible, onClose }: ModalProps) => {
             </View>
 
             <View className='flex-row items-center absolute bottom-9 right-5'>
-              <Text className='text-xs font-semibold text-gray-700'>
+              <Text className='text-xs font-n-bd text-gray-700'>
                 {content.length}
               </Text>
-              <Text className='text-xs font-light text-gray-400'>
+              <Text className='text-xs font-n-lt text-gray-400'>
                 {' '}
                 / 1,000 (최소 20자)
               </Text>
@@ -228,8 +228,8 @@ export const HomeFooterRequestModal = ({ visible, onClose }: ModalProps) => {
 
           <View className='py-3 pb-3'>
             <View className='flex-row mb-3'>
-              <Text className='font-semibold text-red-500'>*</Text>
-              <Text className='font-semibold'> 성함</Text>
+              <Text className='font-n-bd text-red-500'>*</Text>
+              <Text className='font-n-bd'> 성함</Text>
             </View>
 
             <TextField
@@ -246,8 +246,8 @@ export const HomeFooterRequestModal = ({ visible, onClose }: ModalProps) => {
 
           <View className='py-3 pb-3'>
             <View className='flex-row mb-3'>
-              <Text className='font-semibold text-red-500'>*</Text>
-              <Text className='font-semibold'> 연락처</Text>
+              <Text className='font-n-bd text-red-500'>*</Text>
+              <Text className='font-n-bd'> 연락처</Text>
             </View>
             <TextField
               menu={1}
@@ -263,8 +263,8 @@ export const HomeFooterRequestModal = ({ visible, onClose }: ModalProps) => {
 
           <View className='py-3 pb-3'>
             <View className='flex-row mb-3'>
-              <Text className='font-semibold text-red-500'>*</Text>
-              <Text className='font-semibold'> 이메일 주소</Text>
+              <Text className='font-n-bd text-red-500'>*</Text>
+              <Text className='font-n-bd'> 이메일 주소</Text>
             </View>
             <TextField
               menu={1}
@@ -282,7 +282,7 @@ export const HomeFooterRequestModal = ({ visible, onClose }: ModalProps) => {
 
           <View className='flex-row justify-between items-center mb-12'>
             <View className='flex-row items-center'>
-              <Text className='font-semibold text-red-500 mr-2'>*</Text>
+              <Text className='font-n-bd text-red-500 mr-2'>*</Text>
               <CheckboxInput
                 label='개인정보 수집 및 이용 동의'
                 isSelected={privacyAgree}
@@ -301,6 +301,8 @@ export const HomeFooterRequestModal = ({ visible, onClose }: ModalProps) => {
             onPress={handleSubmit}
             disabled={isSubmitDisabled}
           />
+
+          <View className='h-[50px]' />
         </ScrollView>
       </View>
 

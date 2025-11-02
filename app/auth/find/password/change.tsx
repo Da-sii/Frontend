@@ -2,6 +2,8 @@ import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
 import { LongButton } from '@/components/common/buttons/LongButton';
 import { TextField } from '@/components/common/Inputs/TextField';
 import Navigation from '@/components/layout/Navigation';
+import { useResetPassword } from '@/hooks/auth/useFindAccount';
+import { usePasswordReset } from '@/store/usePasswordReset';
 import {
   hasPasswordComposition,
   isLen8to20,
@@ -11,8 +13,6 @@ import { Stack, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { usePasswordReset } from '@/store/usePasswordReset';
-import { useResetPassword } from '@/hooks/auth/useFindAccount';
 
 export default function change() {
   const router = useRouter();
@@ -51,10 +51,10 @@ export default function change() {
       />
 
       <View className='p-5'>
-        <Text className='text-h-lg font-extrabold text-gray-700 mb-[12px]'>
+        <Text className='text-h-lg font-n-eb text-gray-700 mb-[12px]'>
           비밀번호 변경
         </Text>
-        <Text className='text-b-md font-bold text-gray-700 mb-[8px]'>
+        <Text className='text-b-md font-n-bd text-gray-700 mb-[8px]'>
           새로운 비밀번호를 입력해주세요.
         </Text>
 

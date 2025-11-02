@@ -1,5 +1,4 @@
 import { LongButton } from '@/components/common/buttons/LongButton';
-import React from 'react';
 import { Image, Text, View } from 'react-native';
 
 interface ProductCardProps {
@@ -29,7 +28,7 @@ export default function ProductCard({
             )
           ) : (
             <View className='border-gray-100 w-full h-full items-center justify-center'>
-              <Text className='text-b-lg font-bold text-gray-500'>?</Text>
+              <Text className='text-b-lg font-n-bd text-gray-500'>?</Text>
             </View>
           )}
         </View>
@@ -43,7 +42,7 @@ export default function ProductCard({
             {brand}
           </Text>
           <Text
-            className='text-b-sm font-bold'
+            className='text-b-sm font-n-bd'
             ellipsizeMode='tail'
             numberOfLines={1}
           >

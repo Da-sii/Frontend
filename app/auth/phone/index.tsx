@@ -219,21 +219,21 @@ export default function Index() {
       />
 
       <View className='p-5'>
-        <Text className='text-h-lg font-extrabold text-gray-700 mb-[12px]'>
+        <Text className='text-h-lg font-n-eb text-gray-700 mb-[12px]'>
           휴대폰 본인 인증
         </Text>
         {menu === 'signUp' ? (
           <>
-            <Text className='text-b-md font-bold text-gray-700 mb-[8px]'>
+            <Text className='text-b-md font-n-bd text-gray-700 mb-[8px]'>
               계정 생성 후,
             </Text>
-            <Text className='text-b-md font-bold text-gray-700 mb-[25px]'>
+            <Text className='text-b-md font-n-bd text-gray-700 mb-[25px]'>
               휴대폰 본인인증을 완료하면 가입이 완료됩니다.
             </Text>
           </>
         ) : (
           <>
-            <Text className='text-b-md font-bold text-gray-700 mb-[25px]'>
+            <Text className='text-b-md font-n-bd text-gray-700 mb-[25px]'>
               입력하신 정보는 본인 확인을 위해서만 사용됩니다.
             </Text>
           </>

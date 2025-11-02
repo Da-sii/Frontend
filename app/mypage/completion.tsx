@@ -24,15 +24,15 @@ export default function Completion() {
       <Stack.Screen options={{ headerShown: false }} />
 
       <View className='flex-1 flex-col justify-between items-center pt-20 pb-3'>
-        <Text className='text-[24px] font-bold text-gray-800 mb-6'>
+        <Text className='text-[24px] font-n-bd text-gray-800 mb-6'>
           {title}
         </Text>
 
         <View className='items-center'>
-          <Text className='text-[36px] font-bold text-green-500 mb-3'>
+          <Text className='text-[36px] font-n-bd text-green-500 mb-3'>
             <Logo />
           </Text>
-          <Text className='mt-1 text-center font-semibold text-[14px] text-gray-500 leading-5'>
+          <Text className='mt-1 text-center font-n-rg text-[14px] text-gray-500 leading-5'>
             {subText}
           </Text>
         </View>

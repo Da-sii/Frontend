@@ -76,18 +76,13 @@ export default function ProductRankingCarousel({ data, isLoading }: Props) {
               className='absolute'
               fill={index < 3 ? colors.green[500] : colors.gray[400]}
             />
-            <Text className='text-white text-sm font-semibold'>
-              {index + 1}
-            </Text>
+            <Text className='text-white text-sm font-n-bd'>{index + 1}</Text>
           </View>
           <View className='flex-col ml-0.5'>
             <Text className='text-xs mt-1 text-gray-400' numberOfLines={1}>
               {item.company}
             </Text>
-            <Text
-              className='text-sm font-medium text-gray-800'
-              numberOfLines={1}
-            >
+            <Text className='text-sm font-n-rg text-gray-800' numberOfLines={1}>
               {item.name}
             </Text>
             <View
@@ -104,8 +99,8 @@ export default function ProductRankingCarousel({ data, isLoading }: Props) {
             </View>
 
             <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
-              <Text className='mr-1 text-sm font-regular'>정가</Text>
-              <Text className='text-base text-gray-900 mr-1 font-regular'>
+              <Text className='mr-1 text-sm font-n-rg'>정가</Text>
+              <Text className='text-base text-gray-900 mr-1 font-n-rg'>
                 {item.price.toLocaleString('ko-KR')}원
               </Text>
             </View>

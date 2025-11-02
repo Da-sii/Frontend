@@ -101,8 +101,8 @@ export default function Category() {
               <Text
                 className={`text-md pl-3 pr-3 ${
                   selectedBigCategory === cat
-                    ? 'text-gray-900 font-semibold'
-                    : 'text-gray-400 font-semibold'
+                    ? 'text-gray-900 font-n-bd'
+                    : 'text-gray-400 font-n-bd'
                 }`}
                 onLayout={onTextLayout}
               >
@@ -114,7 +114,7 @@ export default function Category() {
 
         <View className='flex-1'>
           <View className='flex-row justify-between items-center px-4 pt-2 pb-1'>
-            <Text className='text-lg font-semibold text-gray-900'>
+            <Text className='text-lg font-n-bd text-gray-900'>
               {selectedBigCategory}
             </Text>
             <Pressable
@@ -135,9 +135,7 @@ export default function Category() {
                   goToList(item);
                 }}
               >
-                <Text className='text-sm text-gray-900 font-semibold'>
-                  {item}
-                </Text>
+                <Text className='text-sm text-gray-900 font-n-bd'>{item}</Text>
               </Pressable>
             )}
             showsVerticalScrollIndicator={false}

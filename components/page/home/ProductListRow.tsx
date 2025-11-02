@@ -24,7 +24,7 @@ export default function ProductListRow({ item, onPress }: Props) {
         }}
         className='relative py-3'
       >
-        <View className='h-full overflow-hidden rounded-xl aspect-square bg-gray-box'>
+        <View className='h-full overflow-hidden rounded-xl aspect-square bg-gray-box border border-gray-100'>
           {isValidImage ? (
             <Image
               source={{ uri: item.image }}
@@ -54,11 +54,11 @@ export default function ProductListRow({ item, onPress }: Props) {
           </Text>
           <View
             style={{ flexDirection: 'row', alignItems: 'center' }}
-            className='mb-4'
+            className='mb-2'
           >
             <Text className='text-yellow-star text-xs'>★</Text>
             <Text className='text-gray-500 mr-1 text-xs'>
-              {item.reviewAvg || (0).toFixed(2)}
+              {Number(item.reviewAvg || 0).toFixed(2)}
             </Text>
             <Text className='text-xs text-gray-300'>({item.reviewCount})</Text>
           </View>
@@ -70,7 +70,7 @@ export default function ProductListRow({ item, onPress }: Props) {
             }}
           >
             <Text
-              style={{ fontSize: 13, color: colors.gray[900], marginRight: 2 }}
+              style={{ fontSize: 12, color: colors.gray[900], marginRight: 2 }}
             >
               정가
             </Text>

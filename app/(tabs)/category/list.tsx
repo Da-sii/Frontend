@@ -114,7 +114,7 @@ export default function List() {
     page: 1,
   });
 
-  const snapPoints = useMemo(() => ['50%'], []);
+  const snapPoints = useMemo(() => ['30%'], []);
   const renderBackdrop = useCallback(
     (props: BottomSheetBackdropProps) => (
       <BottomSheetBackdrop
@@ -163,7 +163,7 @@ export default function List() {
             onPress={() => setTopModalVisible(true)}
             style={{ flexDirection: 'row', alignItems: 'center' }}
           >
-            <Text className='text-lg font-semibold mr-1'>{bigCategory} </Text>
+            <Text className='text-lg font-n-bd mr-1'>{bigCategory} </Text>
             <MoreIcon width={13} height={13} fill={colors.gray[900]} />
           </Pressable>
         }
@@ -187,7 +187,7 @@ export default function List() {
       </View>
 
       <View className='px-4 py-3 pb-1 mb-2 flex-row justify-between items-center'>
-        <Text className='pt-1 text-sm text-gray-900 font-semibold'>
+        <Text className='pt-1 text-sm text-gray-900 font-n-bd'>
           총 {productList?.results.length}개
         </Text>
         <View className='flex-row items-center'>
@@ -195,7 +195,7 @@ export default function List() {
             className='flex-row items-center mr-2'
             onPress={openSortSheet}
           >
-            <Text className='text-sm text-gray-900 mr-1 font-semibold'>
+            <Text className='text-sm text-gray-900 mr-1 font-n-bd'>
               {sortOptions.find((opt) => opt.id === selectedSort)?.label}
             </Text>
             <SelectOptionsIcon width={10} height={10} fill={colors.gray[900]} />
@@ -317,7 +317,7 @@ export default function List() {
             paddingBottom: 24,
           }}
         >
-          <View className='pt-12'>
+          <View className=''>
             <Navigation
               left={
                 <ArrowLeftIcon width={20} height={20} fill={colors.gray[900]} />
@@ -331,9 +331,7 @@ export default function List() {
                   onPress={() => setTopModalVisible(false)}
                   style={{ flexDirection: 'row', alignItems: 'center' }}
                 >
-                  <Text className='text-lg font-semibold mr-2'>
-                    {bigCategory}
-                  </Text>
+                  <Text className='text-lg font-n-bd mr-2'>{bigCategory}</Text>
                   <LessIcon width={13} height={13} fill={colors.gray[900]} />
                 </Pressable>
               }
@@ -364,7 +362,7 @@ export default function List() {
                 }}
               >
                 <Text
-                  className={`text-lg font-semibold ${
+                  className={`text-lg font-n-bd ${
                     bigCategory === cat ? 'text-gray-900' : 'text-gray-400'
                   }`}
                   style={{ fontSize: 16, color: '#333' }}
@@ -395,8 +393,8 @@ export default function List() {
                 <Text
                   className={`text-base ${
                     selectedSort === option.id
-                      ? 'text-gray-900 font-semibold'
-                      : 'text-gray-500 font-normal'
+                      ? 'text-gray-900 font-n-bd'
+                      : 'text-gray-400 font-n-rg'
                   }`}
                 >
                   {option.label}

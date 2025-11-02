@@ -22,9 +22,7 @@ export const LongButton: React.FC<LongButtonProps> = ({
         ${disabled ? 'bg-gray-200' : 'bg-green-500 active:bg-green-600'}
       `}
     >
-      <Text className='text-white text-b-lg font-extrabold my-auto'>
-        {label}
-      </Text>
+      <Text className='text-white text-b-lg font-n-eb my-auto'>{label}</Text>
     </TouchableOpacity>
   );
 };
