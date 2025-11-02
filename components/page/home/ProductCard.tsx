@@ -93,7 +93,7 @@ export default function ProductCard({
             <Text
               style={{ fontSize: 10, color: colors.gray[500], marginLeft: 2 }}
             >
-              {item.reviewAvg || (0).toFixed(2)}
+              {Number(item.reviewAvg || 0).toFixed(2)}
             </Text>
             <Text
               style={{ fontSize: 10, color: colors.gray[400], marginLeft: 2 }}
