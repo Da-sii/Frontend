@@ -27,6 +27,7 @@ import { useProductDetail } from '@/hooks/product/useProductDetail';
 import { useUser } from '@/hooks/useUser';
 import BottomSheet from '@gorhom/bottom-sheet';
 import { PortalHost, PortalProvider } from '@gorhom/portal';
+
 import { useQueryClient } from '@tanstack/react-query';
 import {
   Stack,
@@ -109,6 +110,7 @@ export default function ProductDetail() {
 
   if (!data) return <Text>제품을 찾을 수 없습니다.</Text>;
 
+
   return (
     <PortalProvider>
       <SafeAreaView className='flex-1 bg-white'>
@@ -140,77 +142,104 @@ export default function ProductDetail() {
           ListHeaderComponent={
             <View>
               {/* 상품 이미지 */}
-              <View className='h-[390px] w-full'>
-                {data?.images.length > 0 ? (
-                  typeof data.images === 'string' ? (
+              <View className='h-[46.2vh] w-full'>
+                {(() => {
+                  const img = data?.images;
+                  let imageSource: { uri: string } | undefined;
+
+                  if (Array.isArray(img) && img.length > 0) {
+                    const first = img[0];
+                    if (typeof first === 'string') {
+                      imageSource = { uri: first };
+                    } else if (
+                      first &&
+                      typeof first === 'object' &&
+                      typeof first.url === 'string'
+                    ) {
+                      imageSource = { uri: first.url };
+                    }
+                  }
+                  return imageSource ? (
                     <Image
-                      source={{ uri: data.images }}
-                      className='w-full h-full'
+                      source={imageSource}
+                      style={{ width: '100%', height: '100%' }}
+                      resizeMode='contain'
                     />
                   ) : (
-                    <Image
-                      source={data.images as any}
-                      className='w-full h-full'
-                    />
-                  )
-                ) : (
-                  <View className='border-gray-100 border w-full h-full items-center justify-center'>
-                    <Text className='text-b-lg font-bold text-gray-500'>
-                      상품 이미지를 준비중입니다.
-                    </Text>
-                  </View>
-                )}
+                    <View className='border-gray-100 border w-full h-full items-center justify-center'>
+                      <Text className='text-b-lg font-bold text-gray-500'>
+                        상품 이미지를 준비중입니다.
+                      </Text>
+                    </View>
+                  );
+                })()}
               </View>
 
               {/* 상품 정보 헤더 */}
-              <View className='flex-col gap-y-5 border-gray-100 border-b py-5 px-5'>
-                <View className='flex-col gap-[15px]'>
-                  <Text className='text-b-sm font-bold'>{data?.company}</Text>
-                  <Text className='text-h-md font-bold'>{data?.name}</Text>
-                  <View className='flex-row items-center'>
+              <View className='flex-col border-gray-100 border-b h-[172px] py-[20px]'>
+                <View className='flex-col px-[20px] h-full '>
+                  <Text className='text-b-sm font-bold  mb-[15px]'>
+                    {data?.company}
+                  </Text>
+                  <Text className='text-h-md font-bold  mb-[15px]'>
+                    {data?.name}
+                  </Text>
+                  <View className='flex-row items-center mb-[20px]'>
                     <StarIcon />
                     <Text className='text-c1 font-normal text-gray-400 ml-[3px]'>
                       {data?.reviewAvg ?? 0} ({data?.reviewCount ?? 0})
                     </Text>
                   </View>
-                </View>
-                <View className='flex-row items-center'>
-                  <Text className='text-b-lg font-bold'>정가 </Text>
-                  <Text className='text-h-md font-extrabold'>
-                    {data?.price.toLocaleString('ko-KR') ?? 0}원{' '}
-                  </Text>
-                  <Text className='text-c1 font-bold text-gray-300'>
-                    / {data?.unit ?? ''}
-                  </Text>
+                  <View className='flex-row items-center'>
+                    <Text className='text-b-lg font-bold'>정가 </Text>
+                    <Text className='text-h-md font-extrabold'>
+                      {data?.price.toLocaleString('ko-KR') ?? 0}원{' '}
+                    </Text>
+                    <Text className='text-c1 font-bold text-gray-300'>
+                      / {data?.unit ?? ''}
+                    </Text>
+                  </View>
                 </View>
               </View>
 
               {/* 랭킹 및 영양 정보 */}
               <View className='flex-col gap-y-4 border-gray-100 border-b-[3px] py-5 px-5 '>
-                <View className='flex-row'>
-                  <Text className='text-c2 font-normal text-gray-400 mr-[26px] w-[46px]'>
-                    랭킹
-                  </Text>
+                <View className='flex-row w-full'>
+                  <View className='flex-[0.2]'>
+                    <Text className='text-c2 font-normal text-gray-400'>
+                      랭킹
+                    </Text>
+                  </View>
 
-                  {data?.ranking?.map((item, index) => (
-                    <View key={index} className='flex-row items-baseline mr-2'>
-                      <Text className='text-c2 font-normal h-[16px]'>
-                        {item.bigCategory}
-                      </Text>
-                      <Text className='text-c2 font-normal'> / </Text>
-                      <Text className='text-c2 font-normal'>
-                        {item.smallCategory} {item.monthlyRank}위
-                      </Text>
-                    </View>
-                  ))}
+                  <View className='flex-col flex-wrap flex-[0.8]'>
+                    {data?.ranking?.map((item, index) => (
+                      <View
+                        key={index}
+                        className='flex-row items-baseline mr-2'
+                      >
+                        <Text className='text-c2 font-normal h-[16px]'>
+                          {item.bigCategory}
+                        </Text>
+                        <Text className='text-c2 font-normal'> / </Text>
+                        <Text className='text-c2 font-normal'>
+                          {item.smallCategory} {item.monthlyRank}위
+                        </Text>
+                      </View>
+                    ))}
+                  </View>
                 </View>
-                <View className='flex-row'>
-                  <Text className='text-c2 font-normal text-gray-400 w-[46px] mr-[26px]'>
-                    식품 유형
-                  </Text>
-                  <Text className='text-c2 font-normal'>
-                    {data?.productType}
-                  </Text>
+                <View className='flex-row w-full'>
+                  <View className='flex-[0.2]'>
+                    <Text className='text-c2 font-normal text-gray-400'>
+                      식품 유형
+                    </Text>
+                  </View>
+
+                  <View className='flex-[0.8]'>
+                    <Text className='text-c2 font-normal'>
+                      {data?.productType}
+                    </Text>
+                  </View>
                 </View>
               </View>
 
@@ -266,7 +295,7 @@ export default function ProductDetail() {
 
                   <LongButton
                     label={'리뷰 작성하기'}
-                    height='h-[40px]'
+                    heightClass='h-[44px]'
                     onPress={async () => {
                       if (data?.isMyReview) {
                         setShowIsMyReviewModal(true);
@@ -279,10 +308,7 @@ export default function ProductDetail() {
                               id: String(id), // 제품아이디
                               name: data?.name ?? '', // 제품명
                               brand: data?.company ?? '', // 회사명
-                              image:
-                                typeof data?.images === 'string'
-                                  ? data?.images
-                                  : '', // URL만 보내기
+                              image: data?.images[0]?.url ?? '',
                             },
                           });
                         } else {
@@ -391,7 +417,7 @@ export default function ProductDetail() {
               : undefined
           }
           ListFooterComponent={
-            activeTab === 'review' ? (
+            activeTab === 'review' && (ratingStats?.total_reviews ?? 0) > 0 ? (
               <View className='items-center mt-4 mb-6'>
                 <ReviewButton
                   onPress={() => {

@@ -103,6 +103,7 @@ export default function ReviewWritePage() {
 
   const { check } = useProfanity();
   const [profanityOpen, setProfanityOpen] = useState(false);
+
   const productImage = (() => {
     try {
       return image
@@ -112,6 +113,7 @@ export default function ReviewWritePage() {
       return undefined;
     }
   })();
+
   const gallery: GalleryItem[] = [
     ...existingImages.map((e) => ({
       kind: 'existing' as const,
@@ -308,6 +310,7 @@ export default function ReviewWritePage() {
     setShowMinError(!isReviewValid(review));
   };
 
+  console.log('image', image);
   return (
     // <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
     <SafeAreaView className='flex-1 bg-white'>
@@ -336,11 +339,11 @@ export default function ReviewWritePage() {
         >
           <View className='gap-y-4'>
             <View className='flex-row'>
-              <View className='w-[49px] aspect-square mr-[10px] border-gray-100 border rounded-[10px]'>
-                {productImage ? (
+              <View className='w-[49px] aspect-square mr-[10px] border-gray-100 border rounded-[10px] '>
+                {image ? (
                   <Image
-                    source={{ uri: productImage.url }}
-                    className='w-full h-full'
+                    source={{ uri: image }}
+                    className='w-full h-full rounded-[10px]'
                   />
                 ) : (
                   <View className='border-gray-100 w-full h-full items-center justify-center'>

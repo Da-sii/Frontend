@@ -22,24 +22,29 @@ export const ScrollToTopButton = ({ scrollRef, visible }: Props) => {
 
   return (
     <Animated.View
-      // visible=false일 때 터치 막기
       pointerEvents={visible ? 'auto' : 'none'}
       style={{
         opacity: fade,
         position: 'absolute',
         right: 20,
-        bottom: 130,
-        zIndex: 50, // 다른 뷰 위에 뜨게
+        bottom: 100,
+        zIndex: 50,
+
+        // ✅ iOS용 shadow
         shadowColor: '#000',
         shadowOpacity: 0.15,
         shadowRadius: 8,
         shadowOffset: { width: 0, height: 2 },
+
+        // ✅ Android용 그림자
         elevation: 4,
+        backgroundColor: 'white',
+        borderRadius: 999,
       }}
     >
       <Pressable
         onPress={() => scrollRef.current?.scrollTo({ y: 0, animated: true })}
-        className=' rounded-full items-center justify-center'
+        className='rounded-full items-center justify-center w-[36px] h-[36px]'
         android_ripple={{ borderless: true }}
       >
         <ArrowUpIcon />
