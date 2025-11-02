@@ -58,7 +58,7 @@ export default function ProductListRow({ item, onPress }: Props) {
           >
             <Text className='text-yellow-star text-xs'>★</Text>
             <Text className='text-gray-500 mr-1 text-xs'>
-              {item.reviewAvg || (0).toFixed(2)}
+              {Number(item.reviewAvg || 0).toFixed(2)}
             </Text>
             <Text className='text-xs text-gray-300'>({item.reviewCount})</Text>
           </View>
