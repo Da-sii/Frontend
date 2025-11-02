@@ -1,4 +1,3 @@
-import DottedLine from '@/assets/icons/ic_dotted_line.svg';
 import EffectIfon from '@/assets/icons/ic_effect.svg';
 import IngredienStatusIcon from '@/assets/icons/ic_ingredien_status.svg';
 import DownArrowIcon from '@/assets/icons/product/productDetail/ic_arrow_down.svg';
@@ -60,15 +59,21 @@ export default function MaterialInfo({
                   <UpArrowIcon className='w-[12px] h-[12px]' />
                 </View>
               </Pressable>
-              <View className='mt-1'>
+              <View className='mt-1 '>
                 <View className='flex-row justify-between mb-5 px-[7px]'>
                   <EffectIfon className='mr-[14px]' />
                   <Text className='flex-1 text-c1 font-nomal'>
                     {materialInfo.effect}
                   </Text>
                 </View>
-                <DottedLine className='w-full' />
-
+                <View
+                  className='w-full h-[1px] my-3'
+                  style={{
+                    borderBottomWidth: 1,
+                    borderStyle: 'dashed',
+                    borderColor: '#E4E6E7',
+                  }}
+                />
                 <View className='flex-row justify-between mb-5 mt-5 px-[7px]'>
                   <IngredienStatusIcon className='mr-[14px]' />
                   <Text className='flex-1 text-c1 font-nomal'>
