@@ -104,6 +104,7 @@ export default function ProductDetail() {
 
   if (!data) return <Text>제품을 찾을 수 없습니다.</Text>;
 
+
   return (
     <PortalProvider>
       <SafeAreaView className='flex-1 bg-white'>
@@ -288,7 +289,7 @@ export default function ProductDetail() {
 
                   <LongButton
                     label={'리뷰 작성하기'}
-                    height='h-[40px]'
+                    heightClass='h-[44px]'
                     onPress={async () => {
                       if (data?.isMyReview) {
                         setShowIsMyReviewModal(true);
@@ -301,10 +302,7 @@ export default function ProductDetail() {
                               id: String(id), // 제품아이디
                               name: data?.name ?? '', // 제품명
                               brand: data?.company ?? '', // 회사명
-                              image:
-                                typeof data?.images === 'string'
-                                  ? data?.images
-                                  : '', // URL만 보내기
+                              image: data?.images[0]?.url ?? '',
                             },
                           });
                         } else {
@@ -410,7 +408,7 @@ export default function ProductDetail() {
               : undefined
           }
           ListFooterComponent={
-            activeTab === 'review' ? (
+            activeTab === 'review' && (ratingStats?.total_reviews ?? 0) > 0 ? (
               <View className='items-center mt-4 mb-6'>
                 <ReviewButton
                   onPress={() => {
