@@ -10,7 +10,7 @@ export default function ProgressBar({
   current,
   recommended,
 }: progressBarProps) {
-  const max = 1500; // bar 전체 기준치
+  const max = recommended / 0.8;
 
   const percent = (current / max) * 100;
   const recommendPercent = (recommended / max) * 100;
