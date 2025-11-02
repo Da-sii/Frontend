@@ -20,9 +20,12 @@ export default function ReviewCard({
   const topScoreKey = entries.find(([, p]) => Number(p) === maxPercent)?.[0];
 
   return (
-    <View className='bg-[#F6F5FA] h-[140px] rounded-[12px] flex-row items-center '>
+    <View className='bg-[#F6F5FA] h-[140px] rounded-[12px] flex-row items-center w-full '>
       {/* 왼쪽 영역 */}
-      <View className='flex-1 h-[100px] border-r border-gray-200 items-center justify-center'>
+      <View
+        className='h-[100px] border-r border-gray-200 items-center justify-center'
+        style={{ flex: 0.4 }}
+      >
         <Text className='text-[28px] font-extrabold'>
           {reviewRank.toFixed(2)}
         </Text>
@@ -30,14 +33,17 @@ export default function ReviewCard({
       </View>
 
       {/* 오른쪽 영역 */}
-      <View className='flex-1 h-[100px] justify-center flex-row'>
-        <View className='justify-center flex-row space-x-2 w-[80%]'>
+      <View
+        className=' h-[100px] justify-center flex-row'
+        style={{ flex: 0.6 }}
+      >
+        <View className='justify-center flex-row w-[170px]'>
           {entries.map(([score, percent]) => {
             const isTop = score === topScoreKey;
             return (
               <View
                 key={score}
-                className=' flex-col items-center justify-center space-y-[5px] relative'
+                className='flex-1 flex-col items-center justify-center space-y-[5px] relative'
               >
                 <Text
                   numberOfLines={1}
