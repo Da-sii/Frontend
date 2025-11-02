@@ -23,7 +23,7 @@ export default function Navigation({
   onRightPress,
 }: NavigationProps) {
   return (
-    <View className='flex-row items-center justify-between px-4 py-3 mt-2'>
+    <View className='flex-row items-center justify-between px-4 h-[6.9vh]'>
       <Pressable onPress={onLeftPress} className='p-1'>
         {left || <Text></Text>}
       </Pressable>
