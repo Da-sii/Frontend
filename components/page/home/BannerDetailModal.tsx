@@ -88,7 +88,7 @@ export default function BannerDetailModal({
         />
 
         <ScrollView className='flex-1'>
-          <View className='px-1'>
+          <View>
             {detailData.images.map((imageSource, index) => (
               <Image
                 key={index}

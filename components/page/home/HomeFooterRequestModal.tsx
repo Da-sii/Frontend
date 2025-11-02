@@ -7,9 +7,9 @@ import { userAPI } from '@/services/user';
 import { InquiryPayload } from '@/types/payloads/post';
 import { isEmail } from '@/utils/validation';
 import { Ionicons } from '@expo/vector-icons';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Alert, Modal, ScrollView, Text, TextInput, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import CheckboxInput from './CheckboxInput';
 import { HomeFooterModal } from './HomeFooterModal';
 interface ModalProps {
@@ -18,6 +18,7 @@ interface ModalProps {
 }
 
 export const HomeFooterRequestModal = ({ visible, onClose }: ModalProps) => {
+  const insets = useSafeAreaInsets();
   const [visibleErrorModal, setVisibleErrorModal] = useState(false);
 
   const [requestType, setRequestType] = useState(0);
@@ -31,16 +32,21 @@ export const HomeFooterRequestModal = ({ visible, onClose }: ModalProps) => {
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
 
-  const handleSubmit = async () => {
-    if (
+  const isSubmitDisabled = useMemo(() => {
+    // 하나라도 조건에 맞지 않으면 true(비활성화)를 반환합니다.
+    return (
       !requestType ||
-      !brandName ||
+      !brandName.trim() || // .trim()으로 공백만 입력한 경우도 방지
       content.length < 20 ||
-      !name ||
-      !phone ||
+      !name.trim() ||
+      !phone.trim() ||
       !isEmail(email) ||
       !privacyAgree
-    ) {
+    );
+  }, [requestType, brandName, content, name, phone, email, privacyAgree]);
+
+  const handleSubmit = async () => {
+    if (isSubmitDisabled) {
       setVisibleErrorModal(true);
       return;
     }
@@ -88,7 +94,14 @@ export const HomeFooterRequestModal = ({ visible, onClose }: ModalProps) => {
       visible={visible}
       onRequestClose={onClose}
     >
-      <SafeAreaView className='flex-1'>
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: 'white',
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom,
+        }}
+      >
         <Navigation
           right={<Ionicons name='close' size={25} color='black' />}
           onRightPress={onClose}
@@ -283,9 +296,13 @@ export const HomeFooterRequestModal = ({ visible, onClose }: ModalProps) => {
             />
           </View>
 
-          <LongButton label='제출하기' onPress={handleSubmit} />
+          <LongButton
+            label='제출하기'
+            onPress={handleSubmit}
+            disabled={isSubmitDisabled}
+          />
         </ScrollView>
-      </SafeAreaView>
+      </View>
 
       <HomeFooterModal
         type='privacy'

@@ -15,42 +15,54 @@ export default function BannerCarousel({ data, onPress }: BannerCarouselProps) {
 
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const renderBannerItem = ({ item }: { item: IBannerCell }) => (
-    <Pressable
-      onPress={() => onPress(activeIndex)}
-      style={{
-        width: '100%',
-        height: '100%',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
-      <View
-        className='bg-white rounded-2xl overflow-hidden shadow-lg'
+  const renderBannerItem = ({
+    item,
+    index,
+  }: {
+    item: IBannerCell;
+    index: number;
+  }) => {
+    const isFocused = activeIndex === index;
+
+    return (
+      <Pressable
+        onPress={() => onPress(activeIndex)}
         style={{
           width: '100%',
           height: '100%',
+          justifyContent: 'center',
+          alignItems: 'center',
         }}
       >
-        <Image
-          source={item.image}
-          resizeMode='contain'
-          className='w-full h-full'
-        />
-        <View className='absolute left-8 bottom-8'>
-          <Text className='text-white text-2xl font-bold'>{item.title}</Text>
-          <Text className='text-white text-lg font-bold mt-1'>
-            {item.subTitle}
-          </Text>
+        <View
+          className='bg-white rounded-2xl overflow-hidden shadow-lg'
+          style={{
+            width: '100%',
+            height: '100%',
+          }}
+        >
+          <Image
+            source={item.image}
+            resizeMode='contain'
+            className='w-full h-full'
+          />
+          <View className='absolute left-8 bottom-8'>
+            <Text className='text-white text-2xl font-bold'>{item.title}</Text>
+            <Text className='text-white text-lg font-bold mt-1'>
+              {item.subTitle}
+            </Text>
+          </View>
+          {isFocused && (
+            <View className='absolute top-5 right-5 bg-black/40 px-4 py-1 rounded-full'>
+              <Text className='text-white text-sm font-semibold'>
+                {activeIndex + 1} / {data.length}
+              </Text>
+            </View>
+          )}
         </View>
-        <View className='absolute top-5 right-5 bg-black/40 px-4 py-1 rounded-full'>
-          <Text className='text-white text-sm font-semibold'>
-            {activeIndex + 1} / {data.length}
-          </Text>
-        </View>
-      </View>
-    </Pressable>
-  );
+      </Pressable>
+    );
+  };
   const progress = useSharedValue<number>(0);
 
   return (
@@ -68,8 +80,7 @@ export default function BannerCarousel({ data, onPress }: BannerCarouselProps) {
       }}
       mode='parallax'
       modeConfig={{
-        parallaxScrollingScale: 0.85,
-        parallaxScrollingOffset: 70,
+        parallaxScrollingScale: 0.8,
       }}
       onProgressChange={progress}
       renderItem={renderBannerItem}
