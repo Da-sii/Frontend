@@ -234,12 +234,11 @@ export default function ReviewItems({
             </View>
           )}
         </View>
-        {!isMyReview ||
-          (!enableBottomSheet && (
-            <Pressable onPress={openSheet} hitSlop={8} className='my-auto'>
-              <MoreIcon className='my-auto' />
-            </Pressable>
-          ))}
+        {!isMyReview && !enableBottomSheet && (
+          <Pressable onPress={openSheet} hitSlop={8} className='my-auto'>
+            <MoreIcon className='my-auto' />
+          </Pressable>
+        )}
       </View>
       {isMyReview && (
         <View className='flex-row items-center pb-2'>
