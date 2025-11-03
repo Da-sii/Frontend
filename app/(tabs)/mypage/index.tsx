@@ -5,17 +5,16 @@ import { SettingSection } from '@/components/page/my/SettingSection';
 import { useLogout } from '@/hooks/useLogout';
 import { useUser } from '@/hooks/useUser';
 import { getAccessToken } from '@/lib/authToken';
-import * as Clipboard from 'expo-clipboard';
+// import * as Clipboard from 'expo-clipboard';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { Pressable, ScrollView } from 'react-native';
+import { ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Mypage() {
   const router = useRouter();
   const logout = useLogout();
-  const { deleteUser } = useUser();
-  const { mypageInfo, fetchMypage } = useUser();
+  const { deleteUser, mypageInfo, fetchMypage } = useUser();
 
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showEmailCopiedModal, setShowEmailCopiedModal] = useState(false);
@@ -32,10 +31,10 @@ export default function Mypage() {
     setShowPasswordModal(false);
   };
 
-  const handleEmailCopiedPress = async (value: string) => {
-    setShowEmailCopiedModal(true);
-    await Clipboard.setStringAsync(value);
-  };
+  // const handleEmailCopiedPress = async (value: string) => {
+  //   setShowEmailCopiedModal(true);
+  //   // await Clipboard.setStringAsync(value);
+  // };
 
   const handleEmailCopiedModalConfirm = () => {
     setShowEmailCopiedModal(false);
@@ -106,16 +105,13 @@ export default function Mypage() {
 
             <SettingSection title='도움말' topBorder>
               <SettingItem label='버전 정보' value='V 1.0.3' />
-              <Pressable
+              {/* <Pressable
                 onPress={() =>
                   handleEmailCopiedPress('podostore1111@gmail.com')
                 }
-              >
-                <SettingItem
-                  label='문의 메일'
-                  value='podostore1111@gmail.com'
-                />
-              </Pressable>
+              > */}
+              <SettingItem label='문의 메일' value='podostore1111@gmail.com' />
+              {/* </Pressable> */}
             </SettingSection>
 
             <SettingSection title='기타' topBorder>
@@ -134,16 +130,13 @@ export default function Mypage() {
 
             <SettingSection title='도움말' topBorder>
               <SettingItem label='버전 정보' value='V 1.0.3' />
-              <Pressable
+              {/* <Pressable
                 onPress={() =>
                   handleEmailCopiedPress('podostore1111@gmail.com')
                 }
-              >
-                <SettingItem
-                  label='문의 메일'
-                  value='podostore1111@gmail.com'
-                />
-              </Pressable>
+              > */}
+              <SettingItem label='문의 메일' value='podostore1111@gmail.com' />
+              {/* </Pressable> */}
             </SettingSection>
           </>
         )}
