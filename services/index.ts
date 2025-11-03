@@ -19,7 +19,7 @@ axiosInstance.interceptors.request.use(
     const accessToken = await getAccessToken();
     if (__DEV__) {
       const url = (config.baseURL || '') + (config.url || '');
-      console.log('[AXIOS] →', url, 'params=', config.params);
+      // console.log('[AXIOS] →', url, 'params=', config.params);
     }
 
     if (accessToken) config.headers.Authorization = `Bearer ${accessToken}`;
