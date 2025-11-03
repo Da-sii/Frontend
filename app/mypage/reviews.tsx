@@ -69,7 +69,7 @@ export default function MyReviews() {
             company: item.product_info.company ?? '',
             name: item.product_info.name ?? '',
             date: item.date ?? '-',
-            isEdited: false,
+            isEdited: item.updated,
             content: item.review ?? '',
             rating: item.rate ?? 0,
             images,
