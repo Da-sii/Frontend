@@ -28,7 +28,10 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Dimensions, FlatList, Pressable, Text, View } from 'react-native';
 import Modal from 'react-native-modal';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 
 const screenWidth = Dimensions.get('window').width;
 const cardWidth = (screenWidth - 16 * 2 - 8 * 2) / 2;
@@ -36,6 +39,7 @@ type ListTab = string;
 
 export default function List() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { categories, fetchCategories } = useCategory();
   const params = useLocalSearchParams<{ main?: string; sub?: string }>();
   const [bigCategory, setBigCategory] = useState(params.main ?? '');
@@ -313,11 +317,17 @@ export default function List() {
             backgroundColor: '#fff',
             borderBottomLeftRadius: 12,
             borderBottomRightRadius: 12,
-            paddingTop: 12,
             paddingBottom: 24,
           }}
         >
-          <View className=''>
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: 'white',
+              paddingTop: insets.top,
+              paddingBottom: insets.bottom,
+            }}
+          >
             <Navigation
               left={
                 <ArrowLeftIcon width={20} height={20} fill={colors.gray[900]} />
@@ -345,7 +355,7 @@ export default function List() {
 
           <View
             style={{ flexDirection: 'row', flexWrap: 'wrap' }}
-            className='mt-1'
+            className='mt-1 pt-6'
           >
             {bigCategories.map((cat) => (
               <Pressable
