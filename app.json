@@ -4,7 +4,7 @@
     "slug": "dasii",
     "version": "1.0.3",
     "orientation": "portrait",
-    "icon": "./assets/icons/ic_logo_word.svg",
+    "icon": "./assets/images/img_logo_word.png",
     "scheme": "dasii",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -20,7 +20,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icons/ic_logo_word.svg",
+        "foregroundImage": "./assets/images/img_logo_word.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
@@ -30,7 +30,7 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/icons/ic_logo_word.svg"
+      "favicon": "./assets/images/img_logo_word.png"
     },
     "plugins": [
       "expo-router",
