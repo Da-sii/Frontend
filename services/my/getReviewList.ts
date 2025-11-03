@@ -20,6 +20,7 @@ export type MyReview = {
   rate: number;
   date?: string;
   review: string;
+  updated: boolean;
   images: ReviewImagesDTO[]; // url만 뽑아 정규화
   product_info: ProductInfoDTO;
 };
@@ -36,7 +37,7 @@ export async function getMyReviewList(review_id: number): Promise<MyReview[]> {
       rate: v.rate,
       date: v.date,
       review: v.review,
-
+      updated: v.updated,
       images: v.images,
       product_info: v.product_info,
     }),
