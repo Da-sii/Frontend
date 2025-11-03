@@ -353,7 +353,10 @@ export default function ProductDetail() {
                             if (await isLoggedIn()) {
                               const imageUrl = previewPhotoUrls?.[idx];
                               if (!imageUrl) return;
-
+                              qc.setQueryData(['product', 'detail', idNum], {
+                                reviewAvg: data?.reviewAvg,
+                                reviewCount: data?.reviewCount,
+                              });
                               router.push({
                                 pathname:
                                   '/product/[id]/review/[reviewId]/photoReviewDetail',
