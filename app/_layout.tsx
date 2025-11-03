@@ -146,7 +146,10 @@ function RootLayout() {
         <BottomSheetModalProvider>
           {loaded || error ? (
             <>
-              <Stack initialRouteName='index'>
+              <Stack
+                initialRouteName='index'
+                screenOptions={{ headerShown: false }}
+              >
                 <Stack.Screen
                   name='home/search'
                   options={{ headerShown: false }}
