@@ -19,7 +19,7 @@ export default function Ranking() {
   const router = useRouter();
   const params = useLocalSearchParams();
 
-  const { categories, fetchCategories } = useCategory();
+  const { fetchRankingCategories, rankingCategories } = useCategory();
   const initialFilter = params.category ? (params.category as string) : '전체';
   const initialTab = params.initialTab === 'monthly' ? 'monthly' : 'daily';
   const [filter, setFilter] = useState<string>(initialFilter);
@@ -32,17 +32,19 @@ export default function Ranking() {
   });
 
   const allSmallCategories = useMemo(() => {
-    if (!categories) {
+    if (!rankingCategories || rankingCategories.length === 0) {
       return ['전체'];
     }
-    const flattenedCategories = categories.flatMap(
-      (category) => category.smallCategories,
-    );
-    return ['전체', ...flattenedCategories];
-  }, [categories]);
+
+    const extractedCategories = (
+      rankingCategories.topSmallCategories || []
+    ).map((category) => category.smallCategory);
+
+    return ['전체', ...extractedCategories];
+  }, [rankingCategories]);
 
   useEffect(() => {
-    fetchCategories();
+    fetchRankingCategories();
   }, []);
 
   useEffect(() => {
