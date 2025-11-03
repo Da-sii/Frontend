@@ -83,6 +83,7 @@ export default function ProductDetail() {
     const y = e.nativeEvent.contentOffset.y;
     setShowTopButton(y > 200);
   }, []);
+
   const previewPhotoUrls = useMemo(
     () =>
       (data?.reviewImages ?? [])
@@ -109,7 +110,6 @@ export default function ProductDetail() {
   // const [coupangProduct, setCoupangProduct] = useState(null);
 
   if (!data) return <Text>제품을 찾을 수 없습니다.</Text>;
-
 
   return (
     <PortalProvider>
@@ -275,7 +275,8 @@ export default function ProductDetail() {
                               {
                                 previewPhotos: previewPhotoUrls ?? [],
                                 total_photo:
-                                  reviewImageList?.pages[0]?.total_images ?? 0,
+                                  reviewImageList?.pages?.[0]?.total_images ??
+                                  0,
                               },
                             );
                             qc.setQueryData(['product', 'detail', idNum], {
