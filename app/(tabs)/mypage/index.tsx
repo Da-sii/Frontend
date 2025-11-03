@@ -5,9 +5,10 @@ import { SettingSection } from '@/components/page/my/SettingSection';
 import { useLogout } from '@/hooks/useLogout';
 import { useUser } from '@/hooks/useUser';
 import { getAccessToken } from '@/lib/authToken';
+import * as Clipboard from 'expo-clipboard';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { ScrollView } from 'react-native';
+import { Pressable, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Mypage() {
@@ -17,6 +18,7 @@ export default function Mypage() {
   const { mypageInfo, fetchMypage } = useUser();
 
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [showEmailCopiedModal, setShowEmailCopiedModal] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
 
@@ -28,6 +30,15 @@ export default function Mypage() {
 
   const handleOAuthModalConfirm = () => {
     setShowPasswordModal(false);
+  };
+
+  const handleEmailCopiedPress = async (value: string) => {
+    setShowEmailCopiedModal(true);
+    await Clipboard.setStringAsync(value);
+  };
+
+  const handleEmailCopiedModalConfirm = () => {
+    setShowEmailCopiedModal(false);
   };
 
   const handleLogoutPress = () => {
@@ -94,8 +105,17 @@ export default function Mypage() {
             </SettingSection>
 
             <SettingSection title='도움말' topBorder>
-              <SettingItem label='버전 정보' value='V 1.0.1' />
-              <SettingItem label='문의 메일' value='podostore1111@gmail.com' />
+              <SettingItem label='버전 정보' value='V 1.0.3' />
+              <Pressable
+                onPress={() =>
+                  handleEmailCopiedPress('podostore1111@gmail.com')
+                }
+              >
+                <SettingItem
+                  label='문의 메일'
+                  value='podostore1111@gmail.com'
+                />
+              </Pressable>
             </SettingSection>
 
             <SettingSection title='기타' topBorder>
@@ -113,8 +133,17 @@ export default function Mypage() {
             </SettingSection>
 
             <SettingSection title='도움말' topBorder>
-              <SettingItem label='버전 정보' value='V 1.0.1' />
-              <SettingItem label='문의 메일' value='podostore1111@gmail.com' />
+              <SettingItem label='버전 정보' value='V 1.0.3' />
+              <Pressable
+                onPress={() =>
+                  handleEmailCopiedPress('podostore1111@gmail.com')
+                }
+              >
+                <SettingItem
+                  label='문의 메일'
+                  value='podostore1111@gmail.com'
+                />
+              </Pressable>
             </SettingSection>
           </>
         )}
@@ -124,6 +153,14 @@ export default function Mypage() {
         visible={showPasswordModal}
         message='소셜 로그인 계정은&#10;비밀번호를 변경할 수 없습니다.'
         onConfirm={handleOAuthModalConfirm}
+        confirmText='확인'
+        singleButton
+      />
+
+      <DefaultModal
+        visible={showEmailCopiedModal}
+        message='이메일이 복사되었습니다.'
+        onConfirm={handleEmailCopiedModalConfirm}
         confirmText='확인'
         singleButton
       />

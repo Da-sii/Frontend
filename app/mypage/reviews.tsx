@@ -7,7 +7,7 @@ import { useGetMyReview } from '@/hooks/my/useGetMyReview';
 import { useState } from 'react';
 
 import { MyReview } from '@/services/my/getReviewList';
-import { useRouter } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { useCallback } from 'react';
 import {
   ActivityIndicator,
@@ -16,6 +16,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function MyReviews() {
   const router = useRouter();
@@ -143,7 +144,9 @@ export default function MyReviews() {
   }
 
   return (
-    <View className='flex-1 bg-white px-4'>
+    <SafeAreaView className='flex-1 bg-white px-4'>
+      <Stack.Screen options={{ headerShown: false }} />
+
       <Navigation
         title='내가 쓴 리뷰'
         left={<BackIcon width={17} height={17} />}
@@ -175,6 +178,6 @@ export default function MyReviews() {
         refreshing={isRefetching}
         onRefresh={refetch}
       />
-    </View>
+    </SafeAreaView>
   );
 }
