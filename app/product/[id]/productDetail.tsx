@@ -372,6 +372,10 @@ export default function ProductDetail() {
                             }
                           }}
                           onPressMore={async () => {
+                            qc.setQueryData(['product', 'detail', idNum], {
+                              reviewAvg: data?.reviewAvg,
+                              reviewCount: data?.reviewCount,
+                            });
                             if (await isLoggedIn()) {
                               router.push(
                                 `/product/${id}/review/photo/allList`,
