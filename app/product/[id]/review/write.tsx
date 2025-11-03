@@ -310,7 +310,6 @@ export default function ReviewWritePage() {
     setShowMinError(!isReviewValid(review));
   };
 
-  console.log('image', image);
   return (
     // <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
     <SafeAreaView className='flex-1 bg-white'>

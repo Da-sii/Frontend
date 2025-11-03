@@ -60,12 +60,16 @@ export default function MyReviews() {
       : [];
 
     const canDelete = item.review_id != null;
-
+    console.log('item', item.product_info.image);
     return (
       <View className='border-b border-gray-100'>
         <ReviewItems
           reviewItem={{
             id: item.review_id ?? 0,
+            product_image:
+              typeof item.product_info.image === 'string'
+                ? item.product_info.image
+                : (item.product_info.image?.url ?? ''),
             company: item.product_info.company ?? '',
             name: item.product_info.name ?? '',
             date: item.date ?? '-',
@@ -92,7 +96,10 @@ export default function MyReviews() {
                   imageId: String(item.product_info?.image.id ?? ''),
                   name: item.product_info?.name ?? '',
                   brand: item.product_info?.company ?? '',
-                  image: JSON.stringify(item.product_info?.image ?? {}),
+                  image:
+                    typeof item.product_info?.image === 'string'
+                      ? item.product_info?.image
+                      : (item.product_info?.image?.url ?? ''),
                   initRate: String(item.rate ?? 0),
                   initReview: item.review ?? '',
                   initImages: JSON.stringify(
@@ -145,8 +152,11 @@ export default function MyReviews() {
 
   return (
     <SafeAreaView className='flex-1 bg-white px-4'>
-      <Stack.Screen options={{ headerShown: false }} />
-
+      <Stack.Screen
+        options={{
+          headerShown: false,
+        }}
+      />
       <Navigation
         title='내가 쓴 리뷰'
         left={<BackIcon width={17} height={17} />}
