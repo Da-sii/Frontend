@@ -310,7 +310,6 @@ export default function ReviewWritePage() {
     setShowMinError(!isReviewValid(review));
   };
 
-  console.log('image', image);
   return (
     // <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
     <SafeAreaView className='flex-1 bg-white'>
@@ -401,7 +400,7 @@ export default function ReviewWritePage() {
               </Text>
               {/* 내용 입력 */}
 
-              <View className='border border-gray-100 rounded-[12px] p-[15px] pb-[40px] h-[150px] text-b-md relative'>
+              <View className='border border-gray-100 rounded-[12px] px-[15px] pt-[15px] pb-[40px] h-[150px] text-b-md relative border'>
                 <TextInput
                   placeholder={`사용하신 제품에 대한 효과나\n양/부작용/섭취 팁 등에 대해 남겨주세요!`}
                   value={review}
@@ -409,9 +408,8 @@ export default function ReviewWritePage() {
                     if (t.trim().length <= 1000) {
                       setReview(t);
                     }
-                    // TextField(menu=2)와 동일: blur 이후에는 입력 변화 즉시 유효/무효 반영
                     if (touched) setShowMinError(!isReviewValid(t));
-                    else if (showMinError) setShowMinError(false); // blur 전에는 숨김
+                    else if (showMinError) setShowMinError(false);
                   }}
                   onBlur={() => {
                     setTouched(true);
@@ -422,6 +420,7 @@ export default function ReviewWritePage() {
                     setShowMinError(!isReviewValid(review));
                   }}
                   multiline
+                  textAlignVertical='top'
                 />
                 {touched && showMinError && (
                   <Text className='mt-2 text-c3 font-n-rg text-[#FF3A4A] absolute bottom-[15px] left-[20px]'>

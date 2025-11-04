@@ -161,7 +161,7 @@ export default function PhotoReviewDetail() {
                 reviewId: reviewIdNum,
                 name: reviewDetail.user.nickname ?? '',
                 date: reviewDetail.date ?? '-',
-                isEdited: true,
+                isEdited: reviewDetail.updated,
                 content: reviewDetail.review ?? '',
                 rating: reviewDetail.rate ?? 0,
                 images: reviewDetail.images ? [reviewDetail.images] : [],

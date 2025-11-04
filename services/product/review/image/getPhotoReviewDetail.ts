@@ -37,7 +37,6 @@ export async function getPhotoReviewDetail(review_id: number) {
     const { data } = await axiosInstance.get<ReviewDetailMapDTO>(
       `/review/detail/${review_id}/`,
     );
-    console.log('data', data);
     return data.review;
   } catch (e: any) {
     const status = e?.response?.status;

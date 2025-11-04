@@ -63,7 +63,6 @@ export default function allReview() {
     if (hasNextPage && !isFetchingNextPage) fetchNextPage();
   };
 
-
   const handleScroll = useCallback((e: any) => {
     const y = e.nativeEvent.contentOffset.y;
     setShowTopButton(y > 200);
@@ -230,11 +229,7 @@ export default function allReview() {
                 justifyContent: 'center',
               }}
             >
-              {isFetchingNextPage ? (
-                <Text>불러오는 중…</Text>
-              ) : !hasNextPage ? (
-                <Text>-</Text>
-              ) : null}
+              {isFetchingNextPage ? <Text>불러오는 중…</Text> : null}
             </View>
           }
         />

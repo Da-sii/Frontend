@@ -20,12 +20,13 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/img_logo_word.png",
+        "foregroundImage": "./assets/images/img_logo.png",
         "backgroundColor": "#ffffff"
       },
+      "blockedPermissions": ["com.google.android.gms.permission.AD_ID"],
       "edgeToEdgeEnabled": true,
       "package": "com.dasii",
-      "versionCode": 4
+      "versionCode": 9
     },
     "web": {
       "bundler": "metro",

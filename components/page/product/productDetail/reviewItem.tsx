@@ -35,6 +35,7 @@ interface reviewItem {
   content: string;
   rating: number;
   images: any[];
+  product_image?: string;
 }
 
 interface reviewItemProups {
@@ -202,10 +203,16 @@ export default function ReviewItems({
       >
         {isMyReview && (
           <Image
-            source={require('@/assets/images/img_product_1.png')}
-            style={{ width: 40, height: 40, borderRadius: 8 }}
+            source={{ uri: reviewItem.product_image ?? '' }}
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 8,
+              borderWidth: 0.5,
+              borderColor: '#E4E6E7',
+            }}
             resizeMode='cover'
-            className='mr-2'
+            className='mr-2 '
           />
         )}
         <View className='flex-col flex-1'>
@@ -227,12 +234,11 @@ export default function ReviewItems({
             </View>
           )}
         </View>
-        {!isMyReview ||
-          (!enableBottomSheet && (
-            <Pressable onPress={openSheet} hitSlop={8} className='my-auto'>
-              <MoreIcon className='my-auto' />
-            </Pressable>
-          ))}
+        {!isMyReview && !enableBottomSheet && (
+          <Pressable onPress={openSheet} hitSlop={8} className='my-auto'>
+            <MoreIcon className='my-auto' />
+          </Pressable>
+        )}
       </View>
       {isMyReview && (
         <View className='flex-row items-center pb-2'>
