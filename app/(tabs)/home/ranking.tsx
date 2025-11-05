@@ -11,8 +11,15 @@ import { useFetchRankingQuery } from '@/hooks/useProductQueries';
 import { IRankingProduct } from '@/types/models/product';
 import { formatCurrentTime } from '@/utils/date';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect, useMemo, useState } from 'react';
-import { FlatList, Pressable, ScrollView, Text, View } from 'react-native';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  ActivityIndicator,
+  FlatList,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Ranking() {
@@ -25,10 +32,17 @@ export default function Ranking() {
   const [filter, setFilter] = useState<string>(initialFilter);
   const [tab, setTab] = useState<'daily' | 'monthly'>(initialTab);
 
-  const { data: rankingInfo, isLoading } = useFetchRankingQuery({
+  const {
+    data: rankingInfo,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    refetch,
+    isRefetching,
+  } = useFetchRankingQuery({
     period: tab === 'daily' ? 'daily' : 'monthly',
     category: filter === '전체' ? '전체' : filter,
-    page: 1,
   });
 
   const allSmallCategories = useMemo(() => {
@@ -42,6 +56,17 @@ export default function Ranking() {
 
     return ['전체', ...extractedCategories];
   }, [rankingCategories]);
+
+  const loadMore = useCallback(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  const flatData = useMemo(
+    () => rankingInfo?.pages.flatMap((page) => page.results) ?? [],
+    [rankingInfo],
+  );
 
   useEffect(() => {
     fetchRankingCategories();
@@ -212,13 +237,24 @@ export default function Ranking() {
         />
       ) : (
         <FlatList
-          data={rankingInfo?.results}
+          data={flatData}
           renderItem={renderItem}
           keyExtractor={(item) => item.id.toString()}
           showsVerticalScrollIndicator={false}
           ItemSeparatorComponent={() => (
             <View className='h-[0.5px] bg-gray-200 mx-4' />
           )}
+          onEndReached={loadMore} // 👈 스크롤이 끝에 닿으면 loadMore 함수 호출
+          onEndReachedThreshold={0.3} // 👈 끝에서 30% 지점에서 호출
+          ListFooterComponent={
+            isFetchingNextPage ? (
+              <View style={{ paddingVertical: 20 }}>
+                <ActivityIndicator size='small' />
+              </View>
+            ) : null
+          }
+          onRefresh={refetch}
+          refreshing={isRefetching}
         />
       )}
     </SafeAreaView>

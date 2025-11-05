@@ -26,7 +26,14 @@ import {
 } from '@gorhom/bottom-sheet';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Dimensions, FlatList, Pressable, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Dimensions,
+  FlatList,
+  Pressable,
+  Text,
+  View,
+} from 'react-native';
 import Modal from 'react-native-modal';
 import {
   SafeAreaView,
@@ -107,7 +114,15 @@ export default function List() {
     { id: 'price_desc', label: '높은 가격순' },
   ];
 
-  const { data: productList, isLoading } = useFetchProductsQuery({
+  const {
+    data: productList,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    refetch,
+    isRefetching,
+  } = useFetchProductsQuery({
     bigCategory: bigCategory,
     smallCategory: tab,
     sort: selectedSort as
@@ -115,8 +130,18 @@ export default function List() {
       | 'price_asc'
       | 'price_desc'
       | 'review_desc',
-    page: 1,
   });
+
+  const loadMore = useCallback(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  const flatData = useMemo(
+    () => productList?.pages.flatMap((page) => page.results) ?? [],
+    [productList],
+  );
 
   const snapPoints = useMemo(() => ['30%'], []);
   const renderBackdrop = useCallback(
@@ -192,7 +217,7 @@ export default function List() {
 
       <View className='px-4 py-3 pb-1 mb-2 flex-row justify-between items-center'>
         <Text className='pt-1 text-sm text-gray-900 font-n-bd'>
-          총 {productList?.results.length}개
+          총 {productList?.pages[0]?.count}개
         </Text>
         <View className='flex-row items-center'>
           <Pressable
@@ -242,7 +267,7 @@ export default function List() {
         ) : (
           <FlatList
             key='grid'
-            data={productList?.results}
+            data={flatData}
             keyExtractor={(item) => item.id.toString()}
             numColumns={2}
             showsVerticalScrollIndicator={false}
@@ -267,6 +292,17 @@ export default function List() {
                 />
               </View>
             )}
+            onEndReached={loadMore}
+            onEndReachedThreshold={0.3}
+            ListFooterComponent={
+              isFetchingNextPage ? (
+                <View style={{ paddingVertical: 20 }}>
+                  <ActivityIndicator size='small' />
+                </View>
+              ) : null
+            }
+            onRefresh={refetch}
+            refreshing={isRefetching}
           />
         )
       ) : isLoading ? (
@@ -282,7 +318,7 @@ export default function List() {
       ) : (
         <FlatList
           key='list'
-          data={productList?.results}
+          data={flatData}
           renderItem={({ item }) => (
             <View className='px-4'>
               <ProductListRow
@@ -301,6 +337,17 @@ export default function List() {
           ItemSeparatorComponent={() => (
             <View className='h-[0.5px] bg-gray-200 mx-4' />
           )}
+          onEndReached={loadMore}
+          onEndReachedThreshold={0.3}
+          ListFooterComponent={
+            isFetchingNextPage ? (
+              <View style={{ paddingVertical: 20 }}>
+                <ActivityIndicator size='small' />
+              </View>
+            ) : null
+          }
+          onRefresh={refetch}
+          refreshing={isRefetching}
         />
       )}
 

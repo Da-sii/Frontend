@@ -6,28 +6,55 @@ import {
   GetRankingPayload,
   SearchProductsPayload,
 } from '@/types/payloads/fetch';
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
 export const useFetchProductsQuery = (payload: GetProductsPayload) => {
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: ['products', payload],
-    queryFn: () => productAPI.getProducts(payload),
+    queryFn: ({ pageParam = 1 }) =>
+      productAPI.getProducts({ ...payload, page: pageParam }),
     enabled: !!payload.bigCategory,
+
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      const hasNext = lastPage.next !== null;
+      const currentPage = allPages.length;
+      return hasNext ? currentPage + 1 : undefined;
+    },
   });
 };
 
 export const useSearchProductsQuery = (payload: SearchProductsPayload) => {
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: ['products', 'search', payload],
-    queryFn: () => productAPI.searchProducts(payload),
+    queryFn: ({ pageParam = 1 }) =>
+      productAPI.searchProducts({ ...payload, page: pageParam }),
     enabled: !!payload.word?.trim(),
+
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      const hasNext = lastPage.next !== null;
+      const currentPage = allPages.length;
+      return hasNext ? currentPage + 1 : undefined;
+    },
   });
 };
 
 export const useFetchRankingQuery = (payload: GetRankingPayload) => {
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: ['ranking', payload],
-    queryFn: () => rankingAPI.getRanking(payload),
+
+    queryFn: ({ pageParam = 1 }) => {
+      return rankingAPI.getRanking({ ...payload, page: pageParam });
+    },
+
+    initialPageParam: 1,
+
+    getNextPageParam: (lastPage, allPages) => {
+      const hasNext = lastPage.next !== null;
+      const currentPage = allPages.length;
+      return hasNext ? currentPage + 1 : undefined;
+    },
   });
 };
 

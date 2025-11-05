@@ -46,7 +46,7 @@
       <true/>
     </dict>
     <key>NSCameraUsageDescription</key>
-    <string>제품 리뷰를 작성할 때 직접 촬영한 사진을 첨부하기 위해 카메라를 사용합니다.</string>
+    <string>리뷰를 작성할 때 직접 촬영한 사진을 첨부하기 위해 카메라를 사용합니다.</string>
     <key>NSFaceIDUsageDescription</key>
     <string>Allow $(PRODUCT_NAME) to access your Face ID biometric data.</string>
     <key>NSMicrophoneUsageDescription</key>

@@ -16,7 +16,14 @@ import BottomSheet, {
 } from '@gorhom/bottom-sheet';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Dimensions, FlatList, Pressable, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Dimensions,
+  FlatList,
+  Pressable,
+  Text,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const sortOptions = [
@@ -47,14 +54,21 @@ export default function Search() {
   const [selectedSort, setSelectedSort] = useState('monthly_rank');
   const [hasSearched, setHasSearched] = useState(false);
 
-  const { data: searchData } = useSearchProductsQuery({
+  const {
+    data: searchData,
+    isLoading, // 👈 초기 로딩 상태
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    refetch,
+    isRefetching,
+  } = useSearchProductsQuery({
     word: searchQuery,
     sort: selectedSort as
       | 'monthly_rank'
       | 'price_asc'
       | 'price_desc'
       | 'review_desc',
-    page: 1,
   });
 
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
@@ -77,12 +91,10 @@ export default function Search() {
     if (!searchTerm.trim()) return;
 
     try {
-      // 기존 목록에서 중복 제거
       const newSearches = [
         searchTerm,
         ...recentSearches.filter((s) => s !== searchTerm),
       ];
-      // 최대 10개로 제한
       const limitedSearches = newSearches.slice(0, MAX_RECENT_SEARCHES);
 
       await AsyncStorage.setItem(
@@ -143,7 +155,18 @@ export default function Search() {
     />
   );
 
-  const hasResults = searchData?.results && searchData.results.length > 0;
+  const loadMore = useCallback(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  const flatData = useMemo(
+    () => searchData?.pages.flatMap((page) => page.results) ?? [],
+    [searchData],
+  );
+
+  const hasResults = flatData.length > 0;
 
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ['30%'], []);
@@ -193,11 +216,11 @@ export default function Search() {
       {hasResults ? (
         <FlatList
           ListHeaderComponent={
-            searchData?.results && (
+            hasResults ? (
               <View className='mb-3 mt-[-10px]'>
                 <View className='flex-row justify-between items-center'>
                   <Text className='text-sm text-gray-900 font-n-bd'>
-                    총 {searchData?.results.length}개
+                    총 {searchData?.pages[0]?.count}개
                   </Text>
                   <View className='flex-row items-center'>
                     <Pressable
@@ -225,10 +248,10 @@ export default function Search() {
                   </View>
                 </View>
               </View>
-            )
+            ) : null
           }
           key={viewType}
-          data={searchData?.results}
+          data={flatData}
           numColumns={viewType === 'grid' ? 2 : 1}
           keyExtractor={(item) => item.id.toString()}
           showsVerticalScrollIndicator={false}
@@ -269,6 +292,17 @@ export default function Search() {
               ? () => <View className='h-[0.5px] bg-gray-200' />
               : undefined
           }
+          onEndReached={loadMore}
+          onEndReachedThreshold={0.3}
+          ListFooterComponent={
+            isFetchingNextPage ? (
+              <View style={{ paddingVertical: 20 }}>
+                <ActivityIndicator size='small' />
+              </View>
+            ) : null
+          }
+          onRefresh={refetch}
+          refreshing={isRefetching}
         />
       ) : (
         hasSearched &&

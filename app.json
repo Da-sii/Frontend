@@ -4,7 +4,7 @@
     "slug": "dasii",
     "version": "1.0.3",
     "orientation": "portrait",
-    "icon": "./assets/images/img_logo_word.png",
+    "icon": "./assets/images/img_logo.png",
     "scheme": "dasii",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -31,7 +31,7 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/img_logo_word.png"
+      "favicon": "./assets/images/img_logo.png"
     },
     "plugins": [
       "expo-router",
