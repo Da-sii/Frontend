@@ -11,7 +11,7 @@ import { useKakaoLogin } from '@/hooks/useKakaoLogin';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Stack, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Index({ emergency }: { emergency?: string }) {
@@ -37,66 +37,72 @@ export default function Index({ emergency }: { emergency?: string }) {
       {emergency && (
         <Navigation right={<XIcon />} onRightPress={() => router.back()} />
       )}
-      <View className='flex-1 items-center'>
-        <View className='items-center w-full justify-center h-[64.98%]'>
-          <Logo width={112} height={33} />
-          <View className='flex-col items-center mt-[18px] '>
-            <Text className='text-b-sm font-n-rg text-gray-900'>
-              다이어트 필수 정보,
-            </Text>
-            <Text className='text-b-sm font-n-rg text-gray-900'>
-              보조제 성분부터 후기까지 한번에
-            </Text>
-          </View>
-        </View>
 
-        <View className=' w-full px-5 flex-col space-y-3'>
-          <KakaoLogin onPress={() => setShowKakao(true)} />
-          <LoginButton
-            label='Apple로 로그인'
-            onPress={() => {
-              appleLogin();
-            }}
-            color='bg-[#000]'
-            Icon={AppleIcon}
-            textColor='text-white'
-            border='border-none'
-            IconWidth={16}
-            IconHeight={20}
-          />
-          <LoginButton
-            label='이메일로 로그인'
-            onPress={() => {
-              router.push('/auth/login/email');
-            }}
-            color='bg-[#FFF]'
-            Icon={EmailIcon}
-            borderColor='border-gray-200'
-            textColor='text-black'
-            border='border'
-            IconWidth={18}
-            IconHeight={18}
-          />
-        </View>
-
-        {!emergency && (
-          <View className='flex-row items-center justify-center mt-[10px]'>
-            <Text className='text-b-sm font-n-rg text-gray-500'>
-              서비스가 궁금하시다면?
-            </Text>
-
-            <Pressable
-              onPress={() => {
-                router.push('/home');
-              }}
-            >
-              <Text className='text-b-md font-n-eb text-[#19B375] ml-1'>
-                둘러보기
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
+        className='pb-[100px]'
+      >
+        <View className='flex-1 items-center'>
+          <View className='items-center w-full justify-center h-[64.98%]'>
+            <Logo width={112} height={33} />
+            <View className='flex-col items-center mt-[18px] '>
+              <Text className='text-b-sm font-n-rg text-gray-900'>
+                다이어트 필수 정보,
               </Text>
-            </Pressable>
+              <Text className='text-b-sm font-n-rg text-gray-900'>
+                보조제 성분부터 후기까지 한번에
+              </Text>
+            </View>
           </View>
-        )}
-      </View>
+
+          <View className=' w-full px-5 flex-col space-y-3'>
+            <KakaoLogin onPress={() => setShowKakao(true)} />
+            <LoginButton
+              label='Apple로 로그인'
+              onPress={() => {
+                appleLogin();
+              }}
+              color='bg-[#000]'
+              Icon={AppleIcon}
+              textColor='text-white'
+              border='border-none'
+              IconWidth={16}
+              IconHeight={20}
+            />
+            <LoginButton
+              label='이메일로 로그인'
+              onPress={() => {
+                router.push('/auth/login/email');
+              }}
+              color='bg-[#FFF]'
+              Icon={EmailIcon}
+              borderColor='border-gray-200'
+              textColor='text-black'
+              border='border'
+              IconWidth={18}
+              IconHeight={18}
+            />
+          </View>
+
+          {!emergency && (
+            <View className='flex-row items-center justify-center mt-[10px]'>
+              <Text className='text-b-sm font-n-rg text-gray-500'>
+                서비스가 궁금하시다면?
+              </Text>
+
+              <Pressable
+                onPress={() => {
+                  router.push('/home');
+                }}
+              >
+                <Text className='text-b-md font-n-eb text-[#19B375] ml-1'>
+                  둘러보기
+                </Text>
+              </Pressable>
+            </View>
+          )}
+        </View>
+      </ScrollView>
 
       {/* KakaoLoginWebView 모달 */}
       {showKakao && (
