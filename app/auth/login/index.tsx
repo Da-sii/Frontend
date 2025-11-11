@@ -11,22 +11,35 @@ import { useKakaoLogin } from '@/hooks/useKakaoLogin';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Stack, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import {
+  Pressable,
+  ScrollView,
+  Text,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Index({ emergency }: { emergency?: string }) {
+  const { width, height } = useWindowDimensions();
+  const aspectRatio = width / height;
+
   const router = useRouter();
   const appleLogin = useAppleLogin();
   const [showKakao, setShowKakao] = useState(false);
   const [forceReauth, setForceReauth] = useState(false);
   const kakaoLogin = useKakaoLogin();
 
+  const isTabletRatio =
+    Math.abs(aspectRatio - 4 / 3) < 0.2 || Math.abs(aspectRatio - 3 / 4) < 0.2;
+
+  const scrollClassName = isTabletRatio ? 'pb-[100px]' : '';
+
   useEffect(() => {
-    // 로그아웃 후 첫 로그인 여부 확인
     AsyncStorage.getItem('forceReauth').then((value) => {
       if (value === 'true') {
         setForceReauth(true);
-        AsyncStorage.removeItem('forceReauth'); // 한 번 쓰면 바로 삭제
+        AsyncStorage.removeItem('forceReauth');
       }
     });
   }, []);
@@ -40,7 +53,7 @@ export default function Index({ emergency }: { emergency?: string }) {
 
       <ScrollView
         contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
-        className='pb-[100px]'
+        className={scrollClassName}
       >
         <View className='flex-1 items-center'>
           <View className='items-center w-full justify-center h-[64.98%]'>
