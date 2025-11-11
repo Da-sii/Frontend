@@ -1,3 +1,4 @@
+// import * as Clipboard from 'expo-clipboard';
 import DefaultModal from '@/components/common/modals/DefaultModal';
 import Navigation from '@/components/layout/Navigation';
 import { SettingItem } from '@/components/page/my/SettingItem';
@@ -5,7 +6,6 @@ import { SettingSection } from '@/components/page/my/SettingSection';
 import { useLogout } from '@/hooks/useLogout';
 import { useUser } from '@/hooks/useUser';
 import { getAccessToken } from '@/lib/authToken';
-// import * as Clipboard from 'expo-clipboard';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { ScrollView } from 'react-native';
@@ -104,7 +104,7 @@ export default function Mypage() {
             </SettingSection>
 
             <SettingSection title='도움말' topBorder>
-              <SettingItem label='버전 정보' value='V 1.0.3' />
+              <SettingItem label='버전 정보' value='V 1.0.4' />
               {/* <Pressable
                 onPress={() =>
                   handleEmailCopiedPress('podostore1111@gmail.com')
@@ -129,7 +129,7 @@ export default function Mypage() {
             </SettingSection>
 
             <SettingSection title='도움말' topBorder>
-              <SettingItem label='버전 정보' value='V 1.0.3' />
+              <SettingItem label='버전 정보' value='V 1.0.4' />
               {/* <Pressable
                 onPress={() =>
                   handleEmailCopiedPress('podostore1111@gmail.com')
