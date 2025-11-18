@@ -1,11 +1,11 @@
 import XIcon from '@/assets/icons/ic_x.svg';
 import Navigation from '@/components/layout/Navigation';
-import { Stack, useRouter } from 'expo-router';
-import { Dimensions, FlatList, Image, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLocalSearchParams } from 'expo-router';
 import { useQueryClient } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { Dimensions, FlatList, Image, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 export default function photoViewer() {
   const { token, index } = useLocalSearchParams<{
     token?: string;
@@ -15,6 +15,7 @@ export default function photoViewer() {
   const router = useRouter();
   const SCREEN_W = Dimensions.get('window').width;
   const startIndex = index ? Number(index) : 0;
+  const [currentIndex, setCurrentIndex] = useState(startIndex);
   const photoViewerKey = (token: string) => ['photoViewer', token] as const;
 
   const qc = useQueryClient();
@@ -36,6 +37,33 @@ export default function photoViewer() {
         onRightPress={() => router.back()}
       />
 
+      {images.length > 0 && (
+        <View
+          style={{
+            position: 'absolute',
+            right: 20,
+            top: 138,
+            alignSelf: 'center',
+            zIndex: 10,
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            width: 48,
+            height: 24,
+            borderRadius: 999,
+            paddingHorizontal: 8,
+            paddingVertical: 4,
+          }}
+        >
+          <Text
+            style={{
+              color: 'white',
+              fontWeight: '600',
+              fontSize: 12,
+            }}
+          >
+            {currentIndex + 1} / {images.length}
+          </Text>
+        </View>
+      )}
       <FlatList
         data={images}
         horizontal
@@ -46,6 +74,11 @@ export default function photoViewer() {
           offset: SCREEN_W * i,
           index: i,
         })}
+        onMomentumScrollEnd={(e) => {
+          const offsetX = e.nativeEvent.contentOffset.x;
+          const newIndex = Math.round(offsetX / SCREEN_W);
+          setCurrentIndex(newIndex);
+        }}
         renderItem={({ item }) => (
           <View style={{ width: SCREEN_W, flex: 1, backgroundColor: 'black' }}>
             <Image

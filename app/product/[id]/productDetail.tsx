@@ -186,7 +186,7 @@ export default function ProductDetail() {
                   </Text>
                   <View className='flex-row items-center mb-[20px]'>
                     <StarIcon />
-                    <Text className='text-c1 font-normal text-gray-400 ml-[3px]'>
+                    <Text className='text-c1 font-n-rg text-gray-400 ml-[3px]'>
                       {data?.reviewAvg ?? 0} ({data?.reviewCount ?? 0})
                     </Text>
                   </View>
@@ -217,7 +217,7 @@ export default function ProductDetail() {
                         key={index}
                         className='flex-row items-baseline mr-2'
                       >
-                        <Text className='text-c2 font-normal h-[16px]'>
+                        <Text className='text-c2 font-n-rg h-[16px]'>
                           {item.bigCategory}
                         </Text>
                         <Text className='text-c2 font-n-rg'> / </Text>
@@ -296,7 +296,7 @@ export default function ProductDetail() {
 
                   <LongButton
                     label={'리뷰 작성하기'}
-                    heightClass='h-[44px]'
+                    height={'h-[44px]'}
                     onPress={async () => {
                       if (data?.isMyReview) {
                         setShowIsMyReviewModal(true);
@@ -501,8 +501,8 @@ function IngredientSection({
     <View className='p-5'>
       <View className='flex-row items-center justify-between mb-[10px]'>
         <View className='flex-row'>
-          <Text className='text-b-lg font-bold'>기능성 원료 </Text>
-          <Text className='text-b-lg font-extrabold text-green-500'>
+          <Text className='text-b-lg font-n-bd'>기능성 원료 </Text>
+          <Text className='text-b-lg font-n-eb text-green-500'>
             {product?.ingredientsCount ?? 0}개
           </Text>
         </View>
