@@ -6,7 +6,7 @@ import {
   UpdatePasswordPayload,
   VerifyCurrentPasswordPayload,
 } from '@/types/payloads/fetch';
-
+import axios from 'axios';
 import { useCallback, useState } from 'react';
 
 export const useUser = () => {
@@ -29,7 +29,11 @@ export const useUser = () => {
       const data = await userAPI.updateNickname(payload);
       return data;
     } catch (error) {
-      handelError(error);
+      if (axios.isAxiosError(error) && error.response?.status === 400) {
+        throw new Error('중복된 닉네임입니다.');
+      } else {
+        handelError(error);
+      }
       return false;
     } finally {
       setIsLoading(false);

@@ -2,7 +2,6 @@ import GoRankingIcon from '@/assets/icons/ic_arrow_right.svg';
 import LogoIcon from '@/assets/icons/ic_logo_full.svg';
 import MagnifierIcon from '@/assets/icons/ic_magnifier.svg';
 import BannerCarousel from '@/components/page/home/BannerCarousel';
-import BannerDetailModal from '@/components/page/home/BannerDetailModal';
 import HomeFooter from '@/components/page/home/HomeFooter';
 import ProductRankingCarousel from '@/components/page/home/ProductRankingCarousel';
 import TagsView from '@/components/page/home/TagsView';
@@ -12,26 +11,11 @@ import { bannerData } from '@/constants/banner';
 import { router } from 'expo-router';
 
 import colors from '@/constants/color';
-import { useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Home() {
-  const [isBannerModalVisible, setIsBannerModalVisible] = useState(false);
-  const [selectedBannerIndex, setSelectedBannerIndex] = useState<number | null>(
-    null,
-  );
   const { data: mainScreenInfo, isLoading } = useFetchMainScreenQuery();
-
-  const handleBannerPress = (index: number) => {
-    setSelectedBannerIndex(index);
-    setIsBannerModalVisible(true);
-  };
-
-  const handleModalClose = () => {
-    setIsBannerModalVisible(false);
-    setSelectedBannerIndex(null);
-  };
 
   return (
     <SafeAreaView className='bg-white flex-1' edges={['top']}>
@@ -49,7 +33,7 @@ export default function Home() {
         </View>
 
         <View className='flex-1 w-full my-[-10px]'>
-          <BannerCarousel data={bannerData} onPress={handleBannerPress} />
+          <BannerCarousel data={bannerData} />
         </View>
 
         <View className='px-6 mb-2'>
@@ -80,14 +64,6 @@ export default function Home() {
 
         <HomeFooter />
       </ScrollView>
-
-      {selectedBannerIndex !== null && (
-        <BannerDetailModal
-          visible={isBannerModalVisible}
-          onClose={handleModalClose}
-          bannerItem={bannerData[selectedBannerIndex]}
-        />
-      )}
     </SafeAreaView>
   );
 }

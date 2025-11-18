@@ -1,6 +1,7 @@
 import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
 import { LongButton } from '@/components/common/buttons/LongButton';
 import { TextField } from '@/components/common/Inputs/TextField';
+import DefaultModal from '@/components/common/modals/DefaultModal';
 import Navigation from '@/components/layout/Navigation';
 import { useUser } from '@/hooks/useUser';
 import { Stack, useRouter } from 'expo-router';
@@ -14,6 +15,7 @@ export default function ChangeNickname() {
 
   const [nickname, setNickname] = useState('');
   const [isNicknameValid, setIsNicknameValid] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const isLen2to10 = (text: string) => {
     return text.length >= 2 && text.length <= 10;
@@ -44,7 +46,7 @@ export default function ChangeNickname() {
       await updateNickname({ nickname });
       router.push('/mypage');
     } catch (error) {
-      console.error('닉네임 변경 실패:', error);
+      setIsModalVisible(true);
     }
   };
 
@@ -87,6 +89,16 @@ export default function ChangeNickname() {
           disabled={isLoading || !isNicknameValid}
         />
       </View>
+
+      <DefaultModal
+        singleButton
+        visible={isModalVisible}
+        title={`이미 사용 중인 닉네임입니다. \n다른 닉네임을 입력해주세요.`}
+        onConfirm={() => {
+          setNickname('');
+          setIsModalVisible(false);
+        }}
+      />
     </SafeAreaView>
   );
 }

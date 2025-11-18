@@ -56,7 +56,6 @@ export default function Search() {
 
   const {
     data: searchData,
-    isLoading, // 👈 초기 로딩 상태
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,

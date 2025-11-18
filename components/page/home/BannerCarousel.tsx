@@ -1,20 +1,20 @@
 import { IBannerCell } from '@/types/models/main';
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Dimensions, Image, Pressable, Text, View } from 'react-native';
-import { useSharedValue } from 'react-native-reanimated';
 import Carousel from 'react-native-reanimated-carousel';
 
 interface BannerCarouselProps {
   data: IBannerCell[];
-  onPress: (index: number) => void;
 }
 
-export default function BannerCarousel({ data, onPress }: BannerCarouselProps) {
+export default function BannerCarousel({ data }: BannerCarouselProps) {
   const screenWidth = Dimensions.get('window').width;
   const ITEM_SIZE = screenWidth;
 
   const [activeIndex, setActiveIndex] = useState(0);
 
+  const router = useRouter();
   const renderBannerItem = ({
     item,
     index,
@@ -26,7 +26,12 @@ export default function BannerCarousel({ data, onPress }: BannerCarouselProps) {
 
     return (
       <Pressable
-        onPress={() => onPress(activeIndex)}
+        onPress={() => {
+          router.push({
+            pathname: '/home/banner',
+            params: { id: item.id },
+          });
+        }}
         style={{
           width: '100%',
           height: '100%',
@@ -63,7 +68,6 @@ export default function BannerCarousel({ data, onPress }: BannerCarouselProps) {
       </Pressable>
     );
   };
-  const progress = useSharedValue<number>(0);
 
   return (
     <Carousel
@@ -82,7 +86,13 @@ export default function BannerCarousel({ data, onPress }: BannerCarouselProps) {
       modeConfig={{
         parallaxScrollingScale: 0.8,
       }}
-      onProgressChange={progress}
+      onProgressChange={(_, absoluteProgress) => {
+        const index = Math.round(absoluteProgress);
+        const realIndex = ((index % data.length) + data.length) % data.length;
+        if (realIndex !== activeIndex) {
+          setActiveIndex(realIndex);
+        }
+      }}
       renderItem={renderBannerItem}
       onSnapToItem={(index) => setActiveIndex(index)}
     />
