@@ -192,9 +192,11 @@ export default function ProductDetail() {
                   </View>
                   <View className='flex-row items-center'>
                     <Text className='text-b-lg font-n-bd'>정가 </Text>
-                    <Text className='text-h-md font-n-eb'>
-                      {data?.price.toLocaleString('ko-KR') ?? 0}원{' '}
-                    </Text>
+                    {data?.price ? (
+                      <Text className='text-h-md font-n-eb'>
+                        {data.price.toLocaleString('ko-KR')}원{' '}
+                      </Text>
+                    ) : null}
                     <Text className='text-c1 font-n-bd text-gray-300'>
                       / {data?.unit ?? ''}
                     </Text>

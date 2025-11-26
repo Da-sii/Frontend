@@ -99,10 +99,14 @@ export default function ProductRankingCarousel({ data, isLoading }: Props) {
             </View>
 
             <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
-              <Text className='mr-1 text-sm font-n-rg'>정가</Text>
-              <Text className='text-base text-gray-900 mr-1 font-n-rg'>
-                {item.price.toLocaleString('ko-KR')}원
-              </Text>
+              {item.price ? (
+                <>
+                  <Text className='mr-1 text-sm font-n-rg'>정가</Text>
+                  <Text className='text-base text-gray-900 mr-1 font-n-rg'>
+                    {item.price.toLocaleString('ko-KR')}원
+                  </Text>
+                </>
+              ) : null}
             </View>
           </View>
         </View>
