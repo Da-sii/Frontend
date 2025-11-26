@@ -103,37 +103,25 @@ export default function ProductCard({
           </View>
 
           <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
-            {item.price ? (
-              <>
-                <Text
-                  style={{
-                    fontSize: 12,
-                    color: colors.gray[900],
-                    marginRight: 2,
-                  }}
-                >
-                  정가
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 14,
-                    fontWeight: '400',
-                    color: colors.gray[900],
-                  }}
-                >
-                  {item.price.toLocaleString('ko-KR')}원
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 11,
-                    color: colors.gray[400],
-                    marginLeft: 4,
-                  }}
-                >
-                  / {item.unit}
-                </Text>
-              </>
-            ) : null}
+            <Text
+              style={{ fontSize: 12, color: colors.gray[900], marginRight: 2 }}
+            >
+              정가
+            </Text>
+            <Text
+              style={{
+                fontSize: 14,
+                fontWeight: '400',
+                color: colors.gray[900],
+              }}
+            >
+              {item.price.toLocaleString('ko-KR')}원
+            </Text>
+            <Text
+              style={{ fontSize: 11, color: colors.gray[400], marginLeft: 4 }}
+            >
+              / {item.unit}
+            </Text>
           </View>
         </View>
       </View>
