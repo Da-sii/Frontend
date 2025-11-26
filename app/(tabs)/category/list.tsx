@@ -110,8 +110,8 @@ export default function List() {
   const sortOptions = [
     { id: 'monthly_rank', label: '랭킹순' },
     { id: 'review_desc', label: '리뷰순' },
-    { id: 'price_asc', label: '낮은 가격순' },
-    { id: 'price_desc', label: '높은 가격순' },
+    // { id: 'price_asc', label: '낮은 가격순' },
+    // { id: 'price_desc', label: '높은 가격순' },
   ];
 
   const {
@@ -127,8 +127,8 @@ export default function List() {
     smallCategory: tab,
     sort: selectedSort as
       | 'monthly_rank'
-      | 'price_asc'
-      | 'price_desc'
+      // | 'price_asc'
+      // | 'price_desc'
       | 'review_desc',
   });
 
