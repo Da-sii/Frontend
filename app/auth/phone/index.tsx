@@ -304,13 +304,15 @@ export default function Index() {
       )}
       <DefaultModal
         visible={visibleModal}
-        onConfirm={() => setVisibleModal(false)}
+        onConfirm={() => {
+          setVisibleModal(false);
+          router.replace('/auth/signUp');
+        }}
         onCancel={() => setVisibleModal(false)}
         message={modalMessage}
         secondMessage={modalSecondMessage}
-        confirmText='확인'
+        confirmText='회원가입'
         cancelText='취소'
-        singleButton={singleButton}
       />
     </SafeAreaView>
   );
