@@ -105,7 +105,7 @@ export default function Index({ emergency }: { emergency?: string }) {
 
               <Pressable
                 onPress={() => {
-                  router.push('/home');
+                  router.replace('/home');
                 }}
               >
                 <Text className='text-b-md font-n-eb text-[#19B375] ml-1'>

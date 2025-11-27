@@ -43,16 +43,6 @@ export default function Index() {
           }}
         />
       </View>
-      <DefaultModal
-        visible={visible}
-        onConfirm={() => setVisible(false)}
-        onCancel={() => setVisible(false)}
-        title='계정을 찾을 수 없습니다.'
-        message='해당 정보로 가입된 계정을 찾을 수 없습니다.'
-        secondMessage='다시 한번 확인해주시거나, 회원가입을 진행해 주세요'
-        confirmText='회원가입'
-        cancelText='닫기'
-      />
     </SafeAreaView>
   );
 }

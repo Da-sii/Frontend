@@ -148,7 +148,11 @@ function RootLayout() {
             <>
               <Stack
                 initialRouteName='index'
-                screenOptions={{ headerShown: false }}
+                screenOptions={{
+                  headerShown: false,
+                  animation: 'fade',
+                  animationDuration: 200,
+                }}
               >
                 <Stack.Screen
                   name='home/search'

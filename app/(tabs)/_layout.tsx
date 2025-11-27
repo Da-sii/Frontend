@@ -16,6 +16,14 @@ export default function TabsLayout() {
           paddingBottom: 0,
           marginBottom: 0,
         },
+
+        animation: 'fade',
+        transitionSpec: {
+          animation: 'timing',
+          config: {
+            duration: 200,
+          },
+        },
       }}
     >
       <Tabs.Screen

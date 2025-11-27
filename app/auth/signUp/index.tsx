@@ -130,7 +130,7 @@ export default function Index() {
   };
 
   const onPressSubmit = async () => {
-    router.push('/auth/phone?menu=signUp');
+    router.replace('/auth/phone?menu=signUp');
   };
 
   return (

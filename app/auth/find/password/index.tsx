@@ -95,7 +95,7 @@ export default function Index() {
           visible={visibleModal}
           onConfirm={() => {
             setVisibleModal(false);
-            router.push('/auth/signUp');
+            router.replace('/auth/signUp');
           }}
           onCancel={() => setVisibleModal(false)}
           title='계정을 찾을 수 없습니다.'
