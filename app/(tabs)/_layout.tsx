@@ -21,7 +21,7 @@ export default function TabsLayout() {
         transitionSpec: {
           animation: 'timing',
           config: {
-            duration: 220,
+            duration: 200,
           },
         },
       }}

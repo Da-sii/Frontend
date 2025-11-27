@@ -151,7 +151,7 @@ function RootLayout() {
                 screenOptions={{
                   headerShown: false,
                   animation: 'fade',
-                  animationDuration: 220,
+                  animationDuration: 200,
                 }}
               >
                 <Stack.Screen
