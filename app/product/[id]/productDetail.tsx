@@ -1,6 +1,7 @@
 import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
 import ArrowRightIcon from '@/assets/icons/ic_arrow_right.svg';
 import HomeIcon from '@/assets/icons/ic_home.svg';
+import InfoIcon from '@/assets/icons/ic_info.svg';
 import SearchIcon from '@/assets/icons/ic_magnifier.svg';
 import StarIcon from '@/assets/icons/ic_star.svg';
 import EmptyReviewIcon from '@/assets/icons/product/productDetail/ic_no_review.svg';
@@ -10,8 +11,7 @@ import { ScrollToTopButton } from '@/components/common/buttons/ScrollToTopButton
 import DefaultModal from '@/components/common/modals/DefaultModal';
 import Navigation from '@/components/layout/Navigation';
 import BottomSheetLayout from '@/components/page/product/productDetail/BottomSeetLayout';
-// import CoupangTabBar from '@/components/page/product/productDetail/CoupangTabBar';
-import InfoIcon from '@/assets/icons/ic_info.svg';
+import CoupangTabBar from '@/components/page/product/productDetail/CoupangTabBar';
 import MaterialInfo from '@/components/page/product/productDetail/materialInfo';
 import PhotoCard from '@/components/page/product/productDetail/PhotoCard';
 import ReviewCard from '@/components/page/product/productDetail/ReviewCard';
@@ -25,6 +25,7 @@ import { useProductReviewsPreview } from '@/hooks/product/review/useGetProductRe
 import { useProductRatingStats } from '@/hooks/product/review/useProductRatingStats';
 import { useProductDetail } from '@/hooks/product/useProductDetail';
 import { useUser } from '@/hooks/useUser';
+import { ICoupang } from '@/types/models/coupang';
 import BottomSheet from '@gorhom/bottom-sheet';
 import { PortalHost, PortalProvider } from '@gorhom/portal';
 
@@ -107,7 +108,7 @@ export default function ProductDetail() {
     }, [qc, idNum, refetchRatingStats]),
   );
 
-  // const [coupangProduct, setCoupangProduct] = useState(null);
+  const [coupangProduct, setCoupangProduct] = useState<ICoupang | null>(null);
 
   if (!data) return <Text>제품을 찾을 수 없습니다.</Text>;
 
@@ -454,7 +455,7 @@ export default function ProductDetail() {
           }
         />
 
-        {/* <CoupangTabBar product={coupangProduct} /> */}
+        <CoupangTabBar product={coupangProduct} />
         <PortalHost name='overlay-top' />
         <DefaultModal
           visible={showIsMyReviewModal}
