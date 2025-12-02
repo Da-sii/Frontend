@@ -176,7 +176,7 @@ export default function ProductDetail() {
               </View>
 
               {/* 상품 정보 헤더 */}
-              <View className='flex-col border-gray-100 border-b h-[172px] py-[20px]'>
+              <View className='flex-col border-gray-100 border-b h-[128px] py-[20px]'>
                 <View className='flex-col px-[20px] h-full '>
                   <Text className='text-b-sm font-n-bd  mb-[15px]'>
                     {data?.company}
@@ -188,17 +188,6 @@ export default function ProductDetail() {
                     <StarIcon />
                     <Text className='text-c1 font-n-rg text-gray-400 ml-[3px]'>
                       {data?.reviewAvg ?? 0} ({data?.reviewCount ?? 0})
-                    </Text>
-                  </View>
-                  <View className='flex-row items-center'>
-                    <Text className='text-b-lg font-n-bd'>정가 </Text>
-                    {data?.price ? (
-                      <Text className='text-h-md font-n-eb'>
-                        {data.price.toLocaleString('ko-KR')}원{' '}
-                      </Text>
-                    ) : null}
-                    <Text className='text-c1 font-n-bd text-gray-300'>
-                      / {data?.unit ?? ''}
                     </Text>
                   </View>
                 </View>

@@ -42,12 +42,19 @@ export default function ProductListRow({ item, onPress }: Props) {
           )}
         </View>
 
-        <View className='flex-1 ml-3 space-y-1'>
-          <Text style={{ fontSize: 12, color: colors.gray[300] }}>
+        <View className='flex-1 ml-3'>
+          <Text
+            style={{ fontSize: 12, color: colors.gray[300], marginBottom: 8 }}
+          >
             {item.company}
           </Text>
           <Text
-            style={{ fontSize: 14, fontWeight: '500', color: colors.gray[900] }}
+            style={{
+              fontSize: 14,
+              fontWeight: '500',
+              color: colors.gray[900],
+              marginBottom: 20,
+            }}
             numberOfLines={1}
           >
             {item.name}
