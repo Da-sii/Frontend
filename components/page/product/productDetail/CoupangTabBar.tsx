@@ -1,9 +1,10 @@
 import InfoIcon from '@/assets/icons/product/productDetail/ic_help.svg';
 import { LongButton } from '@/components/common/buttons/LongButton';
+import { ICoupang } from '@/types/models/coupang';
+import { useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import {
   Animated,
-  Linking,
   Modal,
   Pressable,
   StyleSheet,
@@ -13,14 +14,14 @@ import {
 } from 'react-native';
 
 interface Props {
-  product: any;
+  cproduct: ICoupang;
 }
 
-export default function CoopangTabBar({ product }: Props) {
-  //   if (!product) {
-  //     return null;
-  //   }
-
+export default function CoopangTabBar({ cproduct }: Props) {
+  if (!cproduct) {
+    return null;
+  }
+  const router = useRouter();
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -41,9 +42,14 @@ export default function CoopangTabBar({ product }: Props) {
   }, [isTooltipVisible, fadeAnim]);
 
   const handlePress = () => {
-    Linking.openURL(product.productUrl).catch((err) =>
-      console.error('URL을 여는 데 실패했습니다.', err),
-    );
+    router.push({
+      pathname: '/product/[id]/coupangPartnerScreen',
+      params: {
+        id: String(cproduct.id),
+        cproductUrl: cproduct.productUrl || '',
+        imageUrl: cproduct.imageUrl || '',
+      },
+    });
   };
 
   const toggleTooltip = () => {
