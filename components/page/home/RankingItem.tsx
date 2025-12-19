@@ -96,18 +96,6 @@ export default function RankingItem({
             </Text>
             <Text className='text-xs text-gray-300'>({item.reviewCount})</Text>
           </View>
-
-          <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
-            {item.price ? (
-              <>
-                <Text className='mr-1 text-sm'>정가</Text>
-                <Text className='text-base text-gray-900 mr-1'>
-                  {item.price.toLocaleString('ko-KR')}원
-                </Text>
-                <Text className='text-xs text-gray-300'>/ {item.unit}</Text>
-              </>
-            ) : null}
-          </View>
         </View>
 
         {showDiff && (

@@ -18,9 +18,6 @@ export type ProductDetailDTO = {
   id: number;
   name: string;
   company: string;
-  price: number;
-  unit: string; // "51g"
-  piece: number; // 낱개 수량
   productType: string; // "supplement"
   isMyReview: boolean;
   reviewCount: number; // int

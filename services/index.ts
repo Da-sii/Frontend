@@ -1,12 +1,8 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { router } from 'expo-router';
 import { clearTokens, getAccessToken, setTokens } from '../lib/authToken';
-const MOCK_ACTIVATE = process.env.MOCK_ACTIVATE;
 
-const baseUrl =
-  MOCK_ACTIVATE === 'enable'
-    ? process.env.EXPO_PUBLIC_MOCK_API_URL
-    : process.env.EXPO_PUBLIC_API_URL;
+const baseUrl = process.env.EXPO_PUBLIC_API_URL;
 
 export const axiosInstance = axios.create({
   baseURL: baseUrl,

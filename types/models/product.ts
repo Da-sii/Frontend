@@ -3,9 +3,6 @@ export interface IProduct {
   name: string;
   image: string;
   company: string;
-  price: number;
-  unit: string;
-  piece: number;
   reviewCount: string;
   reviewAvg: string;
 }

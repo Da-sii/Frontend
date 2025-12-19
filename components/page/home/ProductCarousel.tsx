@@ -8,7 +8,6 @@ interface ProductItem {
   image: string;
   name: string;
   rating: number;
-  price: number;
 }
 
 interface ProductCarouselProps {
@@ -47,11 +46,6 @@ export default function ProductCarousel({ data }: ProductCarouselProps) {
         <Text className='text-yellow-star text-xs'>★</Text>
         <Text className='text-xs text-gray-600'>{item.rating} (리뷰수)</Text>
       </View>
-      {item.price ? (
-        <Text className='text-sm text-gray-900 font-semibold'>
-          정가 {item.price.toLocaleString('ko-KR')}
-        </Text>
-      ) : null}
     </View>
   );
 
