@@ -13,12 +13,15 @@ import {
   requestTrackingPermissionsAsync,
 } from 'expo-tracking-transparency';
 
+import {
+  getKeyHashAndroid,
+  initializeKakaoSDK,
+} from '@react-native-kakao/core';
 import { useCallback, useEffect, useState } from 'react';
 import { Linking, Platform } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import 'react-native-url-polyfill/auto';
-
 // Splash 화면 자동 숨김 방지 (1회)
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
@@ -37,19 +40,16 @@ async function initSentry() {
   });
 }
 
-// 프로덕션에서만 Sentry 활성화
-// if (!__DEV__) {
-//   Sentry.init({
-//     dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
-//     sendDefaultPii: true,
-//     enableLogs: true,
-//     replaysSessionSampleRate: 0.1,
-//     replaysOnErrorSampleRate: 1,
-//     integrations: [Sentry.mobileReplayIntegration()],
-//   });
-// }
-
 function RootLayout() {
+  useEffect(() => {
+    if (Platform.OS === 'android') {
+      getKeyHashAndroid().then(console.log).catch(console.error);
+    }
+  }, []);
+
+  useEffect(() => {
+    initializeKakaoSDK(process.env.EXPO_PUBLIC_KAKAO_NATIVE_KEY!);
+  }, []);
   const [loaded, error] = useFonts({
     // 1. 기존 가변 폰트 항목을 삭제하거나 주석 처리합니다.
     NanumSquareNeo: require('@/assets/fonts/NanumSquareNeo-Variable.ttf'),
