@@ -174,15 +174,15 @@ export default function ProductDetail() {
               </View>
 
               {/* 상품 정보 헤더 */}
-              <View className='flex-col border-gray-100 border-b h-[128px] py-[20px]'>
-                <View className='flex-col px-[20px] h-full '>
+              <View className='flex-col border-gray-100 border-b py-[20px]'>
+                <View className='flex-col px-[20px] '>
                   <Text className='text-b-sm font-n-bd  mb-[15px]'>
                     {data?.company}
                   </Text>
                   <Text className='text-h-md font-n-bd  mb-[15px]'>
                     {data?.name}
                   </Text>
-                  <View className='flex-row items-center mb-[20px]'>
+                  <View className='flex-row items-center '>
                     <StarIcon />
                     <Text className='text-c1 font-n-rg text-gray-400 ml-[3px]'>
                       {data?.reviewAvg ?? 0} ({data?.reviewCount ?? 0})
@@ -440,7 +440,8 @@ export default function ProductDetail() {
             )
           }
         />
-        <CoupangTabBar id={id} coupangUrl='https://naver.com' /> // data.coupang
+        {/* data.coupang */}
+        <CoupangTabBar id={id} coupangUrl='https://naver.com' />
         <PortalHost name='overlay-top' />
         <DefaultModal
           visible={showIsMyReviewModal}
