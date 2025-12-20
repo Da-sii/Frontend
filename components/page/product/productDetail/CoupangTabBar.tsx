@@ -1,5 +1,8 @@
+// TODO: 쿠팡 15만원 채우기 전까지 버튼 클릭 시 바로 링크로 이동, 이후 coupangPartnerScreen으로 이동
+
 import InfoIcon from '@/assets/icons/product/productDetail/ic_help.svg';
 import { LongButton } from '@/components/common/buttons/LongButton';
+import { getSafeUrl } from '@/utils/getSafeUrl';
 import { useEffect, useRef, useState } from 'react';
 import {
   Animated,
@@ -13,14 +16,17 @@ import {
 } from 'react-native';
 
 interface Props {
-  product: any;
+  id: string;
+  coupangUrl: string;
 }
 
-export default function CoopangTabBar({ product }: Props) {
-  //   if (!product) {
-  //     return null;
-  //   }
+export default function CoopangTabBar({ id, coupangUrl }: Props) {
+  const finalUrl = getSafeUrl(coupangUrl);
+  if (!id || !finalUrl) {
+    return;
+  }
 
+  // const router = useRouter();
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -40,10 +46,22 @@ export default function CoopangTabBar({ product }: Props) {
     }
   }, [isTooltipVisible, fadeAnim]);
 
-  const handlePress = () => {
-    Linking.openURL(product.productUrl).catch((err) =>
-      console.error('URL을 여는 데 실패했습니다.', err),
-    );
+  const handlePress = async () => {
+    if (!finalUrl) {
+      return;
+    }
+    const canOpen = await Linking.canOpenURL(finalUrl);
+    if (canOpen) {
+      await Linking.openURL(finalUrl);
+    }
+    // router.push({
+    //   pathname: '/product/[id]/coupangPartnerScreen',
+    //   params: {
+    //     id: String(id),
+    //     coupangUrl: coupang || '',
+    //     // imageUrl: cproduct.imageUrl || '',
+    //   },
+    // });
   };
 
   const toggleTooltip = () => {

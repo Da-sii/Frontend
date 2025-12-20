@@ -20,7 +20,7 @@ function generateAuthorization(path: string, requestBody: object) {
 
 export const searchCoupangProduct = async (keyword: string) => {
   if (!ACCESS_KEY || !SECRET_KEY) {
-    return null;
+    return { productUrl: null, price: null };
   }
 
   const requestBody = { keyword, limit: 1 };
@@ -38,15 +38,19 @@ export const searchCoupangProduct = async (keyword: string) => {
     const data = await response.json();
     if (data.rCode !== '0') {
       console.error('Coupang API Error:', data.rMessage);
-      return null;
+      return { productUrl: null, price: null };
     }
-    const product = data.data.productData[0];
-    if (!product) return null;
+    const product = data.data?.productData?.[0];
+    if (!product || !product.productUrl) {
+      console.warn('쿠팡에서 유효한 상품 URL을 찾을 수 없음');
+      return { productUrl: null, price: null };
+    }
     return {
       productUrl: product.productUrl,
+
     };
   } catch (error) {
     console.error('Failed to fetch Coupang product:', error);
-    return null;
+    return { productUrl: null, price: null };
   }
 };
