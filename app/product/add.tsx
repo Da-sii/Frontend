@@ -8,9 +8,6 @@ export default function AddProductButton() {
     addProductMutation.mutate({
       name: '뉴트리디데이다이어트스페셜올뉴',
       company: '동서바이오팜(주) 안성공장',
-      price: 7300,
-      unit: '51g',
-      piece: 60,
       productType: 'supplement',
       images: [], // 이미지 없으니 빈 배열
       ingredients: [

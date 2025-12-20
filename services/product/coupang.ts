@@ -47,7 +47,7 @@ export const searchCoupangProduct = async (keyword: string) => {
     }
     return {
       productUrl: product.productUrl,
-      price: product.salePrice ?? null,
+
     };
   } catch (error) {
     console.error('Failed to fetch Coupang product:', error);

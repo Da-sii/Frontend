@@ -11,9 +11,6 @@ type ReviewDetail = {
     id: number;
     name: string;
     company: string;
-    price: number;
-    unit: string;
-    piece: number;
     productType: string;
     viewCount: number;
   };
