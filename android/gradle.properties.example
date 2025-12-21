@@ -65,3 +65,10 @@ expo.useLegacyPackaging=false
 expo.edgeToEdgeEnabled=true
 
 android.extraMavenRepos=[{"url":"https://devrepo.kakao.com/nexus/content/groups/public/"}]
+
+
+# ==== Android signing (DO NOT COMMIT REAL VALUES) ====
+MYAPP_RELEASE_STORE_FILE=
+MYAPP_RELEASE_STORE_PASSWORD=
+MYAPP_RELEASE_KEY_ALIAS=
+MYAPP_RELEASE_KEY_PASSWORD=

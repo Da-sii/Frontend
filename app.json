@@ -2,7 +2,7 @@
   "expo": {
     "name": "다시",
     "slug": "dasii",
-    "version": "1.0.4",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/img_logo.png",
     "scheme": "dasii",
@@ -26,7 +26,7 @@
       "blockedPermissions": ["com.google.android.gms.permission.AD_ID"],
       "edgeToEdgeEnabled": true,
       "package": "com.dasii",
-      "versionCode": 9
+      "versionCode": 11
     },
     "web": {
       "bundler": "metro",
