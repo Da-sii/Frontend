@@ -11,8 +11,13 @@ local.properties
 *.iml
 *.hprof
 .cxx/
-*.keystore
 *.properties
-
+*.keystore
 # Bundle artifacts
 *.jsbundle
+
+# Expo / RN generated source-set (can be re-generated)
+android/app/src/debugOptimized/
+
+
+
