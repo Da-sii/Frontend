@@ -19,6 +19,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Stack, useRouter } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
+  Platform,
   Pressable,
   ScrollView,
   Text,
@@ -38,6 +39,7 @@ const TERMS: { id: string; terms: string; essential: boolean }[] = [
 
 export default function Index({ emergency }: { emergency?: string }) {
   const { width, height } = useWindowDimensions();
+  const isIOS = Platform.OS === 'ios';
   const aspectRatio = width / height;
 
   const router = useRouter();
@@ -143,18 +145,20 @@ export default function Index({ emergency }: { emergency?: string }) {
                   });
                 }}
               />
-              <LoginButton
-                label='Apple로 로그인'
-                onPress={() => {
-                  appleLogin();
-                }}
-                color='bg-[#000]'
-                Icon={AppleIcon}
-                textColor='text-white'
-                border='border-none'
-                IconWidth={16}
-                IconHeight={20}
-              />
+              {isIOS && (
+                <LoginButton
+                  label='Apple로 로그인'
+                  onPress={() => {
+                    appleLogin();
+                  }}
+                  color='bg-[#000]'
+                  Icon={AppleIcon}
+                  textColor='text-white'
+                  border='border-none'
+                  IconWidth={16}
+                  IconHeight={20}
+                />
+              )}
               <LoginButton
                 label='이메일로 로그인'
                 onPress={() => {
