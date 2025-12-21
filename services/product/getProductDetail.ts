@@ -5,12 +5,12 @@ export type ProductImage = { url: string };
 
 export type ProductIngredient = {
   ingredientName: string;
-  englishName: string;
+  mainIngredient: string;
   amount: string;
   minRecommended: string;
   maxRecommended: string;
-  effect: string;
-  sideEffect: string;
+  effect: string[];
+  sideEffect: string[];
   status: string; // "unknown" 등
 };
 
