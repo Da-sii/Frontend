@@ -26,7 +26,7 @@
       "blockedPermissions": ["com.google.android.gms.permission.AD_ID"],
       "edgeToEdgeEnabled": true,
       "package": "com.dasii",
-      "versionCode": 11
+      "versionCode": 12
     },
     "web": {
       "bundler": "metro",
