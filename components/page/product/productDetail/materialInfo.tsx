@@ -53,11 +53,13 @@ export default function MaterialInfo({
               </Text>
             </View>
           </View>
-          <Text className='text-c3 text-gray-400 font-n-bd mb-[10px]'>
-            ({materialInfo.englishName})
-          </Text>
+          {materialInfo.mainIngredient && (
+            <Text className='text-c3 text-gray-400 font-n-bd '>
+              (주성분 : {materialInfo.mainIngredient})
+            </Text>
+          )}
 
-          <Text className='text-b-sm font-n-eb'>
+          <Text className='text-b-sm font-n-eb mt-[10px]'>
             포함량 {materialInfo.amount}
           </Text>
           <Text className='text-c3 text-gray-400 font-n-bd mb-[10px]'>
