@@ -4,7 +4,6 @@ import Navigation from '@/components/layout/Navigation';
 import ReviewItems from '@/components/page/product/productDetail/reviewItem';
 import { useGetPhotoReviewDetail } from '@/hooks/product/review/image/useGetPhotoReviewDetail';
 import { toCdnUrl } from '@/utils/cdn';
-import { PortalProvider } from '@gorhom/portal';
 import { useQueryClient } from '@tanstack/react-query';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -71,118 +70,116 @@ export default function PhotoReviewDetail() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       <Stack.Screen options={{ headerShown: false }} />
-      <PortalProvider>
-        <Navigation
-          title='포토 리뷰 상세보기'
-          right={<XIcon width={18} height={18} />}
-          onRightPress={() => router.back()}
-        />
+      <Navigation
+        title='포토 리뷰 상세보기'
+        right={<XIcon width={18} height={18} />}
+        onRightPress={() => router.back()}
+      />
 
-        <ScrollView
-          keyboardShouldPersistTaps='handled'
-          nestedScrollEnabled
-          showsVerticalScrollIndicator={false}
+      <ScrollView
+        keyboardShouldPersistTaps='handled'
+        nestedScrollEnabled
+        showsVerticalScrollIndicator={false}
+      >
+        {/* 이미지 뷰어 (리뷰 내 이미지들) */}
+        <View
+          style={{ width: '100%', aspectRatio: 1, backgroundColor: 'black' }}
         >
-          {/* 이미지 뷰어 (리뷰 내 이미지들) */}
-          <View
-            style={{ width: '100%', aspectRatio: 1, backgroundColor: 'black' }}
-          >
-            <FlatList
-              ref={listRef}
-              data={images}
-              horizontal
-              pagingEnabled
-              initialScrollIndex={targetIndex}
-              getItemLayout={(_, i) => ({
-                length: SCREEN_W,
-                offset: SCREEN_W * i,
-                index: i,
-              })}
-              showsHorizontalScrollIndicator={false}
-              keyExtractor={(item, i) => (item?.url ?? '') + i}
-              renderItem={({ item }) => (
-                <View
-                  style={{
-                    width: SCREEN_W,
-                    height: '100%',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <Image
-                    source={{ uri: toCdnUrl(item.url) }}
-                    style={{ width: '100%', height: '100%' }}
-                    resizeMode='cover'
-                  />
-                </View>
-              )}
-              onMomentumScrollEnd={onMomentumEnd}
-              onScrollToIndexFailed={(info) => {
-                setTimeout(() => {
-                  listRef.current?.scrollToIndex({
-                    index: info.index,
-                    animated: false,
-                  });
-                }, 0);
-              }}
-            />
-
-            {/* 우상단 인디케이터: 현재/전체 */}
-            <View
-              style={{
-                position: 'absolute',
-                right: 20,
-                top: 20,
-                borderRadius: 999,
-                backgroundColor: 'rgba(0,0,0,0.5)',
-                width: 48,
-                height: 24,
-                alignItems: 'center',
-                justifyContent: 'center',
-                paddingHorizontal: 8,
-                paddingVertical: 4,
-              }}
-            >
-              {/* FlatList의 onViewableItemsChanged로 실시간 인덱스 추적하려면 상태 추가 */}
-              <Text
-                className='text-white text-c3 font-n-bd'
-                style={{ color: 'white', fontSize: 12 }}
+          <FlatList
+            ref={listRef}
+            data={images}
+            horizontal
+            pagingEnabled
+            initialScrollIndex={targetIndex}
+            getItemLayout={(_, i) => ({
+              length: SCREEN_W,
+              offset: SCREEN_W * i,
+              index: i,
+            })}
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={(item, i) => (item?.url ?? '') + i}
+            renderItem={({ item }) => (
+              <View
+                style={{
+                  width: SCREEN_W,
+                  height: '100%',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
               >
-                {currentIndex + 1} / {reviewDetail?.images.length ?? 0}
-              </Text>
-            </View>
-          </View>
+                <Image
+                  source={{ uri: toCdnUrl(item.url) }}
+                  style={{ width: '100%', height: '100%' }}
+                  resizeMode='cover'
+                />
+              </View>
+            )}
+            onMomentumScrollEnd={onMomentumEnd}
+            onScrollToIndexFailed={(info) => {
+              setTimeout(() => {
+                listRef.current?.scrollToIndex({
+                  index: info.index,
+                  animated: false,
+                });
+              }, 0);
+            }}
+          />
 
-          {/* 리뷰 메타 + 본문 */}
-          {reviewDetail && (
-            <ReviewItems
-              reviewItem={{
-                id: idNum,
-                reviewId: reviewIdNum,
-                name: reviewDetail.user.nickname ?? '',
-                date: reviewDetail.date ?? '-',
-                isEdited: reviewDetail.updated,
-                content: reviewDetail.review ?? '',
-                rating: reviewDetail.rate ?? 0,
-                images: reviewDetail.images ? [reviewDetail.images] : [],
-              }}
-              isPhoto={false}
-              isMore={false}
-            />
-          )}
-          <View className='items-center'>
-            <ReviewButton
-              onPress={() =>
-                router.push({
-                  pathname: '/product/[id]/review/allReview',
-                  params: { id: String(id) },
-                })
-              }
-              count={reviewCount?.reviewCount ?? 0}
-            />
+          {/* 우상단 인디케이터: 현재/전체 */}
+          <View
+            style={{
+              position: 'absolute',
+              right: 20,
+              top: 20,
+              borderRadius: 999,
+              backgroundColor: 'rgba(0,0,0,0.5)',
+              width: 48,
+              height: 24,
+              alignItems: 'center',
+              justifyContent: 'center',
+              paddingHorizontal: 8,
+              paddingVertical: 4,
+            }}
+          >
+            {/* FlatList의 onViewableItemsChanged로 실시간 인덱스 추적하려면 상태 추가 */}
+            <Text
+              className='text-white text-c3 font-n-bd'
+              style={{ color: 'white', fontSize: 12 }}
+            >
+              {currentIndex + 1} / {reviewDetail?.images.length ?? 0}
+            </Text>
           </View>
-        </ScrollView>
-      </PortalProvider>
+        </View>
+
+        {/* 리뷰 메타 + 본문 */}
+        {reviewDetail && (
+          <ReviewItems
+            reviewItem={{
+              id: idNum,
+              reviewId: reviewIdNum,
+              name: reviewDetail.user.nickname ?? '',
+              date: reviewDetail.date ?? '-',
+              isEdited: reviewDetail.updated,
+              content: reviewDetail.review ?? '',
+              rating: reviewDetail.rate ?? 0,
+              images: reviewDetail.images ? [reviewDetail.images] : [],
+            }}
+            isPhoto={false}
+            isMore={false}
+          />
+        )}
+        <View className='items-center'>
+          <ReviewButton
+            onPress={() =>
+              router.push({
+                pathname: '/product/[id]/review/allReview',
+                params: { id: String(id) },
+              })
+            }
+            count={reviewCount?.reviewCount ?? 0}
+          />
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }

@@ -2,9 +2,8 @@ import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetView,
 } from '@gorhom/bottom-sheet';
-import { Portal } from '@gorhom/portal';
-import React, { useCallback } from 'react';
-
+import React, { useCallback, useState } from 'react';
+import { View } from 'react-native';
 interface BottomSheetLayoutProps {
   children: React.ReactNode;
   snapPoints?: number[];
@@ -16,6 +15,8 @@ export default function BottomSheetLayout({
   snapPoints,
   sheetRef,
 }: BottomSheetLayoutProps) {
+  const [isOpen, setIsOpen] = useState(false);
+
   const renderBackdrop = useCallback(
     (props: any) => (
       <BottomSheetBackdrop
@@ -31,21 +32,32 @@ export default function BottomSheetLayout({
     ),
     [],
   );
+
+  const handleChange = useCallback((index: number) => {
+    console.log(index);
+    setIsOpen(index >= 0);
+  }, []);
+
   return (
-    <Portal>
+    <View
+      pointerEvents={isOpen ? 'auto' : 'none'}
+      style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
+    >
       <BottomSheet
         ref={sheetRef}
         index={-1}
         snapPoints={snapPoints}
         enablePanDownToClose
+        onChange={handleChange}
         backdropComponent={renderBackdrop}
         backgroundStyle={{
           borderTopLeftRadius: 12,
           borderTopRightRadius: 12,
         }}
+        handleIndicatorStyle={{ opacity: 1 }}
       >
-        <BottomSheetView className=''>{children}</BottomSheetView>
+        <BottomSheetView>{children}</BottomSheetView>
       </BottomSheet>
-    </Portal>
+    </View>
   );
 }
