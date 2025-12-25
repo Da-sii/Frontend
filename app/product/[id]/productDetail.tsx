@@ -425,7 +425,7 @@ export default function ProductDetail() {
         }
       />
       {/* data.coupang */}
-      <CoupangTabBar id={id} coupangUrl='https://naver.com' />
+      <CoupangTabBar id={id} coupangUrl={data.coupang} />
       <PortalHost name='overlay-top' />
       <DefaultModal
         visible={showIsMyReviewModal}

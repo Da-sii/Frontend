@@ -208,7 +208,12 @@ export default function Index({ emergency }: { emergency?: string }) {
         </View>
       </ScrollView>
 
-      <BottomSheetLayout snapPoints={snapPoints} sheetRef={sheetRef}>
+      <BottomSheetLayout
+        snapPoints={snapPoints}
+        sheetRef={sheetRef}
+        pressBehavior='none'
+        enablePanDownToClose={false}
+      >
         {/* ===== 서비스 약관 동의 ===== */}
         <View className='px-5 pt-[30px] pb-[45px]'>
           <Pressable
