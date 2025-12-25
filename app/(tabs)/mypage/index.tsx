@@ -5,7 +5,7 @@ import { SettingItem } from '@/components/page/my/SettingItem';
 import { SettingSection } from '@/components/page/my/SettingSection';
 import { useLogout } from '@/hooks/useLogout';
 import { useUser } from '@/hooks/useUser';
-import { getAccessToken } from '@/lib/authToken';
+import { clearTokens, getAccessToken } from '@/lib/authToken';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { ScrollView } from 'react-native';
@@ -176,9 +176,10 @@ export default function Mypage() {
         message={
           '회원 탈퇴 시 계정 및 개인정보는 복구 불가능하며, \n모든 서비스 이용 내역이 삭제됩니다. \n탈퇴를 진행하시겠습니까?'
         }
-        onConfirm={() => {
+        onConfirm={async () => {
           setShowWithdrawModal(false);
-          deleteUser();
+          await deleteUser();
+          await clearTokens();
           router.replace('/mypage/completion?action=withdraw');
         }}
         onCancel={() => setShowWithdrawModal(false)}
