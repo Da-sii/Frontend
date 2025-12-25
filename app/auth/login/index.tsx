@@ -11,8 +11,9 @@ import Navigation from '@/components/layout/Navigation';
 import { HomeFooterModal } from '@/components/page/home/HomeFooterModal';
 import KakaoLogin from '@/components/page/login/kakaoLogin';
 import BottomSheetLayout from '@/components/page/product/productDetail/BottomSeetLayout';
+import { useKakaoLogin } from '@/hooks/auth/kakao/useKakaoLogin';
+import { useKakaoPrelogin } from '@/hooks/auth/kakao/useKakaoPrelogin';
 import { useAppleLogin } from '@/hooks/auth/useAppleLogin';
-import { useKakaoLogin } from '@/hooks/useKakaoLogin';
 import BottomSheet from '@gorhom/bottom-sheet';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Stack, useRouter } from 'expo-router';
@@ -47,7 +48,8 @@ export default function Index({ emergency }: { emergency?: string }) {
   const [checkedSet, setCheckedSet] = useState<Set<number>>(new Set());
   const [isTermsModalVisible, setIsTermsModalVisible] = useState(false);
   const [selectedTerm, setSelectedTerm] = useState<string>('');
-  const kakaoLogin = useKakaoLogin();
+  const { mutate: prelogin } = useKakaoPrelogin();
+  const { mutate: finalizeLogin } = useKakaoLogin();
 
   // ===== BottomSheet =====
   const sheetRef = useRef<BottomSheet>(null);
@@ -99,12 +101,37 @@ export default function Index({ emergency }: { emergency?: string }) {
       prev.size === TERMS.length ? new Set() : new Set(TERMS.map((_, i) => i)),
     );
   };
-
   const onPressSubmit = async () => {
-    sheetRef.current?.close?.();
-    router.replace('/home');
+    finalizeLogin(undefined, {
+      onSuccess: () => {
+        sheetRef.current?.close?.();
+        router.replace('/home');
+      },
+      onError: (err: any) => {
+        console.log('finalizeLogin error:', err);
+      },
+    });
   };
 
+  const onPressKakao = () => {
+    prelogin(undefined, {
+      onSuccess: (res) => {
+        if (res.is_new_user) {
+          openSheet();
+          return;
+        }
+
+        finalizeLogin(undefined, {
+          onSuccess: () => {
+            router.replace('/home');
+          },
+          onError: (err: any) => {
+            console.log('finalizeLogin error:', err);
+          },
+        });
+      },
+    });
+  };
   return (
     <SafeAreaView className='flex-1 bg-white'>
       <Stack.Screen options={{ headerShown: false }} />
@@ -130,19 +157,8 @@ export default function Index({ emergency }: { emergency?: string }) {
           </View>
 
           <View className=' w-full px-5 flex-col space-y-3'>
-            <KakaoLogin
-              onPress={() => {
-                kakaoLogin.mutate(undefined, {
-                  onSuccess: (data) => {
-                    if (data.is_new_user) {
-                      openSheet();
-                    } else {
-                      router.replace('/home');
-                    }
-                  },
-                });
-              }}
-            />
+            <KakaoLogin onPress={onPressKakao} />
+
             {isIOS && (
               <LoginButton
                 label='Apple로 로그인'
