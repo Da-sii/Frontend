@@ -1,4 +1,5 @@
 import DefaultModal from '@/components/common/modals/DefaultModal';
+import { getAccessToken } from '@/lib/authToken';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { unlink } from '@react-native-kakao/user';
 import * as Sentry from '@sentry/react-native';
@@ -14,6 +15,7 @@ import {
   requestTrackingPermissionsAsync,
 } from 'expo-tracking-transparency';
 
+import { usePendingKakaoAuth } from '@/store/usePendingKakaoAuth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   getKeyHashAndroid,
@@ -50,22 +52,31 @@ function RootLayout() {
   }, []);
 
   useEffect(() => {
-    (async () => {
-      const pending = await AsyncStorage.getItem('pendingAgreement');
-      if (pending === 'true') {
-        try {
-          await unlink(); // @react-native-kakao/user
-        } catch (e) {
-          // 실패해도 다음 실행 때 다시 시도 가능
-        } finally {
-          await AsyncStorage.removeItem('pendingAgreement');
-        }
-      }
-    })();
+    initializeKakaoSDK(process.env.EXPO_PUBLIC_KAKAO_NATIVE_KEY!);
   }, []);
 
   useEffect(() => {
-    initializeKakaoSDK(process.env.EXPO_PUBLIC_KAKAO_NATIVE_KEY!);
+    (async () => {
+      // 카카오 소셜가입 중 개인정보 처리 동의를 안했을경우 kakao_signup
+      const pending = await AsyncStorage.getItem('pendingAgreement');
+      if (pending !== 'kakao_signup') return;
+
+      // 카카오 소셜가입 중 개인정보 처리 동의를 안했을경우
+      const at = await getAccessToken();
+      const isLoggedIn = !!at;
+
+      try {
+        if (!isLoggedIn) {
+          await unlink();
+        }
+      } catch (e) {
+        console.log('unlink failed', e);
+      } finally {
+        usePendingKakaoAuth.getState().clear();
+        await AsyncStorage.removeItem('pendingAgreement');
+        console.log('kakao unlink success');
+      }
+    })();
   }, []);
 
   const [loaded, error] = useFonts({

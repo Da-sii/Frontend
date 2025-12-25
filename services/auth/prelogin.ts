@@ -1,5 +1,5 @@
 // services/auth/prelogin.ts
-import { axiosInstance, publicAxios } from '../index';
+import { publicAxios } from '../index';
 
 export type SocialProvider = 'kakao' | 'apple';
 
@@ -16,12 +16,10 @@ export type PreloginResponse = {
 export async function postSocialPrelogin(
   req: PreloginRequest,
 ): Promise<PreloginResponse> {
-  console.log('prelogin req: ', req);
-  console.log('prelogin headers', axiosInstance.defaults.headers);
   const { data } = await publicAxios.post<PreloginResponse>(
     '/auth/prelogin/',
     req,
   );
-  console.log('prelogin data:ㄲ;ㄹ낄 ', data);
+  console.log('prelogin 요청 성공');
   return data;
 }

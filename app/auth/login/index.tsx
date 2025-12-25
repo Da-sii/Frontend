@@ -55,7 +55,7 @@ export default function Index({ emergency }: { emergency?: string }) {
   const sheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => [462], []);
   const openSheet = async () => {
-    await AsyncStorage.setItem('pendingAgreement', 'true');
+    await AsyncStorage.setItem('pendingAgreement', 'kakao_signup');
     sheetRef.current?.snapToIndex?.(0);
   };
 

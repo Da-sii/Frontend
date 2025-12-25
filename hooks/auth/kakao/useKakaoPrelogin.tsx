@@ -41,11 +41,8 @@ export const useKakaoPrelogin = () => {
       });
     },
     onError: (err: any) => {
-      console.log('status', err?.response?.status);
-      console.log('url', err?.config?.baseURL, err?.config?.url);
-      console.log('data', err?.config?.data);
       Alert.alert(
-        'pre로그인 실패',
+        'prelogin 실패, 다시 시도해주세요.',
         err?.message ?? '카카오 로그인 중 오류가 발생했어요.',
       );
     },

@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useMutation } from '@tanstack/react-query';
 import { Alert } from 'react-native';
 import { setTokens } from '../../../lib/authToken';
@@ -18,6 +19,7 @@ export const useKakaoLogin = () => {
 
       // 1) 우리 서버 로그인
       const data = await signInWithKakao(kakaoAccessToken, kakaoRefreshToken);
+      console.log('서버 로그인 성공');
 
       // 2) 우리 서비스 access 토큰 저장
       if (!data.access) {
@@ -26,10 +28,8 @@ export const useKakaoLogin = () => {
 
       await setTokens(data.access);
 
-      console.log('useKakao : ', data);
-      // 3) pending 정리
       clear();
-
+      await AsyncStorage.removeItem('pendingAgreement');
       return data;
     },
     onError: (err: any) => {
