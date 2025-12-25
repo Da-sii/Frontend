@@ -8,12 +8,16 @@ interface BottomSheetLayoutProps {
   children: React.ReactNode;
   snapPoints?: number[];
   sheetRef?: React.RefObject<BottomSheet | null>;
+  pressBehavior?: 'close' | 'none';
+  enablePanDownToClose?: boolean;
 }
 
 export default function BottomSheetLayout({
   children,
   snapPoints,
   sheetRef,
+  pressBehavior = 'close',
+  enablePanDownToClose = true,
 }: BottomSheetLayoutProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -26,7 +30,7 @@ export default function BottomSheetLayout({
         disappearsOnIndex={-1}
         // 배경을 터치해도 닫히지 않고, 대신 터치만 막고 싶다면 'none'
         // 배경 터치로 시트를 닫고 싶다면 'close' 로 바꾸세요.
-        pressBehavior='close'
+        pressBehavior={pressBehavior}
         opacity={0.5} // 딤 투명도 (0~1)
       />
     ),
@@ -47,7 +51,7 @@ export default function BottomSheetLayout({
         ref={sheetRef}
         index={-1}
         snapPoints={snapPoints}
-        enablePanDownToClose
+        enablePanDownToClose={enablePanDownToClose}
         onChange={handleChange}
         backdropComponent={renderBackdrop}
         backgroundStyle={{

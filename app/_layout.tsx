@@ -1,5 +1,7 @@
 import DefaultModal from '@/components/common/modals/DefaultModal';
+import { getAccessToken } from '@/lib/authToken';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { unlink } from '@react-native-kakao/user';
 import * as Sentry from '@sentry/react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { compareVersions } from 'compare-versions';
@@ -13,6 +15,8 @@ import {
   requestTrackingPermissionsAsync,
 } from 'expo-tracking-transparency';
 
+import { usePendingKakaoAuth } from '@/store/usePendingKakaoAuth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   getKeyHashAndroid,
   initializeKakaoSDK,
@@ -50,6 +54,31 @@ function RootLayout() {
   useEffect(() => {
     initializeKakaoSDK(process.env.EXPO_PUBLIC_KAKAO_NATIVE_KEY!);
   }, []);
+
+  useEffect(() => {
+    (async () => {
+      // 카카오 소셜가입 중 개인정보 처리 동의를 안했을경우 kakao_signup
+      const pending = await AsyncStorage.getItem('pendingAgreement');
+      if (pending !== 'kakao_signup') return;
+
+      // 카카오 소셜가입 중 개인정보 처리 동의를 안했을경우
+      const at = await getAccessToken();
+      const isLoggedIn = !!at;
+
+      try {
+        if (!isLoggedIn) {
+          await unlink();
+        }
+      } catch (e) {
+        console.log('unlink failed', e);
+      } finally {
+        usePendingKakaoAuth.getState().clear();
+        await AsyncStorage.removeItem('pendingAgreement');
+        console.log('kakao unlink success');
+      }
+    })();
+  }, []);
+
   const [loaded, error] = useFonts({
     // 1. 기존 가변 폰트 항목을 삭제하거나 주석 처리합니다.
     NanumSquareNeo: require('@/assets/fonts/NanumSquareNeo-Variable.ttf'),

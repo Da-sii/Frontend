@@ -9,17 +9,17 @@ export const axiosInstance = axios.create({
   withCredentials: true,
 });
 
+export const publicAxios = axios.create({
+  baseURL: baseUrl,
+  withCredentials: false,
+});
+
 // ---- 요청 로깅 + accessToken 주입
 axiosInstance.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     const accessToken = await getAccessToken();
-    if (__DEV__) {
-      const url = (config.baseURL || '') + (config.url || '');
-      // console.log('[AXIOS] →', url, 'params=', config.params);
-    }
 
     if (accessToken) config.headers.Authorization = `Bearer ${accessToken}`;
-
     return config;
   },
 );
@@ -43,43 +43,24 @@ async function refreshViaCookie() {
   return newAT;
 }
 
+// ✅ refresh 제외 엔드포인트
+function shouldSkipRefresh(url?: string) {
+  if (!url) return false;
+  // 로그인 전 / 인증 시작 단계는 refresh 의미 없음
+  return (
+    url.includes('/auth/prelogin/') ||
+    // url.includes('/auth/login') ||
+    // url.includes('/auth/signup') ||
+    url.includes('/auth/token/refresh/') // refresh 자체는 재귀 방지
+  );
+}
+
 axiosInstance.interceptors.response.use(
   (res) => {
     if (__DEV__) {
       const url = (res.config.baseURL || '') + (res.config.url || '');
-      console.log(
-        '[AXIOS RES] ←',
-        res.status,
-        url,
-        'params=',
-        res.config.params,
-        'data=',
-        res.data,
-      );
+      console.log('[AXIOS RES] ←', res.status, url, 'data=', res.data);
     }
-    return res;
-  },
-  (err) => {
-    if (__DEV__) {
-      const cfg = err.config || {};
-      const url = (cfg.baseURL || '') + (cfg.url || '');
-      console.log(
-        '[AXIOS ERR] ←',
-        err.response?.status,
-        url,
-        'params=',
-        cfg.params,
-        'data=',
-        err.response?.data,
-      );
-    }
-    return Promise.reject(err);
-  },
-);
-
-axiosInstance.interceptors.response.use(
-  (res) => {
-    if (__DEV__) console.log('[AXIOS] ←', res.config.url, res.status);
     return res;
   },
   async (error: AxiosError) => {
@@ -89,24 +70,39 @@ axiosInstance.interceptors.response.use(
       disableRedirect?: boolean;
     };
 
+    if (__DEV__) {
+      const cfg = error.config as InternalAxiosRequestConfig | undefined;
+      const url = (cfg?.baseURL || '') + (cfg?.url || '');
+
+      console.log('[AXIOS ERR] ←', status, url, 'data=', error.response?.data);
+    }
+
+    // ✅ 1) refresh 제외 엔드포인트면 그대로 반환 (덮어쓰기 방지 핵심)
+    if (shouldSkipRefresh(original?.url)) {
+      return Promise.reject(error);
+    }
+
+    // ✅ 2) 401 + 아직 재시도 안 했으면 refresh 시도
     if (status === 401 && !original?._retry) {
-      // if (!original?._retry) {
       original._retry = true;
 
       if (isRefreshing) {
-        // 갱신 완료까지 대기
         return new Promise((resolve, reject) => {
           waitQueue.push({
             resolve: (token) => {
               original.headers.Authorization = `Bearer ${token}`;
               resolve(axiosInstance(original));
             },
-            reject,
+            reject: (e) => {
+              // ✅ refresh 실패해도 "원래 에러"를 유지
+              reject(error);
+            },
           });
         });
       }
 
       isRefreshing = true;
+
       try {
         const newAT = await refreshViaCookie();
         flushQueue(newAT);
@@ -115,23 +111,18 @@ axiosInstance.interceptors.response.use(
       } catch (e) {
         flushQueue(undefined, e);
         await clearTokens();
+
         if (!original.disableRedirect) {
           router.replace('/auth/login');
         }
-        return Promise.reject(e);
+
+        // ✅ refresh 실패해도 "원래 error"로 reject (덮어쓰기 방지 핵심)
+        return Promise.reject(error);
       } finally {
         isRefreshing = false;
       }
     }
 
-    if (__DEV__) {
-      console.log(
-        '[AXIOS] ← ERROR',
-        error.config?.url,
-        status,
-        error.response?.data,
-      );
-    }
     return Promise.reject(error);
   },
 );

@@ -36,7 +36,7 @@ async function handleSignInApple() {
           '백엔드 Apple 로그인 실패:',
           backendError.response?.data || backendError.message,
         );
-        Alert.alert('로그인 실패', '서버 통신 중 오류가 발생했습니다.');
+        Alert.alert('애플로그인 실패', '서버 통신 중 오류가 발생했습니다.');
         return null;
       }
     }
