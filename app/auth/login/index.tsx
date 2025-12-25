@@ -54,7 +54,8 @@ export default function Index({ emergency }: { emergency?: string }) {
   // ===== BottomSheet =====
   const sheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => [462], []);
-  const openSheet = () => {
+  const openSheet = async () => {
+    await AsyncStorage.setItem('pendingAgreement', 'true');
     sheetRef.current?.snapToIndex?.(0);
   };
 
@@ -102,6 +103,7 @@ export default function Index({ emergency }: { emergency?: string }) {
     );
   };
   const onPressSubmit = async () => {
+    await AsyncStorage.removeItem('pendingAgreement');
     finalizeLogin(undefined, {
       onSuccess: () => {
         sheetRef.current?.close?.();
