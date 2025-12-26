@@ -9,7 +9,7 @@ import LoginButton from '@/components/common/buttons/LoginButton';
 import { LongButton } from '@/components/common/buttons/LongButton';
 import Navigation from '@/components/layout/Navigation';
 import { HomeFooterModal } from '@/components/page/home/HomeFooterModal';
-import KakaoLogin from '@/components/page/login/kakaoLogin';
+import KakaoLoginButton from '@/components/page/login/kakaoLogin';
 import BottomSheetLayout from '@/components/page/product/productDetail/BottomSeetLayout';
 import { useKakaoLogin } from '@/hooks/auth/kakao/useKakaoLogin';
 import { useKakaoPrelogin } from '@/hooks/auth/kakao/useKakaoPrelogin';
@@ -154,43 +154,24 @@ export default function Index({ emergency }: { emergency?: string }) {
       prev.size === TERMS.length ? new Set() : new Set(TERMS.map((_, i) => i)),
     );
   };
-  const onPressSubmit = async () => {
-    await AsyncStorage.removeItem('pendingAgreement');
-    finalizeLogin(undefined, {
-      onSuccess: async () => {
-        await AsyncStorage.multiRemove([
-          'kakao_flow',
-          'kakao_prelogin_done',
-          'kakao_is_new_user',
-        ]);
-        sheetRef.current?.close?.();
-        router.replace('/home');
-      },
-      onError: (err: any) => {
-        console.log('finalizeLogin error:', err);
-      },
-    });
-  };
+  // const onPressSubmit = async () => {
+  //   await AsyncStorage.removeItem('pendingAgreement');
+  //   finalizeLogin(undefined, {
+  //     onSuccess: async () => {
+  //       await AsyncStorage.multiRemove([
+  //         'kakao_flow',
+  //         'kakao_prelogin_done',
+  //         'kakao_is_new_user',
+  //       ]);
+  //       sheetRef.current?.close?.();
+  //       router.replace('/home');
+  //     },
+  //     onError: (err: any) => {
+  //       console.log('finalizeLogin error:', err);
+  //     },
+  //   });
+  // };
 
-  const onPressKakao = () => {
-    prelogin(undefined, {
-      onSuccess: (res) => {
-        if (res.is_new_user) {
-          openSheet();
-          return;
-        }
-
-        finalizeLogin(undefined, {
-          onSuccess: () => {
-            router.replace('/home');
-          },
-          onError: (err: any) => {
-            console.log('finalizeLogin error:', err);
-          },
-        });
-      },
-    });
-  };
   return (
     <SafeAreaView className='flex-1 bg-white'>
       <Stack.Screen options={{ headerShown: false }} />
@@ -216,7 +197,7 @@ export default function Index({ emergency }: { emergency?: string }) {
           </View>
 
           <View className=' w-full px-5 flex-col space-y-3'>
-            <KakaoLogin onPress={onPressKakao} />
+            <KakaoLoginButton />
 
             {isIOS && (
               <LoginButton
@@ -354,7 +335,6 @@ export default function Index({ emergency }: { emergency?: string }) {
           </View>
           <LongButton
             label='동의하고 계속하기'
-            onPress={onPressSubmit}
             disabled={!isEssentialChecked}
           />
         </View>
