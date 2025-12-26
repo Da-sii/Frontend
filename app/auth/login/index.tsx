@@ -16,8 +16,8 @@ import { useKakaoPrelogin } from '@/hooks/auth/kakao/useKakaoPrelogin';
 import { useAppleLogin } from '@/hooks/auth/useAppleLogin';
 import BottomSheet from '@gorhom/bottom-sheet';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Stack, useRouter } from 'expo-router';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { Stack, useFocusEffect, useRouter } from 'expo-router';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Platform,
   Pressable,
@@ -28,6 +28,10 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
+
+const KAKAO_FLOW_KEY = 'kakao_flow';
+const KAKAO_PRELOGIN_DONE_KEY = 'kakao_prelogin_done';
+const KAKAO_IS_NEW_USER_KEY = 'kakao_is_new_user';
 
 const TERMS: { id: string; terms: string; essential: boolean }[] = [
   { id: 'service', terms: '이용 약관 동의', essential: true },
@@ -54,11 +58,10 @@ export default function Index({ emergency }: { emergency?: string }) {
   // ===== BottomSheet =====
   const sheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => [462], []);
-  const openSheet = async () => {
+  const openSheet = useCallback(async () => {
     await AsyncStorage.setItem('pendingAgreement', 'kakao_signup');
     sheetRef.current?.snapToIndex?.(0);
-  };
-
+  }, []);
   const isTabletRatio =
     Math.abs(aspectRatio - 4 / 3) < 0.2 || Math.abs(aspectRatio - 3 / 4) < 0.2;
 
@@ -72,6 +75,55 @@ export default function Index({ emergency }: { emergency?: string }) {
       }
     });
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      let cancelled = false;
+
+      (async () => {
+        const flow = await AsyncStorage.getItem(KAKAO_FLOW_KEY);
+        if (flow !== 'in_progress') return;
+
+        const preloginDone = await AsyncStorage.getItem(
+          KAKAO_PRELOGIN_DONE_KEY,
+        );
+        if (preloginDone !== 'true') return;
+
+        const isNew = await AsyncStorage.getItem(KAKAO_IS_NEW_USER_KEY);
+
+        if (cancelled) return;
+
+        if (isNew === 'true') {
+          await AsyncStorage.removeItem(KAKAO_PRELOGIN_DONE_KEY);
+          await openSheet();
+          return;
+        }
+
+        // 기존 유저면 서버 로그인 진행
+        finalizeLogin(undefined, {
+          onSuccess: async () => {
+            await AsyncStorage.multiRemove([
+              KAKAO_FLOW_KEY,
+              KAKAO_PRELOGIN_DONE_KEY,
+              KAKAO_IS_NEW_USER_KEY,
+            ]);
+            router.replace('/home');
+          },
+          onError: async () => {
+            await AsyncStorage.multiRemove([
+              KAKAO_FLOW_KEY,
+              KAKAO_PRELOGIN_DONE_KEY,
+              KAKAO_IS_NEW_USER_KEY,
+            ]);
+          },
+        });
+      })();
+
+      return () => {
+        cancelled = true;
+      };
+    }, [finalizeLogin, openSheet, router]),
+  );
 
   // 필수 항목 인덱스
   const essentialIdxs = useMemo(
@@ -105,7 +157,12 @@ export default function Index({ emergency }: { emergency?: string }) {
   const onPressSubmit = async () => {
     await AsyncStorage.removeItem('pendingAgreement');
     finalizeLogin(undefined, {
-      onSuccess: () => {
+      onSuccess: async () => {
+        await AsyncStorage.multiRemove([
+          'kakao_flow',
+          'kakao_prelogin_done',
+          'kakao_is_new_user',
+        ]);
         sheetRef.current?.close?.();
         router.replace('/home');
       },
