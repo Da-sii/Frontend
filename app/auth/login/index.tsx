@@ -12,7 +12,6 @@ import { HomeFooterModal } from '@/components/page/home/HomeFooterModal';
 import KakaoLoginButton from '@/components/page/login/kakaoLogin';
 import BottomSheetLayout from '@/components/page/product/productDetail/BottomSeetLayout';
 import { useKakaoLogin } from '@/hooks/auth/kakao/useKakaoLogin';
-import { useKakaoPrelogin } from '@/hooks/auth/kakao/useKakaoPrelogin';
 import { useAppleLogin } from '@/hooks/auth/useAppleLogin';
 import BottomSheet from '@gorhom/bottom-sheet';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -52,7 +51,6 @@ export default function Index({ emergency }: { emergency?: string }) {
   const [checkedSet, setCheckedSet] = useState<Set<number>>(new Set());
   const [isTermsModalVisible, setIsTermsModalVisible] = useState(false);
   const [selectedTerm, setSelectedTerm] = useState<string>('');
-  const { mutate: prelogin } = useKakaoPrelogin();
   const { mutate: finalizeLogin } = useKakaoLogin();
 
   // ===== BottomSheet =====
