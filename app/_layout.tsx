@@ -55,9 +55,10 @@ function RootLayout() {
     initializeKakaoSDK(process.env.EXPO_PUBLIC_KAKAO_NATIVE_KEY!);
   }, []);
 
+  //카카오 소셜로그인 약관 동의 안했을 경우 플로우
   useEffect(() => {
     (async () => {
-      // 카카오 소셜가입 중 개인정보 처리 동의를 안했을경우 kakao_signup
+      // 카카오 소셜가입 중 약관 동의를 안했을경우 kakao_signup
       const pending = await AsyncStorage.getItem('pendingAgreement');
       if (pending !== 'kakao_signup') return;
 

@@ -9,15 +9,14 @@ import LoginButton from '@/components/common/buttons/LoginButton';
 import { LongButton } from '@/components/common/buttons/LongButton';
 import Navigation from '@/components/layout/Navigation';
 import { HomeFooterModal } from '@/components/page/home/HomeFooterModal';
-import KakaoLogin from '@/components/page/login/kakaoLogin';
+import KakaoLoginButton from '@/components/page/login/kakaoLogin';
 import BottomSheetLayout from '@/components/page/product/productDetail/BottomSeetLayout';
 import { useKakaoLogin } from '@/hooks/auth/kakao/useKakaoLogin';
-import { useKakaoPrelogin } from '@/hooks/auth/kakao/useKakaoPrelogin';
 import { useAppleLogin } from '@/hooks/auth/useAppleLogin';
 import BottomSheet from '@gorhom/bottom-sheet';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Stack, useRouter } from 'expo-router';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { Stack, useFocusEffect, useRouter } from 'expo-router';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Platform,
   Pressable,
@@ -28,6 +27,10 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
+
+const KAKAO_FLOW_KEY = 'kakao_flow';
+const KAKAO_PRELOGIN_DONE_KEY = 'kakao_prelogin_done';
+const KAKAO_IS_NEW_USER_KEY = 'kakao_is_new_user';
 
 const TERMS: { id: string; terms: string; essential: boolean }[] = [
   { id: 'service', terms: '이용 약관 동의', essential: true },
@@ -48,17 +51,15 @@ export default function Index({ emergency }: { emergency?: string }) {
   const [checkedSet, setCheckedSet] = useState<Set<number>>(new Set());
   const [isTermsModalVisible, setIsTermsModalVisible] = useState(false);
   const [selectedTerm, setSelectedTerm] = useState<string>('');
-  const { mutate: prelogin } = useKakaoPrelogin();
   const { mutate: finalizeLogin } = useKakaoLogin();
 
   // ===== BottomSheet =====
   const sheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => [462], []);
-  const openSheet = async () => {
+  const openSheet = useCallback(async () => {
     await AsyncStorage.setItem('pendingAgreement', 'kakao_signup');
     sheetRef.current?.snapToIndex?.(0);
-  };
-
+  }, []);
   const isTabletRatio =
     Math.abs(aspectRatio - 4 / 3) < 0.2 || Math.abs(aspectRatio - 3 / 4) < 0.2;
 
@@ -72,6 +73,55 @@ export default function Index({ emergency }: { emergency?: string }) {
       }
     });
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      let cancelled = false;
+
+      (async () => {
+        const flow = await AsyncStorage.getItem(KAKAO_FLOW_KEY);
+        if (flow !== 'in_progress') return;
+
+        const preloginDone = await AsyncStorage.getItem(
+          KAKAO_PRELOGIN_DONE_KEY,
+        );
+        if (preloginDone !== 'true') return;
+
+        const isNew = await AsyncStorage.getItem(KAKAO_IS_NEW_USER_KEY);
+
+        if (cancelled) return;
+
+        if (isNew === 'true') {
+          await AsyncStorage.removeItem(KAKAO_PRELOGIN_DONE_KEY);
+          await openSheet();
+          return;
+        }
+
+        // 기존 유저면 서버 로그인 진행
+        finalizeLogin(undefined, {
+          onSuccess: async () => {
+            await AsyncStorage.multiRemove([
+              KAKAO_FLOW_KEY,
+              KAKAO_PRELOGIN_DONE_KEY,
+              KAKAO_IS_NEW_USER_KEY,
+            ]);
+            router.replace('/home');
+          },
+          onError: async () => {
+            await AsyncStorage.multiRemove([
+              KAKAO_FLOW_KEY,
+              KAKAO_PRELOGIN_DONE_KEY,
+              KAKAO_IS_NEW_USER_KEY,
+            ]);
+          },
+        });
+      })();
+
+      return () => {
+        cancelled = true;
+      };
+    }, [finalizeLogin, openSheet, router]),
+  );
 
   // 필수 항목 인덱스
   const essentialIdxs = useMemo(
@@ -102,38 +152,24 @@ export default function Index({ emergency }: { emergency?: string }) {
       prev.size === TERMS.length ? new Set() : new Set(TERMS.map((_, i) => i)),
     );
   };
-  const onPressSubmit = async () => {
-    await AsyncStorage.removeItem('pendingAgreement');
-    finalizeLogin(undefined, {
-      onSuccess: () => {
-        sheetRef.current?.close?.();
-        router.replace('/home');
-      },
-      onError: (err: any) => {
-        console.log('finalizeLogin error:', err);
-      },
-    });
-  };
+  // const onPressSubmit = async () => {
+  //   await AsyncStorage.removeItem('pendingAgreement');
+  //   finalizeLogin(undefined, {
+  //     onSuccess: async () => {
+  //       await AsyncStorage.multiRemove([
+  //         'kakao_flow',
+  //         'kakao_prelogin_done',
+  //         'kakao_is_new_user',
+  //       ]);
+  //       sheetRef.current?.close?.();
+  //       router.replace('/home');
+  //     },
+  //     onError: (err: any) => {
+  //       console.log('finalizeLogin error:', err);
+  //     },
+  //   });
+  // };
 
-  const onPressKakao = () => {
-    prelogin(undefined, {
-      onSuccess: (res) => {
-        if (res.is_new_user) {
-          openSheet();
-          return;
-        }
-
-        finalizeLogin(undefined, {
-          onSuccess: () => {
-            router.replace('/home');
-          },
-          onError: (err: any) => {
-            console.log('finalizeLogin error:', err);
-          },
-        });
-      },
-    });
-  };
   return (
     <SafeAreaView className='flex-1 bg-white'>
       <Stack.Screen options={{ headerShown: false }} />
@@ -159,7 +195,7 @@ export default function Index({ emergency }: { emergency?: string }) {
           </View>
 
           <View className=' w-full px-5 flex-col space-y-3'>
-            <KakaoLogin onPress={onPressKakao} />
+            <KakaoLoginButton />
 
             {isIOS && (
               <LoginButton
@@ -297,7 +333,6 @@ export default function Index({ emergency }: { emergency?: string }) {
           </View>
           <LongButton
             label='동의하고 계속하기'
-            onPress={onPressSubmit}
             disabled={!isEssentialChecked}
           />
         </View>

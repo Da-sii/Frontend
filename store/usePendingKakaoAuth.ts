@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 interface PendingKakaoAuth {
-  kakaoEmail: string | null;
+  kakaoEmail: string;
   kakaoAccessToken: string | null;
   kakaoRefreshToken: string | null;
   setPending: (v: Omit<PendingKakaoAuth, 'setPending' | 'clear'>) => void;
@@ -9,13 +9,13 @@ interface PendingKakaoAuth {
 }
 
 export const usePendingKakaoAuth = create<PendingKakaoAuth>((set) => ({
-  kakaoEmail: null,
+  kakaoEmail: '',
   kakaoAccessToken: null,
   kakaoRefreshToken: null,
   setPending: (v) => set(v),
   clear: () =>
     set({
-      kakaoEmail: null,
+      kakaoEmail: '',
       kakaoAccessToken: null,
       kakaoRefreshToken: null,
     }),
