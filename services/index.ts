@@ -31,7 +31,7 @@ let waitQueue: {
   reject: (e: any) => void;
 }[] = [];
 
-function flushQueue(token?: string, err?: any) {
+function flushQueue(token?: string, err?: unknown) {
   waitQueue.forEach((p) => (token ? p.resolve(token) : p.reject(err)));
   waitQueue = [];
 }
