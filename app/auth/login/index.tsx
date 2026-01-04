@@ -164,7 +164,7 @@ export default function Index({ emergency }: { emergency?: string }) {
   //       sheetRef.current?.close?.();
   //       router.replace('/home');
   //     },
-  //     onError: (err: any) => {
+  //     onError: (err: unknown) => {
   //       console.log('finalizeLogin error:', err);
   //     },
   //   });

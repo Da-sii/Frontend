@@ -46,7 +46,7 @@ export default function OAuth() {
         ]);
         router.replace('/home');
       },
-      onError: (err: any) => {
+      onError: (err: unknown) => {
         console.log('finalizeLogin error:', err);
         router.replace('/auth/login');
       },

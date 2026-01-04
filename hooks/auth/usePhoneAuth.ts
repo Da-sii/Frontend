@@ -19,7 +19,7 @@ export const useSendPhoneAuth = (opts?: {
     onSuccess: (data) => {
       opts?.onSuccess?.(data);
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       opts?.onError?.(err);
     },
   });
@@ -39,7 +39,7 @@ export const useVerifyAuthCode = (opts?: {
     onSuccess: (data) => {
       opts?.onSuccess?.(data);
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       opts?.onError?.(err);
     },
   });
@@ -55,7 +55,7 @@ export const useVerifyAuthToken = (opts?: {
     onSuccess: (data) => {
       opts?.onSuccess?.(data);
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       opts?.onError?.(err);
     },
   });
