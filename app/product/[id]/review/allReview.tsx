@@ -3,7 +3,7 @@ import StarIcon from '@/assets/icons/ic_star.svg';
 import ArrowDownIcon from '@/assets/icons/product/productDetail/ic_arrow_down.svg';
 import { ScrollToTopButton } from '@/components/common/buttons/ScrollToTopButton';
 import Navigation from '@/components/layout/Navigation';
-import BottomSheetLayout from '@/components/page/product/productDetail/BottomSeetLayout';
+import BottomSheetLayout from '@/components/page/product/productDetail/BottomSheet/BottomSheetLayout';
 import PhotoCard from '@/components/page/product/productDetail/PhotoCard';
 import ReviewItems from '@/components/page/product/productDetail/reviewItem';
 import colors from '@/constants/color';

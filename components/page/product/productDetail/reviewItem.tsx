@@ -16,7 +16,7 @@ import {
 import Svg, { Path } from 'react-native-svg';
 
 import { LongButton } from '@/components/common/buttons/LongButton';
-import BottomSheetLayout from '@/components/page/product/productDetail/BottomSeetLayout';
+import BottomSheetLayout from '@/components/page/product/productDetail/BottomSheet/BottomSheetLayout';
 import { useIsLoggedIn } from '@/hooks/auth/useIsLoggedIn';
 import { useReportReview } from '@/hooks/useReportReview';
 import { useUser } from '@/hooks/useUser';

@@ -5,7 +5,7 @@ import RightArrowIcon from '@/assets/icons/ic_arrow_right.svg';
 import { LongButton } from '@/components/common/buttons/LongButton';
 import { TextField } from '@/components/common/Inputs/TextField';
 import Navigation from '@/components/layout/Navigation';
-import BottomSheetLayout from '@/components/page/product/productDetail/BottomSeetLayout';
+import BottomSheetLayout from '@/components/page/product/productDetail/BottomSheet/BottomSheetLayout';
 import { useCheckEmailExists } from '@/hooks/auth/useCheckExistsEmail';
 
 import { HomeFooterModal } from '@/components/page/home/HomeFooterModal';
