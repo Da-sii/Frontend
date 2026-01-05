@@ -10,10 +10,6 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import {
-  getTrackingPermissionsAsync,
-  requestTrackingPermissionsAsync,
-} from 'expo-tracking-transparency';
 
 import { usePendingKakaoAuth } from '@/store/usePendingKakaoAuth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -139,25 +135,6 @@ function RootLayout() {
     };
 
     checkAppVersion();
-  }, []);
-
-  // 앱 추적 허용/거부 요청
-  useEffect(() => {
-    (async () => {
-      if (Platform.OS !== 'ios') {
-        // iOS 외 플랫폼은 바로 초기화(추적 개념 X)
-        await initSentry();
-        return;
-      }
-
-      const { status } = await getTrackingPermissionsAsync();
-      if (status === 'undetermined') {
-        const res = await requestTrackingPermissionsAsync();
-        if (res.status === 'granted') await initSentry();
-      } else if (status === 'granted') {
-        await initSentry();
-      }
-    })();
   }, []);
 
   const handleUpdatePress = () => {
