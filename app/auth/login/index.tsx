@@ -10,7 +10,7 @@ import { LongButton } from '@/components/common/buttons/LongButton';
 import Navigation from '@/components/layout/Navigation';
 import { HomeFooterModal } from '@/components/page/home/HomeFooterModal';
 import KakaoLoginButton from '@/components/page/login/kakaoLogin';
-import BottomSheetLayout from '@/components/page/product/productDetail/BottomSeetLayout';
+import BottomSheetLayout from '@/components/page/product/productDetail/BottomSheet/BottomSheetLayout';
 import { useKakaoLogin } from '@/hooks/auth/kakao/useKakaoLogin';
 import { useAppleLogin } from '@/hooks/auth/useAppleLogin';
 import BottomSheet from '@gorhom/bottom-sheet';
