@@ -23,6 +23,8 @@ export default function Mypage() {
 
   const [isLogin, setIsLogin] = useState(true);
 
+  const canChangePassword = mypageInfo?.login_type === 'email';
+
   const handleOAuthPasswordPress = () => {
     router.push('/mypage/password');
   };
@@ -70,6 +72,8 @@ export default function Mypage() {
     }, [fetchMypage]),
   );
 
+  console.log(mypageInfo?.login_type);
+
   return (
     <SafeAreaView className='flex-1 bg-white'>
       <Navigation title='마이페이지' />
@@ -89,10 +93,12 @@ export default function Mypage() {
                 label='아이디'
                 value={`${mypageInfo?.email} (${mypageInfo?.login_type} 로그인)`}
               />
-              <SettingItem
-                label='비밀번호 변경'
-                onPress={handleOAuthPasswordPress}
-              />
+              {canChangePassword && (
+                <SettingItem
+                  label='비밀번호 변경'
+                  onPress={handleOAuthPasswordPress}
+                />
+              )}
             </SettingSection>
 
             <SettingSection title='리뷰' topBorder>
