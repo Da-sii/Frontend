@@ -8,23 +8,41 @@ export default function KakaoLoginButton() {
   const setPending = usePendingKakaoAuth((s) => s.setPending);
 
   const onPressKakao = async () => {
-    const talkAvailable = await isKakaoTalkLoginAvailable();
+    try {
+      const talkAvailable = await isKakaoTalkLoginAvailable();
 
-    const kakao = await login({
-      useKakaoAccountLogin: talkAvailable ? false : true,
-    });
+      const kakao = await login({
+        useKakaoAccountLogin: talkAvailable ? false : true,
+      });
 
-    if (!kakao.accessToken) throw new Error('카카오 로그인에 실패했어요.');
+      if (!kakao.accessToken) throw new Error('카카오 로그인에 실패했어요.');
 
-    const user = await me();
+      const user = await me();
 
-    setPending({
-      kakaoEmail: user.email,
-      kakaoAccessToken: kakao.accessToken,
-      kakaoRefreshToken: kakao.refreshToken ?? null,
-    });
+      setPending({
+        kakaoEmail: user.email,
+        kakaoAccessToken: kakao.accessToken,
+        kakaoRefreshToken: kakao.refreshToken ?? null,
+      });
 
-    router.replace('/oauth');
+      router.replace('/oauth');
+    } catch (e: any) {
+      // ✅ 유저 취소 케이스: 조용히 종료
+      const msg = String(e?.message ?? '');
+      const code = String(e?.code ?? '');
+
+      if (
+        msg.includes('canceled by user') ||
+        msg.includes('cancelled') ||
+        code === 'E_CANCELLED_OPERATION'
+      ) {
+        return;
+      }
+
+      // ❗ 그 외는 진짜 에러
+      console.error('Kakao login failed:', e);
+      // Alert.alert('로그인 실패', '카카오 로그인 중 오류가 발생했어요.');
+    }
   };
 
   return (
