@@ -1,6 +1,7 @@
 import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
 import PhotoCameraIcon from '@/assets/icons/product/review/ic_blue_camera.svg';
 import { LongButton } from '@/components/common/buttons/LongButton';
+import LoadingSpinner from '@/components/common/LoadingSpinner/LoadingSpinner';
 import DefaultModal from '@/components/common/modals/DefaultModal';
 import Navigation from '@/components/layout/Navigation';
 import ReviewStar from '@/components/page/product/productDetail/ReviewStar';
@@ -139,6 +140,8 @@ export default function ReviewWritePage() {
   const { upload, isUploading } = useReviewImageUpload();
   const { mutateAsync: editReviewMutate, isPending: isUpdating } =
     useEditMyReview(reviewIdNum, { productId: productIdNum });
+
+  const isLoading = isUpdating || isUploading || isPending;
 
   const isReviewValid = (text: string) => text.trim().length >= 20;
   const canSubmit =
@@ -310,7 +313,6 @@ export default function ReviewWritePage() {
     setShowMinError(!isReviewValid(review));
   };
 
-  console.log('image', image);
   return (
     // <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
     <SafeAreaView className='flex-1 bg-white'>
@@ -542,12 +544,12 @@ export default function ReviewWritePage() {
           </View>
           <View className='mb-7 mt-[59px]'>
             <LongButton
-              label={isEdit ? '리뷰 수정하기' : '리뷰 등록하기'}
+              label={isEdit ? '리뷰 수정' : '리뷰 등록'}
               onPress={() => {
                 forceBlurCheck();
                 onSubmit();
               }}
-              disabled={!canSubmit || isPending || isUpdating || isUploading}
+              disabled={!canSubmit || isLoading}
             />
           </View>
           <DefaultModal
@@ -559,6 +561,24 @@ export default function ReviewWritePage() {
           />
         </ScrollView>
       </KeyboardAvoidingView>
+      {isLoading && (
+        <View
+          pointerEvents='auto'
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(255,255,255,0.7)',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 999,
+          }}
+        >
+          <LoadingSpinner />
+        </View>
+      )}
     </SafeAreaView>
     // </TouchableWithoutFeedback>
   );
