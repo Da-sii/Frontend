@@ -47,6 +47,7 @@ export default function SearchBar({
   };
 
   const handleRecentSearchPress = (search: string) => {
+    setIsFocused(false); // 여기서 닫기
     inputRef.current?.blur();
     onRecentSearchPress?.(search);
   };
@@ -73,7 +74,6 @@ export default function SearchBar({
               LayoutAnimation.configureNext(
                 LayoutAnimation.Presets.easeInEaseOut,
               );
-              setIsFocused(false);
               onBlur?.();
             }}
             autoFocus={true}
@@ -124,21 +124,20 @@ export default function SearchBar({
                 ItemSeparatorComponent={() => <View style={{ width: 8 }} />}
                 contentContainerStyle={{ paddingVertical: 4 }}
                 renderItem={({ item }) => (
-                  <Pressable
-                    onPress={() => handleRecentSearchPress(item)}
-                    className='flex-row items-center bg-white border-[0.5px] border-gray-200 rounded-full pl-4 pr-2 py-1'
-                  >
-                    <Text
-                      className='flex-1 text-sm text-gray-900'
-                      numberOfLines={1}
+                  <View className='flex-row items-center bg-white border-[0.5px] border-gray-200 rounded-full pl-4 pr-2 py-1'>
+                    <Pressable
+                      onPress={() => handleRecentSearchPress(item)}
+                      className='flex-1'
                     >
-                      {item}
-                    </Text>
+                      <Text className='text-sm text-gray-900' numberOfLines={1}>
+                        {item}
+                      </Text>
+                    </Pressable>
 
                     <Pressable
                       onPress={() => onRemoveRecentSearch?.(item)}
                       className='p-1 ml-2 mr-1'
-                      onPressIn={(e) => e.stopPropagation()}
+                      hitSlop={8}
                     >
                       <CloseIcon
                         width={16}
@@ -146,7 +145,7 @@ export default function SearchBar({
                         color={colors.gray[700]}
                       />
                     </Pressable>
-                  </Pressable>
+                  </View>
                 )}
               />
             </View>
