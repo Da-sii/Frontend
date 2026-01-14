@@ -398,8 +398,8 @@ export default function ReviewItems({
           setIsBlockModalVisible(false);
         }}
         title='해당 리뷰를 차단하시겠습니까?'
-        message={`해당 유저가 작성한 모든 리뷰를 \n 더 이상 확인할 수 없습니다.`}
-        confirmText='확인'
+        message={`이 리뷰는 더이상 표시되지 않으며, \n차단한 리뷰는 다시 확인할 수 없습니다.`}
+        confirmText='차단하기'
         cancelText='취소'
       />
     </View>
