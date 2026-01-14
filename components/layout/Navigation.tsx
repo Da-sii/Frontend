@@ -44,6 +44,7 @@ export default function Navigation({
       <Pressable
         onPress={onRightPress}
         className='p-1 flex-row items-center gap-6'
+        hitSlop={8}
       >
         {right || <Text></Text>}
         {secondRight && (secondRight || <Text></Text>)}
