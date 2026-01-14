@@ -137,6 +137,17 @@ function RootLayout() {
     checkAppVersion();
   }, []);
 
+  // 앱 추적 허용/거부 요청
+  useEffect(() => {
+    void (async () => {
+      try {
+        await initSentry();
+      } catch (e) {
+        console.log('initSentry failed', e);
+      }
+    })();
+  }, []);
+
   const handleUpdatePress = () => {
     if (storeUrl) Linking.openURL(storeUrl);
   };
