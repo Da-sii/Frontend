@@ -34,9 +34,13 @@ jobs:
       # ✅ 태그에서 버전 뽑기: android-v1.2.0 -> 1.2.0
       - name: Extract version from tag
         run: |
-          TAG="${GITHUB_REF_NAME}"
-          echo "CI_VERSION_NAME=${TAG#android-v}" >> $GITHUB_ENV
-          echo "CI_VERSION_CODE=${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
+          TAG="${GITHUB_REF_NAME}"                 # android-v1.2.0+11
+          VERSION_WITH_CODE="${TAG#android-v}"     # 1.2.0+11
+          VERSION_NAME="${VERSION_WITH_CODE%%+*}"  # 1.2.0
+          VERSION_CODE="${VERSION_WITH_CODE##*+}"  # 11
+
+          echo "CI_VERSION_NAME=$VERSION_NAME" >> $GITHUB_ENV
+          echo "CI_VERSION_CODE=$VERSION_CODE" >> $GITHUB_ENV
 
       # ✅ keystore 생성
       - name: Decode keystore
