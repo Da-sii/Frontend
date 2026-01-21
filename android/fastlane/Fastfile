@@ -6,7 +6,6 @@ platform :android do
     version_name = ENV["CI_VERSION_NAME"]
     version_code = ENV["CI_VERSION_CODE"]
 
-    # ✅ 여기서 -P로 VERSION_NAME / VERSION_CODE 주입
     gradle(
       task: "bundle",
       build_type: "Release",
@@ -16,11 +15,15 @@ platform :android do
       }
     )
 
+    aab_path = lane_context[SharedValues::GRADLE_AAB_OUTPUT_PATH] || lane_context[SharedValues::GRADLE_ALL_AAB_OUTPUT_PATHS]&.first
+
+    UI.user_error!("AAB 경로를 찾지 못했어요. GRADLE_*_AAB_OUTPUT_PATHS 확인 필요") unless aab_path
+
     # ✅ Play 업로드
     upload_to_play_store(
       package_name: "com.dasii",
       track: "internal",
-      aab: "../app/build/outputs/bundle/release/app-release.aab",
+      aab: aab_path,
       json_key_data: ENV["SUPPLY_JSON_KEY_DATA"],
       skip_upload_images: true,
       skip_upload_screenshots: true
