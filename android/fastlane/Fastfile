@@ -1,0 +1,29 @@
+default_platform(:android)
+
+platform :android do
+  desc "Build AAB and upload to Google Play internal track"
+  lane :internal do
+    version_name = ENV["CI_VERSION_NAME"]
+    version_code = ENV["CI_VERSION_CODE"]
+
+    # ✅ 여기서 -P로 VERSION_NAME / VERSION_CODE 주입
+    gradle(
+      task: "bundle",
+      build_type: "Release",
+      properties: {
+        "VERSION_NAME" => version_name,
+        "VERSION_CODE" => version_code
+      }
+    )
+
+    # ✅ Play 업로드
+    upload_to_play_store(
+      package_name: "com.dasii",
+      track: "internal",
+      aab: "../app/build/outputs/bundle/release/app-release.aab",
+      json_key_data: ENV["SUPPLY_JSON_KEY_DATA"],
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+end
