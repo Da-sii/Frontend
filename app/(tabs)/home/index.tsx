@@ -25,7 +25,10 @@ export default function Home() {
 
           <View className='flex-row'>
             <View className='flex-row'>
-              <Pressable onPress={() => router.push('/home/search')}>
+              <Pressable
+                hitSlop={8}
+                onPress={() => router.push('/home/search')}
+              >
                 <MagnifierIcon color={colors.gray[900]} />
               </Pressable>
             </View>
@@ -46,14 +49,17 @@ export default function Home() {
         <View className='mt-2 mb-12'>
           <View className='mx-6 flex-row justify-between items-center'>
             <Text className='text-base font-n-bd'>현재 급상승 랭킹</Text>
-            <GoRankingIcon
+            <Pressable
+              hitSlop={8}
               onPress={() =>
                 router.push({
                   pathname: '/(tabs)/home/ranking',
                   params: { initialTab: 'daily' },
                 })
               }
-            />
+            >
+              <GoRankingIcon />
+            </Pressable>
           </View>
 
           <ProductRankingCarousel

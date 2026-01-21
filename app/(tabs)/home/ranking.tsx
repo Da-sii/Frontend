@@ -124,7 +124,7 @@ export default function Ranking() {
       <Navigation
         title='랭킹'
         left={<ArrowLeftIcon width={20} height={20} fill={colors.gray[900]} />}
-        onLeftPress={() => router.push('/(tabs)/home')}
+        onLeftPress={() => router.back()}
         right={<SearchIcon width={20} height={20} fill={colors.gray[900]} />}
         onRightPress={() => router.push('/home/search')}
       />

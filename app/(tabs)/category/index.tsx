@@ -94,12 +94,12 @@ export default function Category() {
             <Pressable
               key={cat}
               onPress={() => setSelectedBigCategory(cat)}
-              className={`items-start py-4 ${
+              className={`items-start py-[16px] ${
                 selectedBigCategory === cat ? 'bg-white' : 'bg-gray-100'
               }`}
             >
               <Text
-                className={`text-md pl-3 pr-3 ${
+                className={`text-sm pl-3 pr-3 ${
                   selectedBigCategory === cat
                     ? 'text-gray-900 font-n-bd'
                     : 'text-gray-400 font-n-bd'
@@ -113,29 +113,29 @@ export default function Category() {
         </ScrollView>
 
         <View className='flex-1'>
-          <View className='flex-row justify-between items-center px-4 pt-2 pb-1'>
-            <Text className='text-lg font-n-bd text-gray-900'>
+          <Pressable
+            className='flex-row justify-between items-center px-4 pt-[15px] pb-[17px]'
+            onPress={() => goToList()}
+          >
+            <Text className='text-md font-n-bd text-gray-900'>
               {selectedBigCategory}
             </Text>
-            <Pressable
-              onPress={() => goToList()}
-              className='flex-row items-center pr-1'
-            >
+            <View className='flex-row items-center'>
               <ViewAllIcon width={13} height={13} color={colors.gray[900]} />
-            </Pressable>
-          </View>
+            </View>
+          </Pressable>
 
           <FlatList
             data={subCategoriesMap[selectedBigCategory] || []}
             keyExtractor={(item) => item}
             renderItem={({ item }) => (
               <Pressable
-                className='py-2.5 px-4'
+                className='py-2 px-4'
                 onPress={() => {
                   goToList(item);
                 }}
               >
-                <Text className='text-sm text-gray-900 font-n-bd'>{item}</Text>
+                <Text className='text-c1 text-gray-900 font-n-bd'>{item}</Text>
               </Pressable>
             )}
             showsVerticalScrollIndicator={false}
