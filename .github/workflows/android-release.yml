@@ -43,15 +43,14 @@ jobs:
         env:
           KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
         run: |
-          mkdir -p android/keystore
-          echo "$KEYSTORE_BASE64" | base64 --decode > android/keystore/release.jks
+          echo "$KEYSTORE_BASE64" | base64 --decode > android/app/dasii-release-key.keystore
 
       # ✅ build.gradle의 signingConfigs.release는 "project.hasProperty(MYAPP_...)"로 읽으니까
       #    gradle.properties를 런타임에 만들어서 주입해줌
       - name: Create android/gradle.properties for signing
         run: |
           cat >> android/gradle.properties << 'EOF'
-          MYAPP_RELEASE_STORE_FILE=keystore/release.jks
+          MYAPP_RELEASE_STORE_FILE=dasii-release-key.keystore
           MYAPP_RELEASE_STORE_PASSWORD=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           MYAPP_RELEASE_KEY_ALIAS=${{ secrets.ANDROID_KEY_ALIAS }}
           MYAPP_RELEASE_KEY_PASSWORD=${{ secrets.ANDROID_KEY_PASSWORD }}
