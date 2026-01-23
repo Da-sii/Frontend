@@ -6,6 +6,7 @@ import { SettingSection } from '@/components/page/my/SettingSection';
 import { useLogout } from '@/hooks/useLogout';
 import { useUser } from '@/hooks/useUser';
 import { clearTokens, getAccessToken } from '@/lib/authToken';
+import Constants from 'expo-constants';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { ScrollView } from 'react-native';
@@ -110,7 +111,10 @@ export default function Mypage() {
             </SettingSection>
 
             <SettingSection title='도움말' topBorder>
-              <SettingItem label='버전 정보' value='V 1.0.4' />
+              <SettingItem
+                label='버전 정보'
+                value={`V ${Constants.expoConfig?.version || '1.0.0'}`}
+              />
               {/* <Pressable
                 onPress={() =>
                   handleEmailCopiedPress('podostore1111@gmail.com')
@@ -135,7 +139,10 @@ export default function Mypage() {
             </SettingSection>
 
             <SettingSection title='도움말' topBorder>
-              <SettingItem label='버전 정보' value='V 1.0.4' />
+              <SettingItem
+                label='버전 정보'
+                value={`V ${Constants.expoConfig?.version || '1.0.0'}`}
+              />
               {/* <Pressable
                 onPress={() =>
                   handleEmailCopiedPress('podostore1111@gmail.com')
