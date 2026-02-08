@@ -1,3 +1,4 @@
+import React from 'react';
 import { Modal, Text, TouchableOpacity, View } from 'react-native';
 
 type DefaultModalProps = {
@@ -8,8 +9,10 @@ type DefaultModalProps = {
   onCancel?: () => void;
   confirmText?: string;
   cancelText?: string;
+  children?: React.ReactNode;
   singleButton?: boolean;
   secondMessage?: string;
+  confirmDisabled?: boolean;
 };
 
 export default function DefaultModal({
@@ -20,8 +23,10 @@ export default function DefaultModal({
   onCancel,
   confirmText = '확인',
   cancelText = '취소',
+  children,
   singleButton = false,
   secondMessage,
+  confirmDisabled = false,
 }: DefaultModalProps) {
   return (
     <Modal
@@ -49,6 +54,7 @@ export default function DefaultModal({
               {secondMessage}
             </Text>
           )}
+          {children && <View className='w-full'>{children}</View>}
           <View
             className={
               singleButton
@@ -71,8 +77,13 @@ export default function DefaultModal({
               className='flex-1 py-[15px] items-center justify-center active:bg-gray-100 overflow-hidden'
               onPress={onConfirm}
               activeOpacity={0.7}
+              disabled={confirmDisabled}
             >
-              <Text className='text-b-md text-green-600 font-n-bd'>
+              <Text
+                className={`text-b-md font-n-bd ${
+                  confirmDisabled ? 'text-gray-400' : 'text-green-600'
+                }`}
+              >
                 {confirmText}
               </Text>
             </TouchableOpacity>
