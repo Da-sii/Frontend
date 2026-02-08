@@ -226,7 +226,7 @@ export default function Mypage() {
         confirmText='확인'
         singleButton
       >
-        <Text className='text-center text-gray-900 font-n-bd text-b-sm'>
+        <Text className='text-center  font-n-bd text-b-sm'>
           {`제품 추가 요청이 완료되었습니다!\n검토 후 순차적으로 반영될 예정입니다.`}
         </Text>
       </DefaultModal>
