@@ -1,6 +1,12 @@
 import DefaultModal from '@/components/common/modals/DefaultModal';
 import { getAccessToken } from '@/lib/authToken';
+import { usePendingKakaoAuth } from '@/store/usePendingKakaoAuth';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  getKeyHashAndroid,
+  initializeKakaoSDK,
+} from '@react-native-kakao/core';
 import { unlink } from '@react-native-kakao/user';
 import * as Sentry from '@sentry/react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -10,13 +16,10 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-
-import { usePendingKakaoAuth } from '@/store/usePendingKakaoAuth';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
-  getKeyHashAndroid,
-  initializeKakaoSDK,
-} from '@react-native-kakao/core';
+  getTrackingPermissionsAsync,
+  requestTrackingPermissionsAsync,
+} from 'expo-tracking-transparency';
 import { useCallback, useEffect, useState } from 'react';
 import { Linking, Platform } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -139,13 +142,22 @@ function RootLayout() {
 
   // 앱 추적 허용/거부 요청
   useEffect(() => {
-    void (async () => {
-      try {
+    if (Platform.OS !== 'ios') {
+      initSentry();
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      const { status } = await getTrackingPermissionsAsync();
+      if (status === 'undetermined') {
+        const res = await requestTrackingPermissionsAsync();
+        if (res.status === 'granted') await initSentry();
+      } else if (status === 'granted') {
         await initSentry();
-      } catch (e) {
-        console.log('initSentry failed', e);
       }
-    })();
+    }, 1500);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const handleUpdatePress = () => {
