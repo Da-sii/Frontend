@@ -7,8 +7,9 @@ import { LongButton } from '@/components/common/buttons/LongButton';
 import Navigation from '@/components/layout/Navigation';
 import { HomeFooterModal } from '@/components/page/home/HomeFooterModal';
 import { useKakaoLogin } from '@/hooks/auth/kakao/useKakaoLogin';
+import { patchTermsAgreed } from '@/services/auth/terms';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Stack, useRouter } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -27,18 +28,40 @@ const ESSENTIAL_IDXS = TERMS.map((t, i) => (t.essential ? i : -1)).filter(
   (i) => i !== -1,
 );
 export default function OAuth() {
+  const { mode } = useLocalSearchParams<{ mode?: string }>();
+  const isGateMode = mode === 'terms';
   const router = useRouter();
   const [checkedSet, setCheckedSet] = useState<Set<number>>(new Set());
   const [isTermsModalVisible, setIsTermsModalVisible] = useState(false);
   const [selectedTerm, setSelectedTerm] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
+  const [isNewUser, setIsNewUser] = useState(false);
+
   const { kakaoAccessToken, kakaoRefreshToken, kakaoEmail, clear } =
     usePendingKakaoAuth();
   const { mutate: finalizeLogin } = useKakaoLogin();
 
+  useEffect(() => {
+    if (isGateMode) {
+      setIsLoading(false);
+      return;
+    }
+    // 기존 kakaoAccessToken 기반 로직
+  }, [isGateMode, kakaoAccessToken, kakaoEmail]);
+
   const goFinalizeLogin = () => {
     finalizeLogin(undefined, {
       onSuccess: async () => {
+        try {
+          // ✅ 신규 유저만 동의 저장
+          if (isNewUser) await patchTermsAgreed({ is_terms_agreed: true });
+        } catch (e) {
+          // 로그아웃
+          // 회원 탈퇴
+          router.replace('/auth/login');
+          console.log('terms patch error:', e);
+        }
+
         clear();
         await AsyncStorage.multiRemove([
           'kakao_flow',
@@ -69,7 +92,8 @@ export default function OAuth() {
         if (cancelled) return;
 
         if (res.is_new_user) {
-          setIsLoading(false); // ✅ 신규 유저만 약관 UI 노출
+          setIsNewUser(true);
+          setIsLoading(false);
           return;
         }
 
@@ -118,6 +142,19 @@ export default function OAuth() {
 
   const onPressSubmit = async () => {
     await AsyncStorage.removeItem('pendingAgreement');
+    // ✅ 이미 로그인된 상태에서 약관만 저장하는 케이스
+    if (isGateMode) {
+      try {
+        await patchTermsAgreed({ is_terms_agreed: true });
+        router.replace('/home');
+      } catch (e) {
+        console.log('terms patch error:', e);
+        router.replace('/auth/login');
+      }
+      return;
+    }
+
+    // ✅ 소셜 로그인 플로우(신규 유저)
     goFinalizeLogin();
   };
 
@@ -128,7 +165,6 @@ export default function OAuth() {
       <View className='flex-1'>
         <View className='flex-col justify-between flex-1 px-5'>
           <View>
-            {' '}
             <Pressable
               onPress={toggleAll}
               className='flex-row items-center mb-[28px] '

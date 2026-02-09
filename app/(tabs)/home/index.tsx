@@ -5,10 +5,10 @@ import BannerCarousel from '@/components/page/home/BannerCarousel';
 import HomeFooter from '@/components/page/home/HomeFooter';
 import ProductRankingCarousel from '@/components/page/home/ProductRankingCarousel';
 import TagsView from '@/components/page/home/TagsView';
-import { useFetchMainScreenQuery } from '@/hooks/useProductQueries';
-
 import { bannerData } from '@/constants/banner';
-import { router } from 'expo-router';
+import { useFetchMainScreenQuery } from '@/hooks/useProductQueries';
+import { router, usePathname } from 'expo-router';
+import { useEffect } from 'react';
 
 import colors from '@/constants/color';
 import { Pressable, ScrollView, Text, View } from 'react-native';
@@ -16,11 +16,25 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Home() {
   const { data: mainScreenInfo, isLoading } = useFetchMainScreenQuery();
+  const isTermsAgreed = mainScreenInfo?.user?.isTermsAgreed;
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (isLoading) return;
+    if (!mainScreenInfo) return;
+
+    // 이미 약관 화면이면 스킵(루프 방지)
+    if (pathname?.includes('/oauth')) return;
+
+    if (isTermsAgreed === false) {
+      router.replace({ pathname: '/oauth', params: { mode: 'terms' } }); // 약관 동의 화면 라우트로
+    }
+  }, [isLoading, mainScreenInfo, isTermsAgreed, pathname]);
 
   return (
-    <SafeAreaView className='bg-white flex-1' edges={['top']}>
+    <SafeAreaView className='flex-1 bg-white' edges={['top']}>
       <ScrollView className='flex-1'>
-        <View className='flex-row justify-between items-center px-6 pt-4'>
+        <View className='flex-row items-center justify-between px-6 pt-4'>
           <LogoIcon width={80} height={30} />
 
           <View className='flex-row'>
@@ -47,7 +61,7 @@ export default function Home() {
         </View>
 
         <View className='mt-2 mb-12'>
-          <View className='mx-6 flex-row justify-between items-center'>
+          <View className='flex-row items-center justify-between mx-6'>
             <Text className='text-base font-n-bd'>현재 급상승 랭킹</Text>
             <Pressable
               hitSlop={8}
