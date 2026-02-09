@@ -4,7 +4,8 @@ import CircleCheckGrayIcon from '@/assets/icons/auth/ic_circle_check_gray.svg';
 import CircleCheckGreenIcon from '@/assets/icons/auth/ic_circle_check_green.svg';
 import RightArrowIcon from '@/assets/icons/ic_arrow_right.svg';
 import { LongButton } from '@/components/common/buttons/LongButton';
-import { HomeFooterModal } from '@/components/page/login/home/HomeFooterModal';
+import Navigation from '@/components/layout/Navigation';
+import { HomeFooterModal } from '@/components/page/home/HomeFooterModal';
 import { useKakaoLogin } from '@/hooks/auth/kakao/useKakaoLogin';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Stack, useRouter } from 'expo-router';
@@ -87,7 +88,7 @@ export default function OAuth() {
 
   if (isLoading) {
     return (
-      <View className='flex-1 items-center justify-center'>
+      <View className='items-center justify-center flex-1'>
         <Text></Text>
       </View>
     );
@@ -123,92 +124,91 @@ export default function OAuth() {
   return (
     <SafeAreaView className='flex-1 bg-white'>
       <Stack.Screen options={{ headerShown: false }} />
-      <View>
-        {/* <Text>oauth 페이지 입니다</Text>
-      <Text>kakaoAccessToken : {kakaoAccessToken}</Text>
-      <Text>kakaoRefreshToken : {kakaoRefreshToken}</Text>
-      <Text>kakaoEmail : {kakaoEmail}</Text> */}
+      <Navigation title='서비스 이용 약관' />
+      <View className='flex-1'>
+        <View className='flex-col justify-between flex-1 px-5'>
+          <View>
+            {' '}
+            <Pressable
+              onPress={toggleAll}
+              className='flex-row items-center mb-[28px] '
+              hitSlop={8}
+            >
+              {isAllChecked ? (
+                <CircleCheckGreenIcon className='mr-[11px]' />
+              ) : (
+                <CircleCheckGrayIcon className='mr-[11px]' />
+              )}
 
-        <View className='px-5 pt-[30px] pb-[45px]'>
-          <Pressable
-            onPress={toggleAll}
-            className='flex-row items-center mb-[28px] '
-            hitSlop={8}
-          >
-            {isAllChecked ? (
-              <CircleCheckGreenIcon className='mr-[11px]' />
-            ) : (
-              <CircleCheckGrayIcon className='mr-[11px]' />
-            )}
-
-            <Text className='text-b-md font-n-eb text-gray-700 items-center'>
-              서비스 이용 약관 동의(전체)
-            </Text>
-          </Pressable>
-
-          <View className='gap-y-[25px] mb-[25px]'>
-            {TERMS.map(({ id, terms, essential }, idx) => {
-              const checked = checkedSet.has(idx);
-              return (
-                <View
-                  key={idx}
-                  className='flex-row items-center justify-between'
-                >
-                  <Pressable
-                    onPress={() => toggleItem(idx)}
-                    className='flex-row items-center '
-                    hitSlop={8}
+              <Text className='items-center text-gray-700 text-b-lg font-n-eb'>
+                서비스 이용 약관 동의(전체)
+              </Text>
+            </Pressable>
+            <View className='gap-y-[25px] mb-[25px]'>
+              {TERMS.map(({ id, terms, essential }, idx) => {
+                const checked = checkedSet.has(idx);
+                return (
+                  <View
+                    key={idx}
+                    className='flex-row items-center justify-between'
                   >
-                    <Svg
-                      width={18}
-                      height={18}
-                      viewBox='0 0 18 18'
-                      fill='none'
-                      className='mr-[13px]'
+                    <Pressable
+                      onPress={() => toggleItem(idx)}
+                      className='flex-row items-center '
+                      hitSlop={8}
                     >
-                      <Path
-                        d='M16.5 4.5L6.5 15L1.5 9'
-                        stroke={checked ? '#50D88F' : '#C9CDD2'}
-                        strokeWidth={1.5}
-                        strokeLinecap='round'
-                        strokeLinejoin='round'
-                      />
-                    </Svg>
-                    {essential ? (
-                      <Text
-                        className={`text-b-sm font-n-bd text-gray-400 ${checked ? 'text-gray-700' : 'text-gray-400'}`}
+                      <Svg
+                        width={18}
+                        height={18}
+                        viewBox='0 0 18 18'
+                        fill='none'
+                        className='mr-[13px]'
                       >
-                        [필수]
-                      </Text>
-                    ) : (
+                        <Path
+                          d='M16.5 4.5L6.5 15L1.5 9'
+                          stroke={checked ? '#50D88F' : '#C9CDD2'}
+                          strokeWidth={1.5}
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                        />
+                      </Svg>
+                      {essential ? (
+                        <Text
+                          className={`text-b-sm font-n-bd text-gray-400 ${checked ? 'text-gray-700' : 'text-gray-400'}`}
+                        >
+                          [필수]
+                        </Text>
+                      ) : (
+                        <Text
+                          className={`text-b-sm font-n-bd text-gray-400 ${checked ? 'text-gray-700' : 'text-gray-400'}`}
+                        >
+                          [선택]
+                        </Text>
+                      )}
                       <Text
-                        className={`text-b-sm font-n-bd text-gray-400 ${checked ? 'text-gray-700' : 'text-gray-400'}`}
+                        className={`ml-[2px] font-n-bd text-b-sm ${
+                          !checked && 'text-b-sm text-gray-400'
+                        }`}
                       >
-                        [선택]
+                        {terms}
                       </Text>
-                    )}
-                    <Text
-                      className={`ml-[2px] font-n-bd text-b-sm ${
-                        !checked && 'text-b-sm text-gray-400'
-                      }`}
+                    </Pressable>
+                    <Pressable
+                      onPress={() => {
+                        setIsTermsModalVisible(true);
+                        setSelectedTerm(id);
+                      }}
                     >
-                      {terms}
-                    </Text>
-                  </Pressable>
-                  <Pressable
-                    onPress={() => {
-                      setIsTermsModalVisible(true);
-                      setSelectedTerm(id);
-                    }}
-                  >
-                    <RightArrowIcon />
-                  </Pressable>
-                </View>
-              );
-            })}
+                      <RightArrowIcon />
+                    </Pressable>
+                  </View>
+                );
+              })}
+            </View>
           </View>
+
           <LongButton
-            label='동의하고 계속하기'
+            label='동의하고 로그인'
             onPress={onPressSubmit}
             disabled={!isEssentialChecked}
           />
