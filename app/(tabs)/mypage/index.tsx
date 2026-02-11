@@ -4,6 +4,7 @@ import Navigation from '@/components/layout/Navigation';
 import ProductRequestModal from '@/components/page/my/ProductRequestModal';
 import { SettingItem } from '@/components/page/my/SettingItem';
 import { SettingSection } from '@/components/page/my/SettingSection';
+import { useCreateProductRequest } from '@/hooks/useCreateProductRequest';
 import { useLogout } from '@/hooks/useLogout';
 import { useUser } from '@/hooks/useUser';
 import { clearTokens, getAccessToken } from '@/lib/authToken';
@@ -38,6 +39,13 @@ export default function Mypage() {
     setShowPasswordModal(false);
   };
 
+  const { mutate: createProductRequest, isPending } = useCreateProductRequest({
+    onSuccess: () => {
+      setShowAddProductReqModal(false);
+      setProductRequest('');
+      setShowRequestSentModal(true);
+    },
+  });
   const handleAddProductReq = () => {
     setShowAddProductReqModal(true);
   };
@@ -163,16 +171,15 @@ export default function Mypage() {
         value={productRequest}
         onChange={setProductRequest}
         onCancel={() => {
+          if (isPending) return; // 요청 중 닫힘 방지
           setShowAddProductReqModal(false);
           setProductRequest('');
         }}
         onConfirm={() => {
-          // TODO: API 연동 위치
-          console.log('요청 내용:', productRequest);
-
-          setShowAddProductReqModal(false);
-          setProductRequest('');
-          setShowRequestSentModal(true);
+          if (!productRequest.trim()) return;
+          createProductRequest({
+            content: productRequest, // ← 백엔드 모델의 content 필드
+          });
         }}
       />
 
