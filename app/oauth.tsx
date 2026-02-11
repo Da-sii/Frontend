@@ -4,7 +4,7 @@ import CircleCheckGrayIcon from '@/assets/icons/auth/ic_circle_check_gray.svg';
 import CircleCheckGreenIcon from '@/assets/icons/auth/ic_circle_check_green.svg';
 import RightArrowIcon from '@/assets/icons/ic_arrow_right.svg';
 import { LongButton } from '@/components/common/buttons/LongButton';
-import { HomeFooterModal } from '@/components/page/login/home/HomeFooterModal';
+import { HomeFooterModal } from '@/components/page/home/HomeFooterModal';
 import { useKakaoLogin } from '@/hooks/auth/kakao/useKakaoLogin';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Stack, useRouter } from 'expo-router';
