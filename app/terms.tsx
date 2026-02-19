@@ -2,10 +2,14 @@
 
 import CircleCheckGrayIcon from '@/assets/icons/auth/ic_circle_check_gray.svg';
 import CircleCheckGreenIcon from '@/assets/icons/auth/ic_circle_check_green.svg';
+import ArrowLeftIcon from '@/assets/icons/ic_arrow_left.svg';
 import RightArrowIcon from '@/assets/icons/ic_arrow_right.svg';
 import { LongButton } from '@/components/common/buttons/LongButton';
 import Navigation from '@/components/layout/Navigation';
 import { HomeFooterModal } from '@/components/page/home/HomeFooterModal';
+import { useLogout } from '@/hooks/useLogout';
+import { useUser } from '@/hooks/useUser';
+import { clearTokens } from '@/lib/authToken';
 import { patchTermsAgreed } from '@/services/auth/terms';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useQueryClient } from '@tanstack/react-query';
@@ -26,7 +30,8 @@ const TERMS: { id: string; terms: string; essential: boolean }[] = [
 export default function Terms() {
   const router = useRouter();
   const { mode } = useLocalSearchParams<{ mode?: string }>(); // mode='terms' 로 들어올 수 있음
-
+  const logout = useLogout();
+  const { deleteUser } = useUser();
   const [checkedSet, setCheckedSet] = useState<Set<number>>(new Set());
   const [isTermsModalVisible, setIsTermsModalVisible] = useState(false);
   const [selectedTerm, setSelectedTerm] = useState<string>('');
@@ -81,10 +86,27 @@ export default function Terms() {
     }
   };
 
+  const handleExit = async () => {
+    try {
+      // 회원탈퇴 API 호출
+      await deleteUser();
+      await clearTokens(); // DELETE /auth/user 등
+
+      router.replace('/auth/login');
+    } catch (e) {
+      console.log('회원탈퇴 실패:', e);
+    }
+  };
   return (
     <SafeAreaView className='flex-1 bg-white'>
       <Stack.Screen options={{ headerShown: false }} />
-      <Navigation title='서비스 이용 약관' />
+      <Navigation
+        title='서비스 이용 약관'
+        left={<ArrowLeftIcon width={20} height={20} />}
+        onLeftPress={() => {
+          handleExit();
+        }}
+      />
       <View className='flex-1'>
         <View className='flex-col justify-between flex-1 px-5'>
           <View>
