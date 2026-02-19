@@ -24,10 +24,11 @@ export default function Home() {
     if (!mainScreenInfo) return;
 
     // 이미 약관 화면이면 스킵(루프 방지)
-    if (pathname?.includes('/oauth')) return;
+    if (pathname?.includes('/terms')) return;
 
+    // ✅ 약관 미동의인 경우에만 강제 이동
     if (isTermsAgreed === false) {
-      router.replace({ pathname: '/oauth', params: { mode: 'terms' } }); // 약관 동의 화면 라우트로
+      router.replace({ pathname: '/terms', params: { mode: 'terms' } });
     }
   }, [isLoading, mainScreenInfo, isTermsAgreed, pathname]);
 
