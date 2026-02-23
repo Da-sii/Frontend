@@ -51,7 +51,7 @@ android {
 
         // 로컬 기본값(수동 관리용)
         versionCode 15
-        versionName "1.1.0"
+        versionName "1.3.0"
 
         buildConfigField "String", "REACT_NATIVE_RELEASE_LEVEL",
             "\"${findProperty('reactNativeReleaseLevel') ?: 'stable'}\""
