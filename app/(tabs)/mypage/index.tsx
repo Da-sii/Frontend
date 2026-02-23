@@ -90,7 +90,7 @@ export default function Mypage() {
     <SafeAreaView className='flex-1 bg-white'>
       <Navigation title='마이페이지' />
 
-      <ScrollView className='flex-1 bg-white px-2 py-2'>
+      <ScrollView className='flex-1 px-2 py-2 bg-white'>
         {isLogin ? (
           <>
             <SettingSection>
@@ -128,7 +128,7 @@ export default function Mypage() {
               />
               <SettingItem
                 label='버전 정보'
-                value={`V ${Constants.expoConfig?.version || '1.0.0'}`}
+                value={`V ${Constants.expoConfig?.version || '1.3.0'}`}
               />
               <SettingItem label='문의 메일' value='podostore1111@gmail.com' />
             </SettingSection>
@@ -226,7 +226,7 @@ export default function Mypage() {
         confirmText='확인'
         singleButton
       >
-        <Text className='font-n-bd text-b-sm text-gray-900 text-center'>
+        <Text className='text-center text-gray-900 font-n-bd text-b-sm'>
           {`제품 추가 요청이 완료되었습니다!\n검토 후 순차적으로 반영될 예정입니다.`}
         </Text>
       </DefaultModal>
