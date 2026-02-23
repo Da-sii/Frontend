@@ -1,15 +1,17 @@
 // import * as Clipboard from 'expo-clipboard';
 import DefaultModal from '@/components/common/modals/DefaultModal';
 import Navigation from '@/components/layout/Navigation';
+import ProductRequestModal from '@/components/page/my/ProductRequestModal';
 import { SettingItem } from '@/components/page/my/SettingItem';
 import { SettingSection } from '@/components/page/my/SettingSection';
+import { useCreateProductRequest } from '@/hooks/useCreateProductRequest';
 import { useLogout } from '@/hooks/useLogout';
 import { useUser } from '@/hooks/useUser';
 import { clearTokens, getAccessToken } from '@/lib/authToken';
 import Constants from 'expo-constants';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { ScrollView } from 'react-native';
+import { ScrollView, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Mypage() {
@@ -21,6 +23,9 @@ export default function Mypage() {
   const [showEmailCopiedModal, setShowEmailCopiedModal] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
+  const [showAddProductReqModal, setShowAddProductReqModal] = useState(false);
+  const [showRequestSentModal, setShowRequestSentModal] = useState(false);
+  const [productRequest, setProductRequest] = useState('');
 
   const [isLogin, setIsLogin] = useState(true);
 
@@ -34,10 +39,16 @@ export default function Mypage() {
     setShowPasswordModal(false);
   };
 
-  // const handleEmailCopiedPress = async (value: string) => {
-  //   setShowEmailCopiedModal(true);
-  //   // await Clipboard.setStringAsync(value);
-  // };
+  const { mutate: createProductRequest, isPending } = useCreateProductRequest({
+    onSuccess: () => {
+      setShowAddProductReqModal(false);
+      setProductRequest('');
+      setShowRequestSentModal(true);
+    },
+  });
+  const handleAddProductReq = () => {
+    setShowAddProductReqModal(true);
+  };
 
   const handleEmailCopiedModalConfirm = () => {
     setShowEmailCopiedModal(false);
@@ -112,16 +123,14 @@ export default function Mypage() {
 
             <SettingSection title='도움말' topBorder>
               <SettingItem
+                label='제품 추가 요청'
+                onPress={handleAddProductReq}
+              />
+              <SettingItem
                 label='버전 정보'
                 value={`V ${Constants.expoConfig?.version || '1.0.0'}`}
               />
-              {/* <Pressable
-                onPress={() =>
-                  handleEmailCopiedPress('podostore1111@gmail.com')
-                }
-              > */}
               <SettingItem label='문의 메일' value='podostore1111@gmail.com' />
-              {/* </Pressable> */}
             </SettingSection>
 
             <SettingSection title='기타' topBorder>
@@ -143,13 +152,7 @@ export default function Mypage() {
                 label='버전 정보'
                 value={`V ${Constants.expoConfig?.version || '1.0.0'}`}
               />
-              {/* <Pressable
-                onPress={() =>
-                  handleEmailCopiedPress('podostore1111@gmail.com')
-                }
-              > */}
               <SettingItem label='문의 메일' value='podostore1111@gmail.com' />
-              {/* </Pressable> */}
             </SettingSection>
           </>
         )}
@@ -161,6 +164,23 @@ export default function Mypage() {
         onConfirm={handleOAuthModalConfirm}
         confirmText='확인'
         singleButton
+      />
+
+      <ProductRequestModal
+        visible={showAddProductReqModal}
+        value={productRequest}
+        onChange={setProductRequest}
+        onCancel={() => {
+          if (isPending) return; // 요청 중 닫힘 방지
+          setShowAddProductReqModal(false);
+          setProductRequest('');
+        }}
+        onConfirm={() => {
+          if (!productRequest.trim()) return;
+          createProductRequest({
+            content: productRequest, // ← 백엔드 모델의 content 필드
+          });
+        }}
       />
 
       <DefaultModal
@@ -199,6 +219,17 @@ export default function Mypage() {
         confirmText='확인'
         cancelText='취소'
       />
+
+      <DefaultModal
+        visible={showRequestSentModal}
+        onConfirm={() => setShowRequestSentModal(false)}
+        confirmText='확인'
+        singleButton
+      >
+        <Text className='font-n-bd text-b-sm text-gray-900 text-center'>
+          {`제품 추가 요청이 완료되었습니다!\n검토 후 순차적으로 반영될 예정입니다.`}
+        </Text>
+      </DefaultModal>
     </SafeAreaView>
   );
 }

@@ -1,5 +1,3 @@
-// app/oauth.tsx
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Stack, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
