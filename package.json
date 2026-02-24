@@ -12,6 +12,7 @@
     "lint": "expo lint"
   },
   "dependencies": {
+    "@babel/runtime": "^7.28.6",
     "@emotion/native": "^11.11.0",
     "@emotion/react": "^11.14.0",
     "@expo/metro-runtime": "~6.1.2",
