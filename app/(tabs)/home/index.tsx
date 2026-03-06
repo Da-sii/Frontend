@@ -34,6 +34,17 @@ export default function Home() {
 
   return (
     <SafeAreaView className='flex-1 bg-white' edges={['top']}>
+      {/* TODO: 임시 성분 리스트 버튼 (추후 삭제) */}
+      <View className='px-6 mb-4'>
+        <Pressable
+          className='bg-blue-500 rounded-lg py-3 items-center'
+          onPress={() => router.push('/ingredient')}
+        >
+          <Text className='text-white font-n-bd'>
+            ingredient 페이지 이동 (임시)
+          </Text>
+        </Pressable>
+      </View>
       <ScrollView className='flex-1'>
         <View className='flex-row items-center justify-between px-6 pt-4'>
           <LogoIcon width={80} height={30} />
