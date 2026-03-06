@@ -14,7 +14,7 @@ import BottomSheet, {
   BottomSheetBackdropProps,
   BottomSheetView,
 } from '@gorhom/bottom-sheet';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
@@ -42,15 +42,17 @@ const cardWidth = (screenWidth - 16 * 2 - 8 * 2) / 2;
 
 export default function Search() {
   const router = useRouter();
+  const { word } = useLocalSearchParams<{ word?: string }>();
+
   const [viewType, setViewType] = useState<'grid' | 'list'>('grid');
   const toggleViewType = () => {
     setViewType((prev) => (prev === 'grid' ? 'list' : 'grid'));
   };
 
-  const [inputValue, setInputValue] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [inputValue, setInputValue] = useState(word ?? '');
+  const [searchQuery, setSearchQuery] = useState(word ?? '');
   const [selectedSort, setSelectedSort] = useState('monthly_rank');
-  const [hasSearched, setHasSearched] = useState(false);
+  const [hasSearched, setHasSearched] = useState(!!word);
 
   const {
     data: searchData,
@@ -79,6 +81,13 @@ export default function Search() {
     };
     loadRecentSearches();
   }, []);
+
+  // word param으로 진입 시 최근 검색어에 자동 추가
+  useEffect(() => {
+    if (word) {
+      addRecentSearch(word);
+    }
+  }, [word]);
 
   const addRecentSearch = async (searchTerm: string) => {
     if (!searchTerm.trim()) return;
