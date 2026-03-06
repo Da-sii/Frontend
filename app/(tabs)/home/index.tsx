@@ -34,17 +34,6 @@ export default function Home() {
 
   return (
     <SafeAreaView className='flex-1 bg-white' edges={['top']}>
-      {/* TODO: 임시 성분 리스트 버튼 (추후 삭제) */}
-      <View className='px-6 mb-4'>
-        <Pressable
-          className='bg-blue-500 rounded-lg py-3 items-center'
-          onPress={() => router.push('/ingredient')}
-        >
-          <Text className='text-white font-n-bd'>
-            ingredient 페이지 이동 (임시)
-          </Text>
-        </Pressable>
-      </View>
       <ScrollView className='flex-1'>
         <View className='flex-row items-center justify-between px-6 pt-4'>
           <LogoIcon width={80} height={30} />
@@ -65,16 +54,9 @@ export default function Home() {
           <BannerCarousel data={bannerData} />
         </View>
 
-        <View className='px-6 mb-2'>
-          <TagsView
-            categories={mainScreenInfo?.topSmallCategories || []}
-            isLoading={isLoading}
-          />
-        </View>
-
-        <View className='mt-2 mb-12'>
+        <View className='mt-2 mb-[30px]'>
           <View className='flex-row items-center justify-between mx-6'>
-            <Text className='text-base font-n-bd'>현재 급상승 랭킹</Text>
+            <Text className='text-lg font-n-eb'>월간 랭킹</Text>
             <Pressable
               hitSlop={8}
               onPress={() =>
@@ -88,12 +70,15 @@ export default function Home() {
             </Pressable>
           </View>
 
-          <ProductRankingCarousel
+          <ProductRankingCarousel // TODO: 실제 월간 랭킹 데이터 연결 필요
             data={mainScreenInfo?.topProductsToday || []}
             isLoading={isLoading}
           />
         </View>
 
+        <View className='px-6 mb-8 '>
+          <TagsView isLoading={isLoading} showArrow />
+        </View>
         <HomeFooter />
       </ScrollView>
     </SafeAreaView>
