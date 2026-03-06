@@ -8,6 +8,7 @@ import RankingItem from '@/components/page/home/RankingItem';
 import colors from '@/constants/color';
 import { useCategory } from '@/hooks/useCategory';
 import { useFetchRankingQuery } from '@/hooks/useProductQueries';
+import { IRankingCategory } from '@/types/models/category';
 import { IRankingProduct } from '@/types/models/product';
 import { formatCurrentTime } from '@/utils/date';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -51,8 +52,11 @@ export default function Ranking() {
     }
 
     const extractedCategories = (
-      rankingCategories.topSmallCategories || []
-    ).map((category) => category.smallCategory);
+      rankingCategories[0]?.topSmallCategories || []
+    ).map(
+      (category: IRankingCategory['topSmallCategories'][number]) =>
+        category.smallCategory,
+    );
 
     return ['전체', ...extractedCategories];
   }, [rankingCategories]);
@@ -244,8 +248,8 @@ export default function Ranking() {
           ItemSeparatorComponent={() => (
             <View className='h-[0.5px] bg-gray-200 mx-4' />
           )}
-          onEndReached={loadMore} // 👈 스크롤이 끝에 닿으면 loadMore 함수 호출
-          onEndReachedThreshold={0.3} // 👈 끝에서 30% 지점에서 호출
+          onEndReached={loadMore}
+          onEndReachedThreshold={0.3}
           ListFooterComponent={
             isFetchingNextPage ? (
               <View style={{ paddingVertical: 20 }}>
