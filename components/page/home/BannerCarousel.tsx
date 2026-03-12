@@ -23,6 +23,7 @@ export default function BannerCarousel({ data }: BannerCarouselProps) {
     index: number;
   }) => {
     const isFocused = activeIndex === index;
+    console.log('banner item image:', JSON.stringify(item.image)); // 추가
 
     return (
       <Pressable
