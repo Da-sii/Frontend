@@ -10,6 +10,9 @@ interface Props {
   onPressInfo: () => void;
 }
 
+// TODO: API 연결 필요 - 원료명으로 성분 ID를 조회하는 API가 필요합니다.
+const MOCK_INGREDIENT_ID = '1';
+
 export default function OtherIngredientsSection({
   ingredients,
   onPressInfo,
