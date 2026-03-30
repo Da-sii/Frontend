@@ -31,6 +31,7 @@ import {
   Dimensions,
   FlatList,
   Pressable,
+  ScrollView,
   Text,
   View,
 } from 'react-native';
@@ -53,6 +54,7 @@ export default function List() {
   }>();
 
   const [bigCategory, setBigCategory] = useState(params.main ?? '');
+  const [activeSmall, setActiveSmall] = useState('전체');
   const [activeMiddle, setActiveMiddle] = useState(
     params.middle === '전체' ? '전체' : (params.middle as string),
   );
@@ -85,13 +87,25 @@ export default function List() {
   const middleCategoryNames = useMemo(() => {
     if (!targetCategory) return [];
 
-    // '전체'를 추가하지 않고 데이터에 있는 카테고리명만 가져옵니다.
     return targetCategory.middleCategories.map((m) => m.category);
   }, [targetCategory]);
 
-  console.log('카테고리', categories);
-  console.log('카테고리 중분류', targetCategory);
-  console.log('middleCategory', middleCategoryNames);
+  const smallCategories = useMemo(() => {
+    if (!targetCategory || !activeMiddle) return [];
+
+    const selectedMiddle = targetCategory.middleCategories.find(
+      (m) => m.category === activeMiddle,
+    );
+
+    if (!selectedMiddle) return [];
+
+    const names = selectedMiddle.smallCategories;
+    return [...names];
+  }, [targetCategory, activeMiddle]);
+
+  const handleSmallCategoryPress = (name: string) => {
+    setActiveSmall((prev) => (prev === name ? '전체' : name));
+  };
 
   useEffect(() => {
     if (params.middle && params.middle !== '전체') {
@@ -140,7 +154,7 @@ export default function List() {
   } = useFetchProductsQuery({
     bigCategory: bigCategory,
     middleCategory: activeMiddle,
-    // smallCategory: tab,
+    smallCategory: activeSmall === '전체' ? '' : activeSmall,
     sort: selectedSort as 'monthly_rank' | 'review_desc',
   });
 
@@ -209,9 +223,43 @@ export default function List() {
           activeKey={activeMiddle}
           onChangeTab={(key) => {
             setActiveMiddle(key);
-            // setTab(key);
+            setActiveSmall('전체');
           }}
         />
+      </View>
+
+      <View className='items-start'>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ paddingLeft: 20, paddingRight: 20 }}
+          className='self-start mt-3'
+        >
+          {smallCategories.map((name) => {
+            const isSelected = activeSmall === name;
+            return (
+              <Pressable
+                key={name}
+                onPress={() => handleSmallCategoryPress(name)} // 클릭 시 상태 변경
+                className={`h-8 border rounded-[30px] self-start justify-center px-[18px] mr-2 ${
+                  isSelected
+                    ? 'border-green-500 bg-green-500'
+                    : 'border-gray-200 bg-white'
+                }`}
+              >
+                <Text
+                  className={`text-sm ${
+                    isSelected
+                      ? 'font-n-bd text-white'
+                      : 'font-n-rg text-gray-700'
+                  }`}
+                >
+                  {name}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </ScrollView>
       </View>
 
       <View className='flex-row items-center justify-between px-4 py-3 pb-1 mb-2'>
