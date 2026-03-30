@@ -3,6 +3,7 @@ import SearchIcon from '@/assets/icons/ic_magnifier.svg';
 import Navigation from '@/components/layout/Navigation';
 import colors from '@/constants/color';
 import { useCategory } from '@/hooks/useCategory';
+import { MiddleCategory } from '@/types/models/category';
 import { useRouter } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { FlatList, Pressable, ScrollView, Text, View } from 'react-native';
@@ -18,16 +19,22 @@ export default function Category() {
     fetchCategories();
   }, []);
 
+  // 대분류 카테고리 이름 뽑기
+  // ["다이어트 보조제", "에너지 소모"]
   const bigCategories = useMemo(
     () => categories.map((cat) => cat.category),
     [categories],
   );
-  const middleCategories = useMemo(() => {
+
+  // 해당 대분류에 해당하는 데이터 뽑아오기
+  // ex) [{"category": "건강 기능 식품", "smallCategories": ["체지방 감소", "혈당 관리", "장건강 개선"]},
+  const middleCategories: MiddleCategory[] = useMemo(() => {
     return (
       categories.find((c) => c.category === selectedBigCategory)
         ?.middleCategories ?? []
     );
   }, [categories, selectedBigCategory]);
+
 
   useEffect(() => {
     if (categories.length > 0 && !selectedBigCategory) {
@@ -46,6 +53,14 @@ export default function Category() {
     router.push({
       pathname: '/(tabs)/category/list',
       params: { main: selectedBigCategory, sub: sub || '전체' },
+    });
+  };
+
+  const goToAllList = (middle: string) => {
+    if (!selectedBigCategory) return;
+    router.push({
+      pathname: '/(tabs)/category/list',
+      params: { main: selectedBigCategory, middle: middle },
     });
   };
 
@@ -101,7 +116,10 @@ export default function Category() {
               <View className='px-5'>
                 <Pressable
                   className='flex-row justify-between items-center  pt-[15px] pb-[17px]'
-                  onPress={() => goToList()}
+                  onPress={() => {
+                    // item : {"category": "건강 기능 식품", "smallCategories": ["체지방 감소", "혈당 관리", "장건강 개선"]}
+                    goToAllList(item.category);
+                  }}
                 >
                   <Text className='text-gray-900 text-b-md font-n-bd'>
                     {item.category}

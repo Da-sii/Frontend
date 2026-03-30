@@ -2,7 +2,7 @@ export interface TopProduct {
   [key: string]: unknown;
 }
 
-type MiddleCategory = {
+export type MiddleCategory = {
   category: string;
   smallCategories: string[];
 };
@@ -10,7 +10,6 @@ type MiddleCategory = {
 export interface ICategory {
   category: string;
   middleCategories: MiddleCategory[];
-  smallCategories: string[];
 }
 
 export interface IRankingCategory {
