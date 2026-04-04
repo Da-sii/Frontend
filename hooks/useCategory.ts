@@ -6,9 +6,8 @@ import { useState } from 'react';
 export const useCategory = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [categories, setCategories] = useState<ICategory[]>([]);
-  const [rankingCategories, setRankingCategories] = useState<
-    IRankingCategory[]
-  >([]);
+  const [rankingCategories, setRankingCategories] =
+    useState<IRankingCategory | null>(null);
 
   const fetchCategories = async () => {
     setIsLoading(true);
@@ -35,7 +34,6 @@ export const useCategory = () => {
     try {
       const data = await categoryAPI.getRankingCategory();
       setRankingCategories(data);
-
       return true;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 401) {
