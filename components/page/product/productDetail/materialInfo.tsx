@@ -193,11 +193,13 @@ function StatusTag({ status }: { status: string }) {
 
 export default function MaterialInfo({
   materialInfo,
+  onNoGuide,
 }: {
   materialInfo: ProductIngredient;
+  onNoGuide?: () => void;
 }) {
-  const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
   const status = computeStatus(
     materialInfo.amount,
     materialInfo.minRecommended,
@@ -236,10 +238,16 @@ export default function MaterialInfo({
           {/* 제목 */}
           <Pressable
             className='flex-row items-center pt-4'
-            onPress={() =>
-              // TODO: API 연결 필요 - ingredientName으로 성분 ID를 조회하는 API가 필요합니다.
-              router.push('/ingredient/1')
-            }
+            onPress={() => {
+              if (materialInfo.guideId) {
+                router.push({
+                  pathname: '/ingredient/[id]',
+                  params: { id: materialInfo.guideId, from: 'product' },
+                });
+              } else {
+                onNoGuide?.();
+              }
+            }}
           >
             <Text className='text-b-sm font-n-eb mr-[3px]'>
               {materialInfo.ingredientName}
@@ -320,7 +328,7 @@ export default function MaterialInfo({
               <EffectIfon className='mr-[14px]' />
               {renderBulletList(materialInfo.effect ?? [])}
             </View>
-            <View className='w-full h-[1px]' />
+            <View className='w-full border-t border-dashed border-gray-100' />
             <View className='flex-row justify-between mb-5 mt-5 px-[7px]'>
               <IngredienStatusIcon className='mr-[14px]' />
               {renderBulletList(materialInfo.sideEffect ?? [])}

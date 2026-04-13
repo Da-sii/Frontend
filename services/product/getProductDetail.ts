@@ -12,6 +12,11 @@ export type ProductIngredient = {
   effect: string[];
   sideEffect: string[];
   status: string; // "unknown" 등
+  guideId: string | null;
+};
+
+export type OtherIngredient = {
+  otherIngredientName: string;
 };
 
 export type ProductDetailDTO = {
@@ -28,6 +33,8 @@ export type ProductDetailDTO = {
   reviewImages: ProductImage[];
   ingredientsCount: number;
   ingredients: ProductIngredient[];
+  otherIngredientsCount: number;
+  otherIngredients: OtherIngredient[];
 };
 
 // UI 사용 편의를 위한 클라이언트 전용 타입

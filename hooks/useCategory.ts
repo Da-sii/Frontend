@@ -36,7 +36,7 @@ export const useCategory = () => {
     try {
       const data = await categoryAPI.getRankingCategory();
       setRankingCategories(data);
-      console.log('으아아아아아아', data);
+      // console.log('으아아아아아아', data);
       return true;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 401) {

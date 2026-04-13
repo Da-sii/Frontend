@@ -1,7 +1,7 @@
 // 기타 원료
-import ArrowRightIcon from '@/assets/icons/ic_arrow_right.svg';
 import InfoIcon from '@/assets/icons/ic_info.svg';
-import { useRouter } from 'expo-router';
+import DefaultModal from '@/components/common/modals/DefaultModal';
+import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 interface Props {
@@ -9,14 +9,11 @@ interface Props {
   onPressInfo: () => void;
 }
 
-// TODO: API 연결 필요 - 원료명으로 성분 ID를 조회하는 API가 필요합니다.
-const MOCK_INGREDIENT_ID = '1';
-
 export default function OtherIngredientsSection({
   ingredients,
   onPressInfo,
 }: Props) {
-  const router = useRouter();
+  const [showNoGuideModal, setShowNoGuideModal] = useState(false);
 
   if (!ingredients || ingredients.length === 0) {
     return null;
@@ -41,20 +38,24 @@ export default function OtherIngredientsSection({
         {ingredients.map((item, index) => (
           <Pressable
             key={index}
-            onPress={() =>
-              // TODO: API 연결 필요 - item(원료명)에 해당하는 실제 성분 ID로 교체해야 합니다.
-              router.push(`/ingredient/${MOCK_INGREDIENT_ID}`)
-            }
+            onPress={() => setShowNoGuideModal(true)}
             className='flex-row items-center justify-between py-[10px]'
           >
             <View className='flex-row items-center gap-x-2'>
               <Text className='text-b-sm font-n-bd'>•</Text>
               <Text className='text-b-sm font-n-bd'>{item}</Text>
             </View>
-            <ArrowRightIcon />
           </Pressable>
         ))}
       </View>
+
+      <DefaultModal
+        visible={showNoGuideModal}
+        message='성분 가이드가 아직 등록되지 않았습니다.'
+        onConfirm={() => setShowNoGuideModal(false)}
+        confirmText='확인'
+        singleButton
+      />
     </View>
   );
 }
