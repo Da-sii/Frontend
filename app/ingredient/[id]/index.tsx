@@ -82,7 +82,7 @@ export default function IngredientDetailPage() {
         <ScrollView className='flex-1' showsVerticalScrollIndicator={false}>
           {/* 성분명 헤더 영역 */}
           <View className='items-center pt-5 pb-5 text-center'>
-            <Text className='font-n-eb'>{ingredient.name}</Text>
+            <Text className='font-n-eb text-b-md'>{ingredient.name}</Text>
             {ingredient.mainIngredients ? (
               <Text className='text-c3 text-gray-400 mt-1'>
                 (주성분 : {ingredient.mainIngredients})
@@ -102,7 +102,7 @@ export default function IngredientDetailPage() {
               borderColor: '#82E3AF33',
             }}
           >
-            <Text className='text-sm font-n-eb text-gray-800 mb-5'>
+            <Text className='text-b-sm font-n-eb text-gray-800 mb-5'>
               핵심 포인트
             </Text>
             <View className='gap-y-3'>
@@ -142,12 +142,8 @@ export default function IngredientDetailPage() {
               className='flex-row items-center justify-center py-3 rounded-2xl border border-gray-200 active:bg-gray-50'
             >
               <View className='flex-row items-center mr-[10px]'>
-                <Text className='text-c1 font-semibold'>
-                  이 성분이 포함된 제품{' '}
-                </Text>
-                <Text className='text-c1 text-green-600 font-n-eb'>
-                  {productCount}개
-                </Text>
+                <Text className='text-c1'>이 성분이 포함된 제품 </Text>
+                <Text className='text-c1 text-green-600'>{productCount}개</Text>
                 <Text className='text-c1 font-semibold'> 보러가기</Text>
               </View>
               <ArrowRightIcon width={12} height={12} />

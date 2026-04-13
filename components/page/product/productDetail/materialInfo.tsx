@@ -193,8 +193,10 @@ function StatusTag({ status }: { status: string }) {
 
 export default function MaterialInfo({
   materialInfo,
+  onNoGuide,
 }: {
   materialInfo: ProductIngredient;
+  onNoGuide?: () => void;
 }) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
@@ -242,6 +244,8 @@ export default function MaterialInfo({
                   pathname: '/ingredient/[id]',
                   params: { id: materialInfo.guideId, from: 'product' },
                 });
+              } else {
+                onNoGuide?.();
               }
             }}
           >
@@ -324,7 +328,7 @@ export default function MaterialInfo({
               <EffectIfon className='mr-[14px]' />
               {renderBulletList(materialInfo.effect ?? [])}
             </View>
-            <View className='w-full h-[1px]' />
+            <View className='w-full border-t border-dashed border-gray-100' />
             <View className='flex-row justify-between mb-5 mt-5 px-[7px]'>
               <IngredienStatusIcon className='mr-[14px]' />
               {renderBulletList(materialInfo.sideEffect ?? [])}

@@ -10,7 +10,13 @@ import { useGetIngredients } from '@/hooks/useIngredients';
 import { Ingredient } from '@/services/ingredient/getIngredients';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const PAGE_SIZE = 10;
@@ -25,9 +31,9 @@ function IngredientRow({
   return (
     <Pressable
       onPress={onPress}
-      className='flex-row items-center justify-between px-4 py-4 bg-white active:bg-gray-50'
+      className='flex-row items-center justify-between px-[25px] py-[15px] bg-white active:bg-gray-50'
     >
-      <Text className='text-sm text-gray-800'>{name}</Text>
+      <Text className='text-b-sm text-gray-800'>{name}</Text>
       <ArrowRightIcon width={12} height={12} fill={colors.gray[900]} />
     </Pressable>
   );
@@ -44,7 +50,14 @@ export default function IngredientGuidePage() {
     page,
   });
 
-  console.log('[Ingredients] data:', data, 'isError:', isError, 'error:', error);
+  console.log(
+    '[Ingredients] data:',
+    data,
+    'isError:',
+    isError,
+    'error:',
+    error,
+  );
 
   const ingredients = data?.results ?? [];
   const totalCount = data?.count ?? 0;
@@ -101,9 +114,9 @@ export default function IngredientGuidePage() {
           </View>
         ) : ingredients.length > 0 ? (
           <View className='mb-2'>
-            <View className='px-4 pt-5 pb-2 flex-row items-center gap-x-1'>
-              <Text className='text-lg font-n-eb'>성분 리스트</Text>
-              <Text className='text-sm text-gray-400'>({totalCount}개)</Text>
+            <View className='px-5 flex-row items-center gap-x-1'>
+              <Text className='text-b-lg font-n-eb'>성분 리스트</Text>
+              {/*<Text className='text-sm text-gray-400'>({totalCount}개)</Text>*/}
             </View>
             {ingredients.map((item: Ingredient) => (
               <View key={item.id}>
@@ -132,7 +145,7 @@ export default function IngredientGuidePage() {
 
       {/* 페이지네이션 */}
       {totalPages > 1 && (
-        <View className='flex-row items-center justify-center gap-x-6 py-3 border-t border-gray-100'>
+        <View className='flex-row items-center justify-center gap-x-6 py-3'>
           <Pressable
             onPress={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
