@@ -35,7 +35,6 @@ export default function Category() {
     );
   }, [categories, selectedBigCategory]);
 
-
   useEffect(() => {
     if (categories.length > 0 && !selectedBigCategory) {
       setSelectedBigCategory(categories[0].category);
@@ -53,14 +52,6 @@ export default function Category() {
     router.push({
       pathname: '/(tabs)/category/list',
       params: { main: selectedBigCategory, middle, sub: sub || '전체' },
-    });
-  };
-
-  const goToAllList = (middle: string) => {
-    if (!selectedBigCategory) return;
-    router.push({
-      pathname: '/(tabs)/category/list',
-      params: { main: selectedBigCategory, middle: middle },
     });
   };
 
@@ -118,7 +109,7 @@ export default function Category() {
                   className='flex-row justify-between items-center  pt-[15px] pb-[17px]'
                   onPress={() => {
                     // item : {"category": "건강 기능 식품", "smallCategories": ["체지방 감소", "혈당 관리", "장건강 개선"]}
-                    goToAllList(item.category);
+                    goToList(item.category);
                   }}
                 >
                   <Text className='text-gray-900 text-b-md font-n-bd'>
