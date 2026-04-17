@@ -4,6 +4,7 @@ import { Modal, Text, TouchableOpacity, View } from 'react-native';
 type DefaultModalProps = {
   visible: boolean;
   title?: string;
+  titleAlign?: 'left' | 'center';
   message?: string;
   onConfirm: () => void;
   onCancel?: () => void;
@@ -18,6 +19,7 @@ type DefaultModalProps = {
 export default function DefaultModal({
   visible,
   title,
+  titleAlign = 'center',
   message,
   onConfirm,
   onCancel,
@@ -39,7 +41,7 @@ export default function DefaultModal({
         <View className='bg-white rounded-[12px] items-center justify-center max-w-xs pt-7 overflow-hidden'>
           {title && (
             <Text
-              className={`font-n-eb text-b-md text-gray-900 text-center ${message ? 'mb-[15px]' : ''}`}
+              className={`font-n-eb text-b-md text-gray-900 ${titleAlign === 'left' ? 'text-left w-full px-5' : 'text-center'} ${message ? 'mb-[15px]' : ''}`}
             >
               {title}
             </Text>
