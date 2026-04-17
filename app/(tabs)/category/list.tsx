@@ -11,7 +11,7 @@ import SearchIcon from '@/assets/icons/ic_magnifier.svg';
 import SkeletonProductGridItem from '@/components/common/skeleton/ProductGridItemSkeleton';
 import SkeletonRankingItem from '@/components/common/skeleton/ProductListItemSkeleton';
 import Navigation from '@/components/layout/Navigation';
-import TabSwitcher, { TabItem } from '@/components/page/category/TabSwitcher';
+import TabSwitcher from '@/components/page/category/TabSwitcher';
 import ProductCard from '@/components/page/home/ProductCard';
 import ProductListRow from '@/components/page/home/ProductListRow';
 import colors from '@/constants/color';
@@ -31,6 +31,7 @@ import {
   Dimensions,
   FlatList,
   Pressable,
+  ScrollView,
   Text,
   View,
 } from 'react-native';
@@ -42,64 +43,94 @@ import {
 
 const screenWidth = Dimensions.get('window').width;
 const cardWidth = (screenWidth - 16 * 2 - 8 * 2) / 2;
-type ListTab = string;
 
 export default function List() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { categories, fetchCategories } = useCategory();
-  const params = useLocalSearchParams<{ main?: string; sub?: string }>();
-  const [bigCategory, setBigCategory] = useState(params.main ?? '');
-  const [activeSub, setActiveSub] = useState(
-    params.sub === '전체' ? '전체' : (params.sub as string),
-  );
+  const params = useLocalSearchParams<{
+    main?: string;
+    middle: string;
+  }>();
 
-  useEffect(() => {
-    if (activeSub === '전체') {
-      setTab('전체' as ListTab);
-    } else if (listItems.find((i) => i.key === activeSub)) {
-      setTab(activeSub as ListTab);
-    }
-  }, [activeSub]);
+  const [bigCategory, setBigCategory] = useState(params.main ?? '');
+  const [activeSmall, setActiveSmall] = useState('전체');
+  const [activeMiddle, setActiveMiddle] = useState(
+    params.middle === '전체' ? '전체' : (params.middle as string),
+  );
 
   useEffect(() => {
     if (params.main) {
       setBigCategory(params.main);
     }
-    if (params.sub) {
-      const subCategory = params.sub === '전체' ? '전체' : params.sub;
-      setActiveSub(subCategory);
-      setTab(subCategory);
+
+    if (params.middle) {
+      const middleCategory = params.middle === '전체' ? '전체' : params.middle;
+      setActiveMiddle(middleCategory);
+      // setTab(middleCategory);
     }
-  }, [params.main, params.sub]);
+  }, [params.main, params.middle]);
 
   useEffect(() => {
     fetchCategories();
   }, []);
+
   const bigCategories = useMemo(
     () => categories.map((cat) => cat.category),
     [categories],
   );
-  const subCategoriesMap = useMemo(
-    () =>
-      categories.reduce(
-        (acc, current) => {
-          acc[current.category] = current.smallCategories;
-          return acc;
-        },
-        {} as Record<string, string[]>,
-      ),
-    [categories],
-  );
-  const listItems = useMemo(() => {
-    const subCats = subCategoriesMap[bigCategory] || [];
-    return subCats.map((sub) => ({ key: sub, label: sub }));
-  }, [subCategoriesMap, bigCategory]);
-  const [tab, setTab] = useState<ListTab>(listItems[0]?.key ?? '전체');
-  const itemsWithAll: TabItem<ListTab | 'all'>[] = useMemo(
-    () => [{ key: '전체' as const, label: '전체' }, ...listItems],
-    [listItems],
-  );
+
+  const targetCategory = useMemo(() => {
+    return categories.find((item) => item.category === bigCategory);
+  }, [categories, bigCategory]);
+
+  const middleCategoryNames = useMemo(() => {
+    if (!targetCategory) return [];
+
+    return targetCategory.middleCategories.map((m) => m.category);
+  }, [targetCategory]);
+
+  const smallCategories = useMemo(() => {
+    if (!targetCategory || !activeMiddle) return [];
+
+    const selectedMiddle = targetCategory.middleCategories.find(
+      (m) => m.category === activeMiddle,
+    );
+
+    if (!selectedMiddle) return [];
+
+    const names = selectedMiddle.smallCategories;
+    return [...names];
+  }, [targetCategory, activeMiddle]);
+
+  const handleSmallCategoryPress = (name: string) => {
+    setActiveSmall((prev) => (prev === name ? '전체' : name));
+  };
+
+  useEffect(() => {
+    if (params.middle && params.middle !== '전체') {
+      setActiveMiddle(params.middle);
+    } else if (middleCategoryNames.length > 0) {
+      // 파라미터가 없거나 '전체'라면 리스트의 첫 번째 카테고리를 선택
+      setActiveMiddle(middleCategoryNames[0]);
+    }
+  }, [params.middle, middleCategoryNames]);
+
+  const handleBigCategoryChange = (cat: string) => {
+    if (cat !== bigCategory) {
+      const newTarget = categories.find((item) => item.category === cat);
+      const firstMiddle = newTarget?.middleCategories[0]?.category || '';
+
+      setBigCategory(cat);
+      setActiveMiddle(firstMiddle); // '전체' 대신 첫 번째 카테고리 설정
+
+      router.replace({
+        pathname: '/(tabs)/category/list',
+        params: { main: cat, middle: firstMiddle },
+      });
+    }
+    setTopModalVisible(false);
+  };
 
   const sortSheetRef = useRef<BottomSheetModal>(null);
 
@@ -122,7 +153,8 @@ export default function List() {
     isRefetching,
   } = useFetchProductsQuery({
     bigCategory: bigCategory,
-    smallCategory: tab,
+    middleCategory: activeMiddle,
+    smallCategory: activeSmall === '전체' ? '' : activeSmall,
     sort: selectedSort as 'monthly_rank' | 'review_desc',
   });
 
@@ -158,18 +190,6 @@ export default function List() {
     closeSortSheet();
   };
 
-  const handleBigCategoryChange = (cat: string) => {
-    if (cat !== bigCategory) {
-      setBigCategory(cat);
-      setActiveSub('전체');
-      router.replace({
-        pathname: '/(tabs)/category/list',
-        params: { main: cat, sub: '전체' },
-      });
-    }
-    setTopModalVisible(false);
-  };
-
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: '#fff' }}
@@ -186,7 +206,7 @@ export default function List() {
             onPress={() => setTopModalVisible(true)}
             style={{ flexDirection: 'row', alignItems: 'center' }}
           >
-            <Text className='text-lg font-n-bd mr-1'>{bigCategory} </Text>
+            <Text className='mr-1 text-lg font-n-bd'>{bigCategory} </Text>
             <MoreIcon width={13} height={13} fill={colors.gray[900]} />
           </Pressable>
         }
@@ -199,17 +219,50 @@ export default function List() {
 
       <View className='mt-1 w-full border-y-[1px] border-gray-50 px-2'>
         <TabSwitcher
-          items={itemsWithAll}
-          activeKey={tab}
+          items={middleCategoryNames}
+          activeKey={activeMiddle}
           onChangeTab={(key) => {
-            setTab(key as ListTab);
-            setBigCategory(bigCategory);
-            setActiveSub(key as string);
+            setActiveMiddle(key);
+            setActiveSmall('전체');
           }}
         />
       </View>
 
-      <View className='px-4 py-3 pb-1 mb-2 flex-row justify-between items-center'>
+      <View className='items-start'>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ paddingLeft: 20, paddingRight: 20 }}
+          className='self-start mt-3'
+        >
+          {smallCategories.map((name) => {
+            const isSelected = activeSmall === name;
+            return (
+              <Pressable
+                key={name}
+                onPress={() => handleSmallCategoryPress(name)} // 클릭 시 상태 변경
+                className={`h-8 border rounded-[30px] self-start justify-center px-[18px] mr-2 ${
+                  isSelected
+                    ? 'border-green-500 bg-green-500'
+                    : 'border-gray-200 bg-white'
+                }`}
+              >
+                <Text
+                  className={`text-sm ${
+                    isSelected
+                      ? 'font-n-bd text-white'
+                      : 'font-n-rg text-gray-700'
+                  }`}
+                >
+                  {name}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </ScrollView>
+      </View>
+
+      <View className='flex-row items-center justify-between px-4 py-3 pb-1 mb-2'>
         <Text className='pt-1 text-sm text-gray-900 font-n-bd'>
           총 {productList?.pages[0]?.count}개
         </Text>
@@ -218,7 +271,7 @@ export default function List() {
             className='flex-row items-center mr-2'
             onPress={openSortSheet}
           >
-            <Text className='text-sm text-gray-900 mr-1 font-n-bd'>
+            <Text className='mr-1 text-sm text-gray-900 font-n-bd'>
               {sortOptions.find((opt) => opt.id === selectedSort)?.label}
             </Text>
             <SelectOptionsIcon width={10} height={10} fill={colors.gray[900]} />
@@ -382,7 +435,7 @@ export default function List() {
                   onPress={() => setTopModalVisible(false)}
                   style={{ flexDirection: 'row', alignItems: 'center' }}
                 >
-                  <Text className='text-lg font-n-bd mr-2'>{bigCategory}</Text>
+                  <Text className='mr-2 text-lg font-n-bd'>{bigCategory}</Text>
                   <LessIcon width={13} height={13} fill={colors.gray[900]} />
                 </Pressable>
               }
@@ -396,7 +449,7 @@ export default function List() {
 
           <View
             style={{ flexDirection: 'row', flexWrap: 'wrap' }}
-            className='mt-1 pt-6'
+            className='pt-6 mt-1'
           >
             {bigCategories.map((cat) => (
               <Pressable

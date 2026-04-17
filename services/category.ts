@@ -8,9 +8,8 @@ export const categoryAPI = {
     );
     return data;
   },
-
-  getRankingCategory: async (): Promise<IRankingCategory[]> => {
-    const { data } = await axiosInstance.get<IRankingCategory[]>(
+  getRankingCategory: async (): Promise<IRankingCategory> => {
+    const { data } = await axiosInstance.get<IRankingCategory>(
       '/products/ranking/category/',
     );
     return data;
