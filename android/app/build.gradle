@@ -50,8 +50,8 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
 
         // 로컬 기본값(수동 관리용)
-        versionCode 15
-        versionName "1.2.2
+        versionCode 18
+        versionName "1.4.0"
 
         buildConfigField "String", "REACT_NATIVE_RELEASE_LEVEL",
             "\"${findProperty('reactNativeReleaseLevel') ?: 'stable'}\""
