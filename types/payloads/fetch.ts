@@ -6,6 +6,7 @@ export interface GetRankingPayload {
 
 export interface GetProductsPayload {
   bigCategory?: string;
+  middleCategory?: string;
   page?: number;
   smallCategory?: string;
   sort?: 'monthly_rank' | 'review_desc';

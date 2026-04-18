@@ -124,7 +124,7 @@ export default function SearchBar({
                 ItemSeparatorComponent={() => <View style={{ width: 8 }} />}
                 contentContainerStyle={{ paddingVertical: 4 }}
                 renderItem={({ item }) => (
-                  <View className='flex-row items-center bg-white border-[0.5px] border-gray-200 rounded-full pl-4 pr-2 py-1'>
+                  <View className='flex-row items-center bg-white  border-gray-200 rounded-full pl-4 pr-2 py-1'>
                     <Pressable
                       onPress={() => handleRecentSearchPress(item)}
                       className='flex-1'

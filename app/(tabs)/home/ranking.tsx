@@ -7,7 +7,9 @@ import Navigation from '@/components/layout/Navigation';
 import RankingItem from '@/components/page/home/RankingItem';
 import colors from '@/constants/color';
 import { useCategory } from '@/hooks/useCategory';
+
 import { useFetchRankingQuery } from '@/hooks/useProductQueries';
+import { IRankingCategoryItem } from '@/types/models/category';
 import { IRankingProduct } from '@/types/models/product';
 import { formatCurrentTime } from '@/utils/date';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -31,6 +33,8 @@ export default function Ranking() {
   const initialTab = params.initialTab === 'monthly' ? 'monthly' : 'daily';
   const [filter, setFilter] = useState<string>(initialFilter);
   const [tab, setTab] = useState<'daily' | 'monthly'>(initialTab);
+  console.log('rankingCategories', rankingCategories);
+  const selectedCategory = filter;
 
   const {
     data: rankingInfo,
@@ -42,19 +46,17 @@ export default function Ranking() {
     isRefetching,
   } = useFetchRankingQuery({
     period: tab === 'daily' ? 'daily' : 'monthly',
-    category: filter === '전체' ? '전체' : filter,
+    category: selectedCategory,
   });
-
   const allSmallCategories = useMemo(() => {
-    if (!rankingCategories || rankingCategories.length === 0) {
-      return ['전체'];
-    }
+    const topSmallCategories: IRankingCategoryItem[] =
+      rankingCategories?.topSmallCategories ?? [];
 
-    const extractedCategories = (
-      rankingCategories.topSmallCategories || []
-    ).map((category) => category.smallCategory);
+    const categories = topSmallCategories
+      .map((item) => item.smallCategory)
+      .filter(Boolean);
 
-    return ['전체', ...extractedCategories];
+    return ['전체', ...new Set(categories)];
   }, [rankingCategories]);
 
   const loadMore = useCallback(() => {
@@ -85,7 +87,7 @@ export default function Ranking() {
     ) {
       setFilter(params.category as string);
     }
-  }, [params.category]);
+  }, [params.category, allSmallCategories]);
 
   const handleReset = () => {
     setFilter('전체');
@@ -203,12 +205,12 @@ export default function Ranking() {
           </View>
         </ScrollView>
 
-        <View className='flex-row justify-between mx-4 items-center'>
+        <View className='flex-row items-center justify-between mx-4'>
           {tab === 'daily' ? (
             <Pressable onPress={handleReset}>
               <View className='flex-row items-center'>
                 <ResetIcon width={12} height={12} className='mr-1' />
-                <Text className='text-gray-200 text-xs'>초기화</Text>
+                <Text className='text-xs text-gray-200'>초기화</Text>
               </View>
             </Pressable>
           ) : (
@@ -216,7 +218,7 @@ export default function Ranking() {
           )}
           <View className='flex-row items-center'>
             <ListIcon width={12} height={12} className='mr-1' />
-            <Text className='text-gray-200 text-xs'>
+            <Text className='text-xs text-gray-200'>
               {formatCurrentTime(tab)}
             </Text>
           </View>
@@ -244,8 +246,8 @@ export default function Ranking() {
           ItemSeparatorComponent={() => (
             <View className='h-[0.5px] bg-gray-200 mx-4' />
           )}
-          onEndReached={loadMore} // 👈 스크롤이 끝에 닿으면 loadMore 함수 호출
-          onEndReachedThreshold={0.3} // 👈 끝에서 30% 지점에서 호출
+          onEndReached={loadMore}
+          onEndReachedThreshold={0.3}
           ListFooterComponent={
             isFetchingNextPage ? (
               <View style={{ paddingVertical: 20 }}>

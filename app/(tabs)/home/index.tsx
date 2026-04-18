@@ -54,16 +54,9 @@ export default function Home() {
           <BannerCarousel data={bannerData} />
         </View>
 
-        <View className='px-6 mb-2'>
-          <TagsView
-            categories={mainScreenInfo?.topSmallCategories || []}
-            isLoading={isLoading}
-          />
-        </View>
-
-        <View className='mt-2 mb-12'>
+        <View className='mt-2 mb-[30px]'>
           <View className='flex-row items-center justify-between mx-6'>
-            <Text className='text-base font-n-bd'>현재 급상승 랭킹</Text>
+            <Text className='text-lg font-n-eb'>월간 랭킹</Text>
             <Pressable
               hitSlop={8}
               onPress={() =>
@@ -77,12 +70,15 @@ export default function Home() {
             </Pressable>
           </View>
 
-          <ProductRankingCarousel
+          <ProductRankingCarousel // TODO: 실제 월간 랭킹 데이터 연결 필요
             data={mainScreenInfo?.topProductsToday || []}
             isLoading={isLoading}
           />
         </View>
 
+        <View className='px-6 mb-8 '>
+          <TagsView isLoading={isLoading} showArrow />
+        </View>
         <HomeFooter />
       </ScrollView>
     </SafeAreaView>

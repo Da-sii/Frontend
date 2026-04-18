@@ -3,16 +3,10 @@ import SearchIcon from '@/assets/icons/ic_magnifier.svg';
 import Navigation from '@/components/layout/Navigation';
 import colors from '@/constants/color';
 import { useCategory } from '@/hooks/useCategory';
+import { MiddleCategory } from '@/types/models/category';
 import { useRouter } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
-import {
-  FlatList,
-  LayoutChangeEvent,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from 'react-native';
+import { FlatList, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Category() {
@@ -20,34 +14,33 @@ export default function Category() {
   const { categories, fetchCategories } = useCategory();
 
   const [selectedBigCategory, setSelectedBigCategory] = useState('');
-  const [colWidth, setColWidth] = useState<number>();
 
   useEffect(() => {
     fetchCategories();
   }, []);
 
+  // 대분류 카테고리 이름 뽑기
+  // ["다이어트 보조제", "에너지 소모"]
   const bigCategories = useMemo(
     () => categories.map((cat) => cat.category),
     [categories],
   );
 
-  const subCategoriesMap = useMemo(
-    () =>
-      categories.reduce(
-        (acc, current) => {
-          acc[current.category] = current.smallCategories;
-          return acc;
-        },
-        {} as Record<string, string[]>,
-      ),
-    [categories],
-  );
+  // 해당 대분류에 해당하는 데이터 뽑아오기
+  // ex) [{"category": "건강 기능 식품", "smallCategories": ["체지방 감소", "혈당 관리", "장건강 개선"]},
+  const middleCategories: MiddleCategory[] = useMemo(() => {
+    return (
+      categories.find((c) => c.category === selectedBigCategory)
+        ?.middleCategories ?? []
+    );
+  }, [categories, selectedBigCategory]);
+
 
   useEffect(() => {
-    if (bigCategories.length > 0 && !selectedBigCategory) {
-      setSelectedBigCategory(bigCategories[0]);
+    if (categories.length > 0 && !selectedBigCategory) {
+      setSelectedBigCategory(categories[0].category);
     }
-  }, [bigCategories, selectedBigCategory]);
+  }, [categories, selectedBigCategory]);
 
   useEffect(() => {
     if (categories && categories.length > 0 && !selectedBigCategory) {
@@ -55,19 +48,19 @@ export default function Category() {
     }
   }, [categories]);
 
-  const onTextLayout = (e: LayoutChangeEvent) => {
-    const w = e.nativeEvent.layout.width;
-    if (w > (colWidth || 0)) {
-      setColWidth(w);
-    }
-  };
-  const sidebarWidth = colWidth;
-
   const goToList = (sub?: string) => {
     if (!selectedBigCategory) return;
     router.push({
       pathname: '/(tabs)/category/list',
       params: { main: selectedBigCategory, sub: sub || '전체' },
+    });
+  };
+
+  const goToAllList = (middle: string) => {
+    if (!selectedBigCategory) return;
+    router.push({
+      pathname: '/(tabs)/category/list',
+      params: { main: selectedBigCategory, middle: middle },
     });
   };
 
@@ -81,30 +74,32 @@ export default function Category() {
 
       <View className='w-full border-b-[0.5px] border-gray-200' />
 
-      <View className='flex-1 flex-row bg-white'>
+      <View className='flex-row bg-white'>
+        {/* 대분류 */}
+
         <ScrollView
-          className='flex-none border-gray-200 bg-gray-100'
+          className='flex h-screen bg-gray-100 border-gray-200'
           style={{
-            width: sidebarWidth,
             flexGrow: 0,
             flexShrink: 0,
+            minWidth: 127,
           }}
         >
           {bigCategories.map((cat) => (
             <Pressable
               key={cat}
               onPress={() => setSelectedBigCategory(cat)}
-              className={`items-start py-[16px] ${
+              className={`items-center py-[16px] z-10 ${
                 selectedBigCategory === cat ? 'bg-white' : 'bg-gray-100'
               }`}
             >
               <Text
-                className={`text-sm pl-3 pr-3 ${
+                numberOfLines={1}
+                className={`text-b-sm font-n-bd pl-3 pr-3 ${
                   selectedBigCategory === cat
                     ? 'text-gray-900 font-n-bd'
                     : 'text-gray-400 font-n-bd'
                 }`}
-                onLayout={onTextLayout}
               >
                 {cat}
               </Text>
@@ -112,31 +107,47 @@ export default function Category() {
           ))}
         </ScrollView>
 
-        <View className='flex-1'>
-          <Pressable
-            className='flex-row justify-between items-center px-4 pt-[15px] pb-[17px]'
-            onPress={() => goToList()}
-          >
-            <Text className='text-md font-n-bd text-gray-900'>
-              {selectedBigCategory}
-            </Text>
-            <View className='flex-row items-center'>
-              <ViewAllIcon width={13} height={13} color={colors.gray[900]} />
-            </View>
-          </Pressable>
-
+        {/* 중분류 */}
+        <View className='flex-1 '>
           <FlatList
-            data={subCategoriesMap[selectedBigCategory] || []}
-            keyExtractor={(item) => item}
+            data={middleCategories}
+            keyExtractor={(item, index) => `${item.category}-${index}`}
             renderItem={({ item }) => (
-              <Pressable
-                className='py-2 px-4'
-                onPress={() => {
-                  goToList(item);
-                }}
-              >
-                <Text className='text-c1 text-gray-900 font-n-bd'>{item}</Text>
-              </Pressable>
+              <View className='px-5'>
+                <Pressable
+                  className='flex-row justify-between items-center  pt-[15px] pb-[17px]'
+                  onPress={() => {
+                    // item : {"category": "건강 기능 식품", "smallCategories": ["체지방 감소", "혈당 관리", "장건강 개선"]}
+                    goToAllList(item.category);
+                  }}
+                >
+                  <Text className='text-gray-900 text-b-md font-n-bd'>
+                    {item.category}
+                  </Text>
+                  <View className='flex-row items-center'>
+                    <ViewAllIcon
+                      width={13}
+                      height={13}
+                      color={colors.gray[900]}
+                    />
+                  </View>
+                </Pressable>
+                {/* 소분류 */}
+                <View className='flex-col flex-wrap mb-2'>
+                  {item.smallCategories.map((small) => (
+                    <Pressable
+                      key={small}
+                      onPress={() => goToList(small)} // 소분류 클릭 시 해당 카테고리로 이동
+                      className='py-2 '
+                    >
+                      <Text className='text-gray-900 text-c1 font-n-bd'>
+                        {small}
+                      </Text>
+                    </Pressable>
+                  ))}
+                </View>
+                <View className='w-full border-b-[0.5px] border-gray-200' />
+              </View>
             )}
             showsVerticalScrollIndicator={false}
           />

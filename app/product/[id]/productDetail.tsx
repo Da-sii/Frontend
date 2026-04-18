@@ -9,6 +9,7 @@ import { ReviewButton } from '@/components/common/buttons/ReviewButton';
 import { ScrollToTopButton } from '@/components/common/buttons/ScrollToTopButton';
 import DefaultModal from '@/components/common/modals/DefaultModal';
 import Navigation from '@/components/layout/Navigation';
+// import AISummary from '@/components/page/product/productDetail/AISummary';
 import IngredientInfoBottomSheet from '@/components/page/product/productDetail/BottomSheet/IngredientInfoBottomSheet';
 import CoupangTabBar from '@/components/page/product/productDetail/CoupangTabBar';
 import IngredientSection from '@/components/page/product/productDetail/Ingredient/IngredientSection';
@@ -36,8 +37,6 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FlatList, Image, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-const fallbackPath = (id: string) => `/product/${id}`;
 
 const tabs = [
   { key: 'ingredient', label: '성분 정보' },
@@ -239,11 +238,21 @@ export default function ProductDetail() {
 
             {/* 탭별 상단 콘텐츠 */}
             {activeTab === 'ingredient' ? (
-              <IngredientSection
-                product={data}
-                onPressFunctionalInfo={openFunctionalSheet}
-                onPressOtherInfo={openOtherSheet}
-              />
+              <View className='pt-4 gap-y-4'>
+                {/* <AISummary
+                  summary={[
+                    // TODO: api 연결
+                    '이 제품을 먹으면 살도 빠지고 얼굴도 좋아지고 키도 크고 완전 대박 짱일 수도 있고 아닐 수도 있고 함만 잡숴봐',
+                    '장점은 이런데 어떤가요 완전 효과 있죠 짱인 거 같죠 근데 다 좋은가',
+                    '과다 섭취하면 뭐든 다 안 좋아요 부디 아프지 마시고 오래 사세요...북세편살',
+                  ]}
+                /> */}
+                <IngredientSection
+                  product={data}
+                  onPressFunctionalInfo={openFunctionalSheet}
+                  onPressOtherInfo={openOtherSheet}
+                />
+              </View>
             ) : (
               <View className='px-5 mt-5'>
                 <View className='flex-row items-center justify-between mb-5'>

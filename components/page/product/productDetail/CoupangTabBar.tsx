@@ -22,9 +22,6 @@ interface Props {
 
 export default function CoopangTabBar({ id, coupangUrl }: Props) {
   const finalUrl = getSafeUrl(coupangUrl);
-  if (!id || !finalUrl) {
-    return;
-  }
 
   // const router = useRouter();
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
@@ -45,6 +42,10 @@ export default function CoopangTabBar({ id, coupangUrl }: Props) {
       }).start(() => {});
     }
   }, [isTooltipVisible, fadeAnim]);
+
+  if (!id || !finalUrl) {
+    return null;
+  }
 
   const handlePress = async () => {
     if (!finalUrl) {
