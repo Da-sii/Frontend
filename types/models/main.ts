@@ -11,8 +11,14 @@ export interface MainScreenInfo {
   topProductsToday: TopProduct[];
 }
 
+export interface IBannerAPIItem {
+  id: number;
+  image_url: string;
+  detail_image_url: string;
+  order: number;
+}
+
 export interface IBannerCell {
   id: string;
   image: ImageSourcePropType;
-  imageUrl: string;
 }
