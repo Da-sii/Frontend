@@ -37,6 +37,7 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FlatList, Image, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import LoadingSpinner from '@/components/common/LoadingSpinner/LoadingSpinner';
 
 const tabs = [
   { key: 'ingredient', label: '성분 정보' },
@@ -47,12 +48,13 @@ type IngredientInfoType = 'functional' | 'other';
 
 export default function ProductDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  console.log('[productDetail] id:', id);
   const listRef = useRef<FlatList<any>>(null);
   const [showIsMyReviewModal, setShowIsMyReviewModal] = useState(false);
   const [showTopButton, setShowTopButton] = useState(false);
   const isLoggedIn = useIsLoggedIn();
   const idNum = Number(id);
-  const { data } = useProductDetail(id);
+  const { data, isLoading } = useProductDetail(id);
   const { data: reviews = [] } = useProductReviewsPreview(idNum, 'time');
   const { data: ratingStats, refetch: refetchRatingStats } =
     useProductRatingStats(id);
@@ -116,6 +118,7 @@ export default function ProductDetail() {
 
   // const [coupangProduct, setCoupangProduct] = useState<ICoupang | null>(null);
 
+  if (isLoading) return <LoadingSpinner />;
   if (!data) return <Text>제품을 찾을 수 없습니다.</Text>;
 
   return (
