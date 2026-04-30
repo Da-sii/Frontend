@@ -5,7 +5,10 @@ import BannerCarousel from '@/components/page/home/BannerCarousel';
 import HomeFooter from '@/components/page/home/HomeFooter';
 import ProductRankingCarousel from '@/components/page/home/ProductRankingCarousel';
 import TagsView from '@/components/page/home/TagsView';
-import { useFetchBannersQuery, useFetchMainScreenQuery } from '@/hooks/useProductQueries';
+import {
+  useFetchBannersQuery,
+  useFetchMainScreenQuery,
+} from '@/hooks/useProductQueries';
 import { router, usePathname } from 'expo-router';
 import { useEffect } from 'react';
 
@@ -15,12 +18,17 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Home() {
   const { data: mainScreenInfo, isLoading } = useFetchMainScreenQuery();
-  const { data: bannersData, error: bannersError, isLoading: isBannersLoading } = useFetchBannersQuery();
-  console.log('[banners] loading:', isBannersLoading, '| data:', JSON.stringify(bannersData), '| error:', bannersError);
-  const banners = (bannersData ?? []).map((item) => ({
-    ...item,
-    image: { uri: item.imageUrl },
-  }));
+  const { data: fetchedBanners = [] } = useFetchBannersQuery();
+  const banners =
+    fetchedBanners.length > 0
+      ? fetchedBanners
+      : [
+          {
+            id: '0',
+            image: require('@/assets/images/img_logo.png'),
+            imageUrl: '',
+          },
+        ];
   const isTermsAgreed = mainScreenInfo?.user?.isTermsAgreed;
   const pathname = usePathname();
 
