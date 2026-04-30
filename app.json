@@ -2,7 +2,7 @@
   "expo": {
     "name": "다시",
     "slug": "dasii",
-    "version": "1.4.0",
+    "version": "1.4.1",
     "orientation": "portrait",
     "icon": "./assets/images/img_logo.png",
     "scheme": "dasii",
@@ -10,8 +10,9 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": false,
-      "buildNumber": "10",
+      "buildNumber": "1",
       "bundleIdentifier": "com.podostore.dasii",
+      "associatedDomains": ["applinks:dasii.kr"],
       "infoPlist": {
         "NSUserTrackingUsageDescription": "맞춤형 콘텐츠/광고 및 앱 품질 개선을 위해 사용자 활동 데이터를 사용할 수 있도록 허용해 주세요.",
         "NSCameraUsageDescription": "리뷰를 작성할 때 직접 촬영한 사진을 첨부하기 위해 카메라를 사용합니다.",
@@ -25,7 +26,21 @@
       },
       "blockedPermissions": ["com.google.android.gms.permission.AD_ID"],
       "edgeToEdgeEnabled": true,
-      "package": "com.dasii"
+      "package": "com.dasii",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "dasii.kr",
+              "pathPrefix": "/product"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -81,6 +96,12 @@
     "experiments": {
       "typedRoutes": true
     },
-    "assetBundlePatterns": ["**/*"]
+    "assetBundlePatterns": ["**/*"],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "b55b2fe7-2895-4dbe-98e8-2cd3ecc4deea"
+      }
+    }
   }
 }

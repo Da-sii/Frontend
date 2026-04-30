@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C /Users/bangdayeon/Desktop/Projects/Frontend log --oneline refactor/#185-deeplink)",
+      "Bash(git -C /Users/bangdayeon/Desktop/Projects/Frontend diff main refactor/#185-deeplink -- app.json)",
+      "Bash(git -C /Users/bangdayeon/Desktop/Projects/Frontend diff main refactor/#185-deeplink --name-only)",
+      "Bash(git -C /Users/bangdayeon/Desktop/Projects/Frontend show refactor/#185-deeplink:app/+not-found.tsx)",
+      "Bash(git -C /Users/bangdayeon/Desktop/Projects/Frontend show refactor/#185-deeplink:app/product/[id]/index.tsx)",
+      "Bash(git -C /Users/bangdayeon/Desktop/Projects/Frontend show \"refactor/#185-deeplink:app/product/\\\\[id\\\\]/index.tsx\")",
+      "WebFetch(domain:dasii.kr)",
+      "Read(//Users/bangdayeon/**)",
+      "Bash(xargs cat *)",
+      "Bash(curl -sI https://dasii.kr/.well-known/apple-app-site-association)",
+      "Bash(codesign -d --entitlements :- \"/Users/bangdayeon/Library/Developer/Xcode/Archives/2026-05-02/app 5-2-26, 8.22 PM.xcarchive/Products/Applications/app.app\")"
+    ]
+  }
+}
