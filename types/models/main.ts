@@ -14,11 +14,5 @@ export interface MainScreenInfo {
 export interface IBannerCell {
   id: string;
   image: ImageSourcePropType;
-  title: string;
-  subTitle: string;
-}
-
-export interface IBannerDetail {
-  id: string;
-  images: ImageSourcePropType[];
+  imageUrl: string;
 }
