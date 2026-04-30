@@ -1,14 +1,19 @@
 import GoBackIcon from '@/assets/icons/ic_arrow_left.svg';
 import ShareIcon from '@/assets/icons/ic_graph.svg';
 import Navigation from '@/components/layout/Navigation';
+import { useFetchBannersQuery } from '@/hooks/useProductQueries';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Dimensions, Image, ScrollView, Share } from 'react-native';
+import { Dimensions, Image, ScrollView, Share, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Banner() {
   const router = useRouter();
-  const { imageUrl: encodedUrl } = useLocalSearchParams<{ imageUrl: string }>();
-  const imageUrl = encodedUrl ? decodeURIComponent(encodedUrl) : undefined;
+  const { id } = useLocalSearchParams<{ id: string }>();
+
+  const { data: bannersRaw = [] } = useFetchBannersQuery();
+  const detailImages = bannersRaw
+    .filter((item) => String(item.order) === id)
+    .map((item) => ({ uri: item.detail_image_url }));
 
   const handleShare = async () => {
     try {
@@ -32,14 +37,19 @@ export default function Banner() {
       />
 
       <ScrollView className='flex-1'>
-        <Image
-          source={{ uri: imageUrl }}
-          resizeMode='contain'
-          style={{
-            width: Dimensions.get('window').width,
-            height: Dimensions.get('window').width * 1.3,
-          }}
-        />
+        <View>
+          {detailImages.map((source, index) => (
+            <Image
+              key={index}
+              source={source}
+              resizeMode='contain'
+              style={{
+                width: Dimensions.get('window').width,
+                height: Dimensions.get('window').width * 1.3,
+              }}
+            />
+          ))}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

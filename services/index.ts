@@ -59,7 +59,7 @@ axiosInstance.interceptors.response.use(
   (res) => {
     if (__DEV__) {
       const url = (res.config.baseURL || '') + (res.config.url || '');
-      console.log('[AXIOS RES] ←', res.status, url, 'data=', res.data);
+      console.log('[AXIOS RES] ←', res.status, url);
     }
     return res;
   },

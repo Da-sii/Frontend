@@ -27,13 +27,9 @@ export default function BannerCarousel({ data }: BannerCarouselProps) {
     return (
       <Pressable
         onPress={() => {
-          if (!item.imageUrl) return;
           router.push({
             pathname: '/home/banner',
-            params: {
-              id: item.id,
-              imageUrl: encodeURIComponent(item.imageUrl),
-            },
+            params: { id: item.id },
           });
         }}
         style={{

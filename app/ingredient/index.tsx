@@ -51,12 +51,10 @@ export default function IngredientGuidePage() {
   });
 
   console.log(
-    '[Ingredients] data:',
-    data,
-    'isError:',
-    isError,
-    'error:',
-    error,
+    '[Ingredients] isLoading:', isLoading,
+    '| data:', JSON.stringify(data),
+    '| isError:', isError,
+    '| error:', (error as any)?.response?.data ?? (error as any)?.message,
   );
 
   const ingredients = data?.results ?? [];

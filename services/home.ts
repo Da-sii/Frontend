@@ -1,4 +1,4 @@
-import { IBannerCell } from '@/types/models/main';
+import { IBannerAPIItem } from '@/types/models/main';
 import { axiosInstance } from './index';
 
 export const mainAPI = {
@@ -7,12 +7,8 @@ export const mainAPI = {
     return data;
   },
 
-  getBanners: async (): Promise<IBannerCell[]> => {
+  getBanners: async (): Promise<IBannerAPIItem[]> => {
     const { data } = await axiosInstance.get('/banners/');
-    return data.map((item: any) => ({
-      id: String(item.id),
-      image: { uri: item.image_url },
-      imageUrl: item.image_url,
-    }));
+    return data;
   },
 };
