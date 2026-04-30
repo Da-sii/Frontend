@@ -36,8 +36,8 @@ export default function TagsView({
 
   const handleTagPress = (ingredient: IngredientTag) => {
     router.push({
-      pathname: '/home/search',
-      params: { word: ingredient.name },
+      pathname: '/ingredient/[id]',
+      params: { id: ingredient.id },
     });
   };
 

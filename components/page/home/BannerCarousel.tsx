@@ -27,9 +27,13 @@ export default function BannerCarousel({ data }: BannerCarouselProps) {
     return (
       <Pressable
         onPress={() => {
+          if (!item.imageUrl) return;
           router.push({
             pathname: '/home/banner',
-            params: { id: item.id, title: item.title },
+            params: {
+              id: item.id,
+              imageUrl: encodeURIComponent(item.imageUrl),
+            },
           });
         }}
         style={{
@@ -51,12 +55,6 @@ export default function BannerCarousel({ data }: BannerCarouselProps) {
             resizeMode='contain'
             className='w-full h-full'
           />
-          <View className='absolute left-8 bottom-8'>
-            <Text className='text-white text-2xl font-n-bd'>{item.title}</Text>
-            <Text className='text-white text-lg font-n-bd mt-1'>
-              {item.subTitle}
-            </Text>
-          </View>
           {isFocused && (
             <View className='absolute top-5 right-5 bg-black/40 px-4 py-1 rounded-full'>
               <Text className='text-white text-sm font-n-bd'>
