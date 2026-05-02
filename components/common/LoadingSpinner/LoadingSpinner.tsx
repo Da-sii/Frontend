@@ -1,27 +1,29 @@
 import { useEffect, useRef } from 'react';
-import { Animated, Easing } from 'react-native';
+import { Animated, Easing, StyleSheet, View } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 
 const SIZE = 48;
 const STROKE_WIDTH = 4;
 const RADIUS = (SIZE - STROKE_WIDTH) / 2;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
+const DASH = CIRCUMFERENCE * 0.25;
 
-// 76.94%
-const DASH = CIRCUMFERENCE * 0.7694;
+const AnimatedSvg = Animated.createAnimatedComponent(Svg);
 
 export default function LoadingSpinner() {
   const rotate = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    Animated.loop(
+    const loop = Animated.loop(
       Animated.timing(rotate, {
         toValue: 1,
         duration: 1000,
         easing: Easing.linear,
         useNativeDriver: true,
       }),
-    ).start();
+    );
+    loop.start();
+    return () => loop.stop();
   }, [rotate]);
 
   const spin = rotate.interpolate({
@@ -30,8 +32,12 @@ export default function LoadingSpinner() {
   });
 
   return (
-    <Animated.View style={{ transform: [{ rotate: spin }] }}>
-      <Svg width={SIZE} height={SIZE}>
+    <View style={styles.overlay}>
+      <AnimatedSvg
+        width={SIZE}
+        height={SIZE}
+        style={{ transform: [{ rotate: spin }] }}
+      >
         <Circle
           cx={SIZE / 2}
           cy={SIZE / 2}
@@ -39,10 +45,18 @@ export default function LoadingSpinner() {
           stroke='rgba(147,154,159,0.8)'
           strokeWidth={STROKE_WIDTH}
           strokeLinecap='round'
-          strokeDasharray={`${DASH} ${CIRCUMFERENCE}`}
+          strokeDasharray={[DASH, CIRCUMFERENCE]}
           fill='none'
         />
-      </Svg>
-    </Animated.View>
+      </AnimatedSvg>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});

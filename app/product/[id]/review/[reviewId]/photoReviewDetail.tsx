@@ -17,6 +17,7 @@ import {
   Text,
   View,
 } from 'react-native';
+import { PortalHost } from '@gorhom/portal';
 import { SafeAreaView } from 'react-native-safe-area-context';
 export default function PhotoReviewDetail() {
   const router = useRouter();
@@ -180,6 +181,7 @@ export default function PhotoReviewDetail() {
           />
         </View>
       </ScrollView>
+      <PortalHost name='overlay-top' />
     </SafeAreaView>
   );
 }
