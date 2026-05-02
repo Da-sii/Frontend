@@ -17,6 +17,7 @@ import {
   isSamePassword,
 } from '@/utils/validation';
 import BottomSheet from '@gorhom/bottom-sheet';
+import { PortalHost } from '@gorhom/portal';
 import { Stack, useRouter } from 'expo-router';
 import { useMemo, useRef, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
@@ -298,6 +299,7 @@ export default function Index() {
         visible={isTermsModalVisible}
         onClose={() => setIsTermsModalVisible(false)}
       />
+      <PortalHost name='overlay-top' />
     </SafeAreaView>
   );
 }

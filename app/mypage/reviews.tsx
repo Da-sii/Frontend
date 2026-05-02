@@ -7,6 +7,7 @@ import { useGetMyReview } from '@/hooks/my/useGetMyReview';
 import { useState } from 'react';
 
 import { MyReview } from '@/services/my/getReviewList';
+import { PortalHost } from '@gorhom/portal';
 import { Stack, useRouter } from 'expo-router';
 import { useCallback } from 'react';
 import {
@@ -188,6 +189,7 @@ export default function MyReviews() {
         refreshing={isRefetching}
         onRefresh={refetch}
       />
+      <PortalHost name='overlay-top' />
     </SafeAreaView>
   );
 }

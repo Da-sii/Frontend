@@ -11,6 +11,7 @@ import { useParseReviewIdFromImage } from '@/hooks/product/review/image/useParse
 import { useProductReviewsInfinite } from '@/hooks/product/review/useGetProductReview';
 import BottomSheet from '@gorhom/bottom-sheet';
 
+import { PortalHost } from '@gorhom/portal';
 import { useQueryClient } from '@tanstack/react-query';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useMemo, useRef, useState } from 'react';
@@ -237,6 +238,7 @@ export default function allReview() {
         }}
         visible={showTopButton}
       />
+      <PortalHost name='overlay-top' />
     </SafeAreaView>
   );
 }

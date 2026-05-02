@@ -10,6 +10,7 @@ import { ScrollToTopButton } from '@/components/common/buttons/ScrollToTopButton
 import DefaultModal from '@/components/common/modals/DefaultModal';
 import Navigation from '@/components/layout/Navigation';
 // import AISummary from '@/components/page/product/productDetail/AISummary';
+import LoadingSpinner from '@/components/common/LoadingSpinner/LoadingSpinner';
 import IngredientInfoBottomSheet from '@/components/page/product/productDetail/BottomSheet/IngredientInfoBottomSheet';
 import CoupangTabBar from '@/components/page/product/productDetail/CoupangTabBar';
 import IngredientSection from '@/components/page/product/productDetail/Ingredient/IngredientSection';
@@ -37,7 +38,6 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FlatList, Image, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import LoadingSpinner from '@/components/common/LoadingSpinner/LoadingSpinner';
 
 const tabs = [
   { key: 'ingredient', label: '성분 정보' },
@@ -119,7 +119,14 @@ export default function ProductDetail() {
   // const [coupangProduct, setCoupangProduct] = useState<ICoupang | null>(null);
 
   if (isLoading) return <LoadingSpinner />;
-  if (!data) return <Text>제품을 찾을 수 없습니다.</Text>;
+  if (!data) return;
+  <View className='flex items-center justify-center gap-3'>
+    <Text className='text-lg'>제품을 찾을 수 없습니다.😢</Text>;
+    <LongButton
+      label='메인 페이지로 이동하기'
+      onPress={() => router.replace('/(tabs)/home')}
+    />
+  </View>;
 
   return (
     <SafeAreaView className='flex-1 bg-white'>
