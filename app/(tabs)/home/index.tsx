@@ -5,8 +5,7 @@ import BannerCarousel from '@/components/page/home/BannerCarousel';
 import HomeFooter from '@/components/page/home/HomeFooter';
 import ProductRankingCarousel from '@/components/page/home/ProductRankingCarousel';
 import TagsView from '@/components/page/home/TagsView';
-import { bannerData } from '@/constants/banner';
-import { useFetchMainScreenQuery } from '@/hooks/useProductQueries';
+import { useFetchBannersQuery, useFetchMainScreenQuery } from '@/hooks/useProductQueries';
 import { router, usePathname } from 'expo-router';
 import { useEffect } from 'react';
 
@@ -16,6 +15,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Home() {
   const { data: mainScreenInfo, isLoading } = useFetchMainScreenQuery();
+  const { data: bannersData, error: bannersError, isLoading: isBannersLoading } = useFetchBannersQuery();
+  console.log('[banners] loading:', isBannersLoading, '| data:', JSON.stringify(bannersData), '| error:', bannersError);
+  const banners = (bannersData ?? []).map((item) => ({
+    ...item,
+    image: { uri: item.imageUrl },
+  }));
   const isTermsAgreed = mainScreenInfo?.user?.isTermsAgreed;
   const pathname = usePathname();
 
@@ -51,7 +56,7 @@ export default function Home() {
         </View>
 
         <View className='flex-1 w-full my-[-10px]'>
-          <BannerCarousel data={bannerData} />
+          <BannerCarousel data={banners} />
         </View>
 
         <View className='mt-2 mb-[30px]'>

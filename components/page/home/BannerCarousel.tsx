@@ -29,7 +29,7 @@ export default function BannerCarousel({ data }: BannerCarouselProps) {
         onPress={() => {
           router.push({
             pathname: '/home/banner',
-            params: { id: item.id },
+            params: { id: item.id, title: item.title },
           });
         }}
         style={{

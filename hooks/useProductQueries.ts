@@ -64,3 +64,10 @@ export const useFetchMainScreenQuery = () => {
     queryFn: () => mainAPI.getMainScreen(),
   });
 };
+
+export const useFetchBannersQuery = () => {
+  return useQuery({
+    queryKey: ['banners'],
+    queryFn: () => mainAPI.getBanners(),
+  });
+};
