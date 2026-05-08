@@ -1,7 +1,7 @@
 import GoBackIcon from '@/assets/icons/ic_arrow_left.svg';
 import ShareIcon from '@/assets/icons/ic_graph.svg';
 import Navigation from '@/components/layout/Navigation';
-import { bannerData, bannerDetailData } from '@/constants/banner';
+import { bannerDetailData } from '@/constants/banner';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import {
   Dimensions,
@@ -16,16 +16,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Banner() {
   const router = useRouter();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, title } = useLocalSearchParams<{ id: string; title: string }>();
 
-  const bannerItem = bannerData.find((item) => item.id === id);
   const detailData = bannerDetailData.find((data) => data.id === id);
 
   const handleShare = async () => {
-    if (!bannerItem) return;
     try {
       await Share.share({
-        message: `${bannerItem.title} | 다이어트의 시작, 다시`,
+        message: `${title ?? ''} | 다이어트의 시작, 다시`,
         url: `https://www.instagram.com/p/DPEBs27E5tb/?img_index=1`,
       });
     } catch (error) {
@@ -33,7 +31,7 @@ export default function Banner() {
     }
   };
 
-  if (!bannerItem || !detailData) {
+  if (!detailData) {
     return (
       <SafeAreaView className='flex-1 justify-center items-center bg-white'>
         <Text className='text-gray-500 mb-4'>

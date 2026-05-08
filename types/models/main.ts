@@ -18,6 +18,13 @@ export interface IBannerCell {
   subTitle: string;
 }
 
+export interface IBannerAPIItem {
+  id: string;
+  imageUrl: string;
+  title: string;
+  subTitle: string;
+}
+
 export interface IBannerDetail {
   id: string;
   images: ImageSourcePropType[];
