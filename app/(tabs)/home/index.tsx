@@ -5,9 +5,12 @@ import BannerCarousel from '@/components/page/home/BannerCarousel';
 import HomeFooter from '@/components/page/home/HomeFooter';
 import ProductRankingCarousel from '@/components/page/home/ProductRankingCarousel';
 import TagsView from '@/components/page/home/TagsView';
-import { useFetchBannersQuery, useFetchMainScreenQuery } from '@/hooks/useProductQueries';
+import {
+  useFetchBannersQuery,
+  useFetchMainScreenQuery,
+} from '@/hooks/useProductQueries';
 import { router, usePathname } from 'expo-router';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import colors from '@/constants/color';
 import { Pressable, ScrollView, Text, View } from 'react-native';
@@ -15,12 +18,20 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Home() {
   const { data: mainScreenInfo, isLoading } = useFetchMainScreenQuery();
-  const { data: bannersData, error: bannersError, isLoading: isBannersLoading } = useFetchBannersQuery();
-  console.log('[banners] loading:', isBannersLoading, '| data:', JSON.stringify(bannersData), '| error:', bannersError);
-  const banners = (bannersData ?? []).map((item) => ({
-    ...item,
-    image: { uri: item.imageUrl },
-  }));
+  const { data: bannersRaw = [] } = useFetchBannersQuery();
+  const banners = useMemo(() => {
+    const seen = new Set<number>();
+    return bannersRaw
+      .filter((item) => {
+        if (seen.has(item.order)) return false;
+        seen.add(item.order);
+        return true;
+      })
+      .map((item) => ({
+        id: String(item.order),
+        image: { uri: item.image_url },
+      }));
+  }, [bannersRaw]);
   const isTermsAgreed = mainScreenInfo?.user?.isTermsAgreed;
   const pathname = usePathname();
 

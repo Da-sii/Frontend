@@ -1,29 +1,24 @@
 import GoBackIcon from '@/assets/icons/ic_arrow_left.svg';
 import ShareIcon from '@/assets/icons/ic_graph.svg';
 import Navigation from '@/components/layout/Navigation';
-import { bannerDetailData } from '@/constants/banner';
+import { useFetchBannersQuery } from '@/hooks/useProductQueries';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import {
-  Dimensions,
-  Image,
-  Pressable,
-  ScrollView,
-  Share,
-  Text,
-  View,
-} from 'react-native';
+import { Dimensions, Image, ScrollView, Share, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Banner() {
   const router = useRouter();
-  const { id, title } = useLocalSearchParams<{ id: string; title: string }>();
+  const { id } = useLocalSearchParams<{ id: string }>();
 
-  const detailData = bannerDetailData.find((data) => data.id === id);
+  const { data: bannersRaw = [] } = useFetchBannersQuery();
+  const detailImages = bannersRaw
+    .filter((item) => String(item.order) === id)
+    .map((item) => ({ uri: item.detail_image_url }));
 
   const handleShare = async () => {
     try {
       await Share.share({
-        message: `${title ?? ''} | 다이어트의 시작, 다시`,
+        message: '다이어트의 시작, 다시',
         url: `https://www.instagram.com/p/DPEBs27E5tb/?img_index=1`,
       });
     } catch (error) {
@@ -31,35 +26,22 @@ export default function Banner() {
     }
   };
 
-  if (!detailData) {
-    return (
-      <SafeAreaView className='flex-1 justify-center items-center bg-white'>
-        <Text className='text-gray-500 mb-4'>
-          상세 정보를 불러올 수 없습니다.
-        </Text>
-        <Pressable onPress={() => router.back()}>
-          <Text className='text-blue-500 font-semibold'>돌아가기</Text>
-        </Pressable>
-      </SafeAreaView>
-    );
-  }
-
   return (
     <SafeAreaView className='flex-1 bg-white' edges={['top', 'left', 'right']}>
       <Navigation
         left={<GoBackIcon width={17} height={17} />}
         onLeftPress={() => router.back()}
-        title='뉴스' // 또는 bannerItem.title 사용 가능
+        title='뉴스'
         right={<ShareIcon width={18} height={18} />}
         onRightPress={handleShare}
       />
 
       <ScrollView className='flex-1'>
         <View>
-          {detailData.images.map((imageSource, index) => (
+          {detailImages.map((source, index) => (
             <Image
               key={index}
-              source={imageSource}
+              source={source}
               resizeMode='contain'
               style={{
                 width: Dimensions.get('window').width,

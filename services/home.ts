@@ -6,6 +6,7 @@ export const mainAPI = {
     const { data } = await axiosInstance.get('/products/main/');
     return data;
   },
+
   getBanners: async (): Promise<IBannerAPIItem[]> => {
     const { data } = await axiosInstance.get('/banners/');
     return data;
