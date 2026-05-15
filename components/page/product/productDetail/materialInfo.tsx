@@ -274,7 +274,7 @@ export default function MaterialInfo({
               <Text className='text-c3 font-n-rg text-gray-700'>포함량</Text>
             </View>
             <View style={{ width: 7 }} />
-            <Text className='text-c1 font-n-bd'>{materialInfo.amount}</Text>
+            <Text className='text-c1 font-n-bd'>{formatNumber(materialInfo.amount)}</Text>
             <View style={{ width: 5 }} />
             <StatusTag status={status} />
           </View>
@@ -288,7 +288,7 @@ export default function MaterialInfo({
             </View>
             <View style={{ width: 7 }} />
             <Text className='text-c1 font-n-bd'>
-              {materialInfo.minRecommended}~{materialInfo.maxRecommended}
+              {formatNumber(materialInfo.minRecommended)}~{formatNumber(materialInfo.maxRecommended)}
             </Text>
           </View>
         </View>
