@@ -251,7 +251,7 @@ export default function ReviewItems({
       )}
       <View>
         <Text
-          className='text-[13px] font-n-rg'
+          className='text-[13px] font-n-rg leading-5'
           numberOfLines={
             isMore && !isOpen && needsClamp ? MAX_LINES : undefined
           }
