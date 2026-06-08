@@ -1,5 +1,6 @@
 import HomeIcon from '@/assets/icons/ic_home.svg';
 import PersonIcon from '@/assets/icons/ic_person.svg';
+import RecordIcon from '@/assets/icons/ic_graph.svg';
 import ShelfIcon from '@/assets/icons/ic_shelf.svg';
 import colors from '@/constants/color';
 import { Tabs } from 'expo-router';
@@ -27,6 +28,31 @@ export default function TabsLayout() {
       }}
     >
       <Tabs.Screen
+        name='home'
+        options={{
+          title: '홈',
+          tabBarIcon: ({ focused }) => (
+            <HomeIcon
+              width={20}
+              height={20}
+              color={focused ? colors.gray[900] : colors.gray[400]}
+              className='mb-1'
+            />
+          ),
+          tabBarLabel: ({ focused }) => (
+            <Text
+              style={{
+                color: focused ? colors.gray[900] : colors.gray[400],
+                fontSize: 10,
+              }}
+            >
+              홈
+            </Text>
+          ),
+        }}
+      />
+
+      <Tabs.Screen
         name='category'
         options={{
           title: '카테고리',
@@ -52,11 +78,11 @@ export default function TabsLayout() {
       />
 
       <Tabs.Screen
-        name='home'
+        name='record'
         options={{
-          title: '홈',
+          title: '나의 기록',
           tabBarIcon: ({ focused }) => (
-            <HomeIcon
+            <RecordIcon
               width={20}
               height={20}
               color={focused ? colors.gray[900] : colors.gray[400]}
@@ -70,7 +96,7 @@ export default function TabsLayout() {
                 fontSize: 10,
               }}
             >
-              홈
+              나의 기록
             </Text>
           ),
         }}
