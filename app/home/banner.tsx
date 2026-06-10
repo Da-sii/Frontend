@@ -11,10 +11,8 @@ export default function Banner() {
   const { id } = useLocalSearchParams<{ id: string }>();
 
   const { data: bannersRaw = [] } = useFetchBannersQuery();
-  const detailImages = bannersRaw
-    .filter((item) => String(item.order) === id)
-    .sort((a, b) => a.id - b.id)
-    .map((item) => ({ uri: item.detail_image_url }));
+  const banner = bannersRaw.find((item) => String(item.order) === id);
+  const detailImages = (banner?.detail_images ?? []).map((url) => ({ uri: url }));
 
   const handleShare = async () => {
     try {
