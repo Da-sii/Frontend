@@ -13,6 +13,7 @@ export default function Banner() {
   const { data: bannersRaw = [] } = useFetchBannersQuery();
   const detailImages = bannersRaw
     .filter((item) => String(item.order) === id)
+    .sort((a, b) => a.id - b.id)
     .map((item) => ({ uri: item.detail_image_url }));
 
   const handleShare = async () => {
