@@ -15,6 +15,7 @@ export interface IBannerAPIItem {
   id: number;
   image_url: string;
   detail_image_url: string;
+  detail_images: string[];
   order: number;
 }
 
