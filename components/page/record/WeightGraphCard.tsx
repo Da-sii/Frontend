@@ -12,7 +12,7 @@ const CARD_MARGIN = 20; // mx-5
 const CARD_PADDING = 10; // p-2.5
 const CHART_W = SCREEN_W - CARD_MARGIN * 2 - CARD_PADDING * 2;
 const CHART_H = 80;
-const CHART_BASELINE = CHART_H - 18;
+const CHART_BASELINE = CHART_H - 15;
 
 interface WeightGraphCardProps {
   records: IDailyRecord[];
@@ -30,14 +30,21 @@ export default function WeightGraphCard({ records }: WeightGraphCardProps) {
 
   const weights = useMemo(() => {
     const last7 = recentDayKeys(7);
-    return last7
-      .map((k) => records.find((r) => r.date === k)?.weight)
-      .filter((w): w is number => w != null);
+    console.log('last7:', last7);
+    console.log(
+      'records:',
+      records.map((r) => r.date),
+    );
+    const result = last7.map(
+      (k) => records.find((r) => r.date === k)?.weight ?? 0,
+    );
+    console.log('weights:', result);
+    return result;
   }, [records]);
 
   const { min, max } = useMemo(() => {
-    if (weights.length === 0) return { min: 0, max: 1 };
-    return { min: Math.min(...weights), max: Math.max(...weights) };
+    if (weights.every((w) => w === 0)) return { min: 0, max: 1 };
+    return { min: 0, max: Math.max(...weights) };
   }, [weights]);
 
   const chartData = useMemo(
@@ -78,7 +85,7 @@ export default function WeightGraphCard({ records }: WeightGraphCardProps) {
 
   return (
     <View
-      className='bg-white rounded-[16px] border border-gray-50'
+      className='bg-white rounded-[12px] border border-gray-200'
       style={{ marginHorizontal: CARD_MARGIN, padding: CARD_PADDING }}
     >
       {/* 헤더: 체중 + 보기/숨김 토글 */}
@@ -86,16 +93,13 @@ export default function WeightGraphCard({ records }: WeightGraphCardProps) {
         className='flex-row items-center justify-between'
         style={{ paddingHorizontal: 10, marginBottom: 10 }}
       >
-        <Text className='text-c3 font-n-bd text-gray-500'>체중</Text>
+        <Text className='text-c3 font-n-bd text-gray-500 pt-[10px]'>체중</Text>
         <VisibilityToggle />
       </View>
 
       {/* 체중 값 + 말풍선 */}
-      <View
-        className='flex-row items-center'
-        style={{ paddingHorizontal: 10 }}
-      >
-        <Text className='text-h-lg font-n-eb text-gray-900'>{weightLabel}</Text>
+      <View className='flex-row items-center' style={{ paddingHorizontal: 10 }}>
+        <Text className='text-b-lg font-n-eb text-gray-900'>{weightLabel}</Text>
         <View className='flex-row items-center' style={{ marginLeft: 8 }}>
           <View
             style={{
@@ -107,9 +111,10 @@ export default function WeightGraphCard({ records }: WeightGraphCardProps) {
               borderTopColor: 'transparent',
               borderBottomColor: 'transparent',
               borderRightColor: '#66A3FF',
+              marginRight: -0.3,
             }}
           />
-          <View className='bg-blue-300 rounded-[8px] px-2 py-1'>
+          <View className='bg-blue-300 rounded-full px-2 py-[3px]'>
             <Text className='text-c3 font-n-eb text-white'>{bubbleText}</Text>
           </View>
         </View>
@@ -121,13 +126,13 @@ export default function WeightGraphCard({ records }: WeightGraphCardProps) {
           <LineChart
             data={chartData}
             width={CHART_W}
-            height={CHART_H}
+            height={CHART_BASELINE}
             spacing={spacing}
-            initialSpacing={12}
-            endSpacing={12}
-            thickness={2}
+            initialSpacing={0}
+            thickness={2.5}
             color='#82E3AF'
             curved
+            overflowBottom={12} // 하단 여유 공간
             areaChart
             startFillColor='#82E3AF'
             endFillColor='#EAFAF2'
@@ -138,10 +143,9 @@ export default function WeightGraphCard({ records }: WeightGraphCardProps) {
             hideYAxisText
             yAxisThickness={0}
             xAxisThickness={0}
-            yAxisOffset={Math.max(min - 0.5, 0)}
+            yAxisOffset={0}
             maxValue={max + 0.5}
             disableScroll
-            adjustToWidth
           />
         ) : (
           <Svg width={CHART_W} height={CHART_H}>
@@ -151,13 +155,14 @@ export default function WeightGraphCard({ records }: WeightGraphCardProps) {
               x2={CHART_W - 12}
               y2={CHART_BASELINE}
               stroke='#82E3AF'
-              strokeWidth={2}
-              strokeDasharray='6 6'
+              strokeWidth={2.5}
+              strokeDasharray='5 4'
+              strokeLinecap='round'
             />
             <Circle
-              cx={CHART_W - 12}
+              cx={CHART_W - 14}
               cy={CHART_BASELINE}
-              r={4}
+              r={3}
               fill='#FFFFFF'
               stroke='#82E3AF'
               strokeWidth={2}
@@ -168,7 +173,7 @@ export default function WeightGraphCard({ records }: WeightGraphCardProps) {
 
       {/* 푸터 */}
       <Text
-        className='text-c3 font-n-rg text-gray-400 text-right'
+        className='text-[8px] font-n-rg text-gray-400 text-right'
         style={{ paddingHorizontal: 10 }}
       >
         최근 7일 기록

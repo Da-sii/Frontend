@@ -1,6 +1,6 @@
 import HomeIcon from '@/assets/icons/ic_home.svg';
 import PersonIcon from '@/assets/icons/ic_person.svg';
-import RecordIcon from '@/assets/icons/ic_graph.svg';
+import RecordIcon from '@/assets/icons/icon_myrecord.svg';
 import ShelfIcon from '@/assets/icons/ic_shelf.svg';
 import colors from '@/constants/color';
 import { Tabs } from 'expo-router';

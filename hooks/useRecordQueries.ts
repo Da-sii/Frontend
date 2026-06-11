@@ -3,11 +3,7 @@ import {
   GetRecordsRangePayload,
   UpsertRecordPayload,
 } from '@/types/payloads/record';
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export const recordKeys = {
   all: ['records'] as const,
@@ -26,6 +22,7 @@ export const useRecordQuery = (date: string) =>
     queryKey: recordKeys.detail(date),
     queryFn: () => recordAPI.getRecord(date),
     enabled: !!date,
+    staleTime: 1000 * 60 * 5, // 5분
   });
 
 export const useUpsertRecordMutation = () => {
