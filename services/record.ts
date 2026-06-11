@@ -5,7 +5,6 @@ import {
   UpsertRecordPayload,
 } from '@/types/payloads/record';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { MOCK_RECORDS } from './record.mock';
 
 // 백엔드 미구현. 실제 API 와 동일한 형태의 서비스 레이어 —
 // 추후 axiosInstance 호출로 교체하면 됨. 현재는 AsyncStorage + mock 시드.
@@ -17,12 +16,9 @@ async function readAll(): Promise<RecordMap> {
   if (raw) {
     try {
       return JSON.parse(raw) as RecordMap;
-    } catch {
-      // 손상된 데이터 — 시드로 복구
-    }
+    } catch {}
   }
-  await AsyncStorage.setItem(KEYS.WEIGHT_RECORDS, JSON.stringify(MOCK_RECORDS));
-  return MOCK_RECORDS;
+  return {};
 }
 
 async function writeAll(map: RecordMap): Promise<void> {
