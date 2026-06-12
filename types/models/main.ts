@@ -14,8 +14,12 @@ export interface MainScreenInfo {
 export interface IBannerAPIItem {
   id: number;
   image_url: string;
-  detail_image_url: string;
-  detail_images: string[];
+  detail_image_url: string | null;
+  detail_images: {
+    id: number;
+    detail_image_url: string;
+    order: number;
+  }[];
   order: number;
 }
 
