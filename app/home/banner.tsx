@@ -12,7 +12,9 @@ export default function Banner() {
 
   const { data: bannersRaw = [] } = useFetchBannersQuery();
   const banner = bannersRaw.find((item) => String(item.order) === id);
-  const detailImages = (banner?.detail_images ?? []).map((url) => ({ uri: url }));
+  const detailImages = (banner?.detail_images ?? []).map((item) => ({
+    uri: item.detail_image_url,
+  }));
 
   const handleShare = async () => {
     try {
@@ -24,7 +26,6 @@ export default function Banner() {
       console.error('공유하기 실패:', error);
     }
   };
-
   return (
     <SafeAreaView className='flex-1 bg-white' edges={['top', 'left', 'right']}>
       <Navigation
