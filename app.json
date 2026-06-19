@@ -2,7 +2,7 @@
   "expo": {
     "name": "다시",
     "slug": "dasii",
-    "version": "1.4.3",
+    "version": "1.4.4",
     "orientation": "portrait",
     "icon": "./assets/images/img_logo.png",
     "scheme": "dasii",
@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": false,
-      "buildNumber": "6",
+      "buildNumber": "1",
       "bundleIdentifier": "com.podostore.dasii",
       "associatedDomains": ["applinks:dasii.kr"],
       "infoPlist": {

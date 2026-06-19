@@ -33,7 +33,9 @@ function parseNumeric(s: string) {
 }
 
 function formatNumber(s: string): string {
-  return parseNumeric(s).toLocaleString('ko-KR');
+  const value = parseNumeric(s);
+  const unit = s.match(/[a-zA-Zμ]+/)?.[0] ?? '';
+  return `${value.toLocaleString('ko-KR')}${unit}`;
 }
 
 /** 단위를 μg 기준으로 정규화 */
@@ -274,7 +276,9 @@ export default function MaterialInfo({
               <Text className='text-c3 font-n-rg text-gray-700'>포함량</Text>
             </View>
             <View style={{ width: 7 }} />
-            <Text className='text-c1 font-n-bd'>{formatNumber(materialInfo.amount)}</Text>
+            <Text className='text-c1 font-n-bd'>
+              {formatNumber(materialInfo.amount)}
+            </Text>
             <View style={{ width: 5 }} />
             <StatusTag status={status} />
           </View>
@@ -288,7 +292,8 @@ export default function MaterialInfo({
             </View>
             <View style={{ width: 7 }} />
             <Text className='text-c1 font-n-bd'>
-              {formatNumber(materialInfo.minRecommended)}~{formatNumber(materialInfo.maxRecommended)}
+              {formatNumber(materialInfo.minRecommended)}~
+              {formatNumber(materialInfo.maxRecommended)}
             </Text>
           </View>
         </View>
