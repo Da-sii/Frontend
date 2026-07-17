@@ -252,6 +252,9 @@ importers:
       '@react-native/metro-config':
         specifier: ^0.84.0
         version: 0.84.0(@babel/core@7.28.5)
+      '@sentry/cli':
+        specifier: ^2.58.4
+        version: 2.58.4
       '@types/crypto-js':
         specifier: ^4.2.2
         version: 4.2.2
