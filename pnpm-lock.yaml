@@ -267,6 +267,9 @@ importers:
       babel-plugin-transform-inline-environment-variables:
         specifier: ^0.4.4
         version: 0.4.4
+      babel-preset-expo:
+        specifier: ^54.0.9
+        version: 54.0.9(@babel/core@7.28.5)(@babel/runtime@7.28.6)(expo@54.0.30)(react-refresh@0.14.2)
       eslint:
         specifier: ^9.28.0
         version: 9.39.2(jiti@1.21.7)
