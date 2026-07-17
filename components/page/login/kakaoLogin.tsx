@@ -2,12 +2,19 @@ import KakaoIcon from '@/assets/icons/ic_kakao.svg';
 import LoginButton from '@/components/common/buttons/LoginButton';
 import { isKakaoTalkLoginAvailable, login, me } from '@react-native-kakao/user';
 import { useRouter } from 'expo-router';
+import { useRef, useState } from 'react';
 import { usePendingKakaoAuth } from '../../../store/usePendingKakaoAuth';
 export default function KakaoLoginButton() {
   const router = useRouter();
   const setPending = usePendingKakaoAuth((s) => s.setPending);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const isLoggingInRef = useRef(false);
 
   const onPressKakao = async () => {
+    if (isLoggingInRef.current) return; // 중복 클릭 방지: 동시에 여러 인증 세션이 뜨면 PKCE 검증 에러가 남
+    isLoggingInRef.current = true;
+    setIsLoggingIn(true);
+
     try {
       const talkAvailable = await isKakaoTalkLoginAvailable();
 
@@ -42,6 +49,9 @@ export default function KakaoLoginButton() {
       // ❗ 그 외는 진짜 에러
       console.error('Kakao login failed:', e);
       // Alert.alert('로그인 실패', '카카오 로그인 중 오류가 발생했어요.');
+    } finally {
+      isLoggingInRef.current = false;
+      setIsLoggingIn(false);
     }
   };
 
@@ -55,6 +65,7 @@ export default function KakaoLoginButton() {
       border='border-none'
       IconWidth={18}
       IconHeight={18}
+      disabled={isLoggingIn}
     />
   );
 }
