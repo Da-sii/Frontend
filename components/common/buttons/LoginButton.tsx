@@ -12,6 +12,7 @@ type LoginButtonProps = {
   border: string;
   IconWidth?: number;
   IconHeight?: number;
+  disabled?: boolean;
 };
 
 export default function LoginButton({
@@ -24,11 +25,13 @@ export default function LoginButton({
   border,
   IconWidth,
   IconHeight,
+  disabled,
 }: LoginButtonProps) {
   return (
     <Pressable
       onPress={onPress}
-      className={`flex-row items-center justify-center w-full h-[55px] rounded-xl px-4 mb-[15px] ${borderColor} ${border} ${color}`}
+      disabled={disabled}
+      className={`flex-row items-center justify-center w-full h-[55px] rounded-xl px-4 mb-[15px] ${borderColor} ${border} ${color} ${disabled ? 'opacity-50' : ''}`}
     >
       <Icon
         width={IconWidth}
