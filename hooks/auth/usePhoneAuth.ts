@@ -7,6 +7,12 @@ import {
   verifyAuthToken,
   verifyAuthTokenResponse,
 } from '@/services/auth/phone/phoneAuth';
+import {
+  sendOctomoAuth,
+  OctomoSendResponse,
+  verifyOctomoAuth,
+  OctomoVerifyResponse,
+} from '@/services/auth/phone/octomoAuth';
 import { useMutation } from '@tanstack/react-query';
 
 // 전화번호 인증 발송 훅
@@ -52,6 +58,36 @@ export const useVerifyAuthToken = (opts?: {
   useMutation<verifyAuthTokenResponse, unknown, string>({
     mutationFn: (verificationToken: string) =>
       verifyAuthToken(verificationToken),
+    onSuccess: (data) => {
+      opts?.onSuccess?.(data);
+    },
+    onError: (err: unknown) => {
+      opts?.onError?.(err);
+    },
+  });
+
+// 옥토모 인증코드 발급 훅
+export const useSendOctomoAuth = (opts?: {
+  onSuccess?: (data: OctomoSendResponse) => void;
+  onError?: (err: unknown) => void;
+}) =>
+  useMutation<OctomoSendResponse, unknown, string>({
+    mutationFn: (phoneNumber: string) => sendOctomoAuth(phoneNumber),
+    onSuccess: (data) => {
+      opts?.onSuccess?.(data);
+    },
+    onError: (err: unknown) => {
+      opts?.onError?.(err);
+    },
+  });
+
+// 옥토모 수신 여부 확인 훅
+export const useVerifyOctomoAuth = (opts?: {
+  onSuccess?: (data: OctomoVerifyResponse) => void;
+  onError?: (err: unknown) => void;
+}) =>
+  useMutation<OctomoVerifyResponse, unknown, string>({
+    mutationFn: (phoneNumber: string) => verifyOctomoAuth(phoneNumber),
     onSuccess: (data) => {
       opts?.onSuccess?.(data);
     },
