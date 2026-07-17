@@ -50,11 +50,14 @@ export default function List() {
   const { categories, fetchCategories } = useCategory();
   const params = useLocalSearchParams<{
     main?: string;
-    middle: string;
+    middle?: string;
+    sub?: string;
   }>();
 
   const [bigCategory, setBigCategory] = useState(params.main ?? '');
-  const [activeSmall, setActiveSmall] = useState('전체');
+  const [activeSmall, setActiveSmall] = useState(
+    params.sub && params.sub !== '전체' ? params.sub : '전체',
+  );
   const [activeMiddle, setActiveMiddle] = useState(
     params.middle === '전체' ? '전체' : (params.middle as string),
   );
@@ -69,7 +72,11 @@ export default function List() {
       setActiveMiddle(middleCategory);
       // setTab(middleCategory);
     }
-  }, [params.main, params.middle]);
+
+    if (params.sub) {
+      setActiveSmall(params.sub === '전체' ? '전체' : params.sub);
+    }
+  }, [params.main, params.middle, params.sub]);
 
   useEffect(() => {
     fetchCategories();

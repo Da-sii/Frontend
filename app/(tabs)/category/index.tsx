@@ -48,11 +48,11 @@ export default function Category() {
     }
   }, [categories]);
 
-  const goToList = (sub?: string) => {
+  const goToList = (middle: string, sub?: string) => {
     if (!selectedBigCategory) return;
     router.push({
       pathname: '/(tabs)/category/list',
-      params: { main: selectedBigCategory, sub: sub || '전체' },
+      params: { main: selectedBigCategory, middle, sub: sub || '전체' },
     });
   };
 
@@ -137,7 +137,7 @@ export default function Category() {
                   {item.smallCategories.map((small) => (
                     <Pressable
                       key={small}
-                      onPress={() => goToList(small)} // 소분류 클릭 시 해당 카테고리로 이동
+                      onPress={() => goToList(item.category, small)} // 소분류 클릭 시 해당 태그가 선택된 페이지로 이동
                       className='py-2 '
                     >
                       <Text className='text-gray-900 text-c1 font-n-bd'>
