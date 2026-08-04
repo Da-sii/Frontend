@@ -6,7 +6,7 @@ import UpArrowIcon from '@/assets/icons/product/productDetail/ic_arrow_up.svg';
 import { ProductIngredient } from '@/services/product/getProductDetail';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Platform, Pressable, Text, View } from 'react-native';
 import Svg, {
   Circle,
   Defs,
@@ -32,17 +32,76 @@ function parseNumeric(s: string) {
   return parseFloat(s.replace(/[^0-9.]/g, '')) || 0;
 }
 
-function formatNumber(s: string): string {
-  return parseNumeric(s).toLocaleString('ko-KR');
+/**
+ * micro sign(µ, U+00B5)과 Greek small letter mu(μ, U+03BC)는 화면상
+ * 동일하지만 서로 다른 문자다. NFKC 정규화 후 표기까지 μg로 통일한다.
+ */
+function parseUnit(s: string): string {
+  const unit = s.normalize('NFKC').match(/[a-zA-Zμ가-힣]+/u)?.[0] ?? '';
+  const normalizedUnit = unit.toLowerCase();
+
+  if (
+    normalizedUnit === 'μg' ||
+    normalizedUnit === 'mcg' ||
+    normalizedUnit === 'ug'
+  ) {
+    return 'μg';
+  }
+
+  return unit;
+}
+
+function formatNumberParts(s: string): { value: string; unit: string } {
+  const value = parseNumeric(s);
+  const unit = parseUnit(s);
+  return { value: value.toLocaleString('ko-KR'), unit };
+}
+
+function FormattedNumber({
+  value,
+  className,
+  color,
+}: {
+  value: string;
+  className?: string;
+  color?: string;
+}) {
+  const { value: number, unit } = formatNumberParts(value);
+
+  return (
+    <Text className={className} style={color ? { color } : undefined}>
+      {number}
+      {unit === 'μg' ? (
+        <>
+          <Text
+            style={{
+              fontFamily: Platform.select({
+                ios: 'System',
+                android: 'sans-serif',
+                default: 'sans-serif',
+              }),
+              fontWeight: '400',
+              lineHeight: 16,
+            }}
+          >
+            μ
+          </Text>
+          <Text className='font-n-rg'>g</Text>
+        </>
+      ) : unit ? (
+        <Text className='font-n-rg'>{unit}</Text>
+      ) : null}
+    </Text>
+  );
 }
 
 /** 단위를 μg 기준으로 정규화 */
 function toMicrograms(s: string): number {
   const value = parseNumeric(s);
-  const unit = (s.match(/[a-zA-Zμ]+/)?.[0] ?? '').toLowerCase();
+  const unit = parseUnit(s).toLowerCase();
   if (unit === 'g') return value * 1_000_000;
   if (unit === 'mg') return value * 1_000;
-  if (unit === 'μg' || unit === 'mcg' || unit === 'ug') return value;
+  if (unit === 'μg') return value;
   // 단위 없거나 알 수 없는 경우 그대로 비교
   return value;
 }
@@ -134,12 +193,14 @@ function DonutChart({
       </Svg>
       {/* 중앙 텍스트 */}
       <View className='items-center'>
-        <Text className='text-c3 font-n-eb' style={{ color: amountTextColor }}>
-          {formatNumber(amount)}
-        </Text>
+        <FormattedNumber
+          value={amount}
+          className='text-c3 font-n-eb'
+          color={amountTextColor}
+        />
         <View className='w-[20px] h-[1px] bg-gray-200' />
         <Text className='text-c3 font-n-rg text-gray-400'>
-          /{formatNumber(maxRecommended)}
+          /<FormattedNumber value={maxRecommended} />
         </Text>
       </View>
     </View>
@@ -274,7 +335,10 @@ export default function MaterialInfo({
               <Text className='text-c3 font-n-rg text-gray-700'>포함량</Text>
             </View>
             <View style={{ width: 7 }} />
-            <Text className='text-c1 font-n-bd'>{materialInfo.amount}</Text>
+            <FormattedNumber
+              value={materialInfo.amount}
+              className='text-c1 font-n-bd'
+            />
             <View style={{ width: 5 }} />
             <StatusTag status={status} />
           </View>
@@ -288,7 +352,8 @@ export default function MaterialInfo({
             </View>
             <View style={{ width: 7 }} />
             <Text className='text-c1 font-n-bd'>
-              {materialInfo.minRecommended}~{materialInfo.maxRecommended}
+              <FormattedNumber value={materialInfo.minRecommended} />~
+              <FormattedNumber value={materialInfo.maxRecommended} />
             </Text>
           </View>
         </View>
