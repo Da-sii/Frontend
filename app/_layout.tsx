@@ -2,6 +2,7 @@ import DefaultModal from '@/components/common/modals/DefaultModal';
 import { getAccessToken } from '@/lib/authToken';
 import { usePendingKakaoAuth } from '@/store/usePendingKakaoAuth';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { PortalProvider } from '@gorhom/portal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   getKeyHashAndroid,
@@ -173,37 +174,42 @@ function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <GestureHandlerRootView onLayout={onLayoutRootView} style={{ flex: 1 }}>
-        <BottomSheetModalProvider>
-          {loaded || error ? (
-            <>
-              <Stack
-                initialRouteName='index'
-                screenOptions={{
-                  headerShown: false,
-                  animation: 'fade',
-                  animationDuration: 200,
-                }}
-              >
-                <Stack.Screen
-                  name='home/search'
-                  options={{ headerShown: false }}
-                />
-                <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
-                <Stack.Screen name='+not-found' />
-              </Stack>
+        <PortalProvider>
+          <BottomSheetModalProvider>
+            {loaded || error ? (
+              <>
+                <Stack
+                  initialRouteName='index'
+                  screenOptions={{
+                    headerShown: false,
+                    animation: 'fade',
+                    animationDuration: 200,
+                  }}
+                >
+                  <Stack.Screen
+                    name='home/search'
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name='(tabs)'
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen name='+not-found' />
+                </Stack>
 
-              <StatusBar style='auto' />
-            </>
-          ) : null}
-        </BottomSheetModalProvider>
+                <StatusBar style='auto' />
+              </>
+            ) : null}
+          </BottomSheetModalProvider>
 
-        <DefaultModal
-          visible={isUpdateRequired}
-          onConfirm={handleUpdatePress}
-          singleButton
-          title={`“다시” 서비스가 새로워졌어요!\n업데이트하고, 더 편해진 기능을 만나보세요.`}
-          confirmText='확인'
-        />
+          <DefaultModal
+            visible={isUpdateRequired}
+            onConfirm={handleUpdatePress}
+            singleButton
+            title={`“다시” 서비스가 새로워졌어요!\n업데이트하고, 더 편해진 기능을 만나보세요.`}
+            confirmText='확인'
+          />
+        </PortalProvider>
       </GestureHandlerRootView>
     </QueryClientProvider>
   );

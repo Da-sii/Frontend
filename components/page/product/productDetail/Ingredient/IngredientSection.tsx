@@ -1,3 +1,4 @@
+import type { ProductDetail } from '@/services/product/getProductDetail';
 import FunctionalIngredientsSection from './FunctionalIngredients';
 import OtherIngredientsSection from './OtherIngredients';
 
@@ -6,7 +7,7 @@ export default function IngredientSection({
   onPressFunctionalInfo,
   onPressOtherInfo,
 }: {
-  product: any;
+  product: ProductDetail;
   onPressFunctionalInfo: () => void;
   onPressOtherInfo: () => void;
 }) {
