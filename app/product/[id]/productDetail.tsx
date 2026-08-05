@@ -456,7 +456,7 @@ export default function ProductDetail() {
         }
       />
       {/* data.coupang */}
-      <CoupangTabBar id={id} coupangUrl={data.coupang} />
+      <CoupangTabBar id={id} />
       <PortalHost name='overlay-top' />
       <DefaultModal
         visible={showIsMyReviewModal}

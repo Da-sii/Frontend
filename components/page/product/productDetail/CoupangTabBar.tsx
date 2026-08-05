@@ -17,11 +17,15 @@ import {
 
 interface Props {
   id: string;
-  coupangUrl: string;
 }
 
-export default function CoopangTabBar({ id, coupangUrl }: Props) {
-  const finalUrl = getSafeUrl(coupangUrl);
+export default function CoopangTabBar({ id }: Props) {
+  const apiBaseUrl = process.env.EXPO_PUBLIC_API_URL?.replace(/\/+$/, '');
+  const finalUrl = getSafeUrl(
+    apiBaseUrl
+      ? `${apiBaseUrl}/products/${encodeURIComponent(id)}/coupang/`
+      : '',
+  );
 
   // const router = useRouter();
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
