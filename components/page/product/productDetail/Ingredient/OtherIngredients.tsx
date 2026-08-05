@@ -1,11 +1,12 @@
 // 기타 원료
 import InfoIcon from '@/assets/icons/ic_info.svg';
 import DefaultModal from '@/components/common/modals/DefaultModal';
+import { OtherIngredient } from '@/services/product/getProductDetail';
 import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 interface Props {
-  ingredients: string[] | undefined;
+  ingredients: OtherIngredient[] | undefined;
   onPressInfo: () => void;
 }
 
@@ -35,15 +36,17 @@ export default function OtherIngredientsSection({
       </View>
 
       <View className='bg-[#F6F5FA] rounded-xl px-4 py-2'>
-        {ingredients.map((item, index) => (
+        {ingredients.map((item) => (
           <Pressable
-            key={index}
+            key={item.otherIngredientName}
             onPress={() => setShowNoGuideModal(true)}
             className='flex-row items-center justify-between py-[10px]'
           >
             <View className='flex-row items-center gap-x-2'>
               <Text className='text-b-sm font-n-bd'>•</Text>
-              <Text className='text-b-sm font-n-bd'>{item}</Text>
+              <Text className='text-b-sm font-n-bd'>
+                {item.otherIngredientName}
+              </Text>
             </View>
           </Pressable>
         ))}
