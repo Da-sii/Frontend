@@ -452,6 +452,7 @@ export default function ProductDetail() {
           )
         }
       />
+      {/* data.coupang */}
       <CoupangTabBar id={id} />
       <PortalHost name='overlay-top' />
       <DefaultModal
