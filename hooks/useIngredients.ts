@@ -8,10 +8,7 @@ import {
 } from '@/services/ingredient/getIngredients';
 import { useQuery } from '@tanstack/react-query';
 
-export function useGetIngredients(params?: {
-  search?: string;
-  page?: number;
-}) {
+export function useGetIngredients(params?: { search?: string; page?: number }) {
   return useQuery<IngredientsResponse>({
     queryKey: ['ingredients', params?.search, params?.page],
     queryFn: () => getIngredients(params),
