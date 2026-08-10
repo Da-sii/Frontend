@@ -24,7 +24,6 @@ export type ProductDetailDTO = {
   name: string;
   company: string;
   productType: string; // "supplement"
-  coupang: string;
   isMyReview: boolean;
   reviewCount: number; // int
   reviewAvg: number | null; // null 가능

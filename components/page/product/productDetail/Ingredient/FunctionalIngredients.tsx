@@ -3,11 +3,12 @@
 import InfoIcon from '@/assets/icons/ic_info.svg';
 import DefaultModal from '@/components/common/modals/DefaultModal';
 import MaterialInfo from '@/components/page/product/productDetail/materialInfo';
+import type { ProductIngredient } from '@/services/product/getProductDetail';
 import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 interface Props {
-  ingredients: any[] | undefined;
+  ingredients: ProductIngredient[] | undefined;
   onPressInfo: () => void;
 }
 
