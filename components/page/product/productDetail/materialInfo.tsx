@@ -59,6 +59,16 @@ const MICRO_TEXT_STYLE: TextStyle = {
 };
 
 /**
+ * Android는 lineHeight가 고정된 줄에 다른 폰트(μ 폴백)가 섞이면
+ * 줄 상자를 다시 계산하면서 g 같은 디센더 아래쪽이 잘린다.
+ * μ가 들어갈 수 있는 줄에만 tailwind 기본값보다 2px 여유를 준다.
+ */
+const MICRO_LINE_HEIGHT = {
+  c1: 18, // text-c1 = 13px / 기본 16px
+  c3: 16, // text-c3 = 10px / 기본 14px
+} as const;
+
+/**
  * "1000mg" → { number: 1000, gap: '', unit: 'mg' }
  * "5억 CFU" → { number: 5, gap: ' ', unit: '억 CFU' }  (한글 단위 유지)
  * 숫자로 시작하지 않으면 number = null (원문 그대로 노출)
@@ -221,11 +231,14 @@ function DonutChart({
         <FormattedNumber
           value={amount}
           className='text-c3 font-n-eb'
-          style={{ color: amountTextColor }}
+          style={{ color: amountTextColor, lineHeight: MICRO_LINE_HEIGHT.c3 }}
           microStyle={{ fontWeight: '600' }}
         />
         <View className='w-[20px] h-[1px] bg-gray-200' />
-        <Text className='text-c3 font-n-rg text-gray-400'>
+        <Text
+          className='text-c3 font-n-rg text-gray-400'
+          style={{ lineHeight: MICRO_LINE_HEIGHT.c3 }}
+        >
           /
           <FormattedNumber
             value={maxRecommended}
@@ -368,6 +381,7 @@ export default function MaterialInfo({
             <FormattedNumber
               value={materialInfo.amount}
               className='text-c1 font-n-bd'
+              style={{ lineHeight: MICRO_LINE_HEIGHT.c1 }}
             />
             <View style={{ width: 5 }} />
             <StatusTag status={status} />
@@ -381,7 +395,10 @@ export default function MaterialInfo({
               </Text>
             </View>
             <View style={{ width: 7 }} />
-            <Text className='text-c1 font-n-bd'>
+            <Text
+              className='text-c1 font-n-bd'
+              style={{ lineHeight: MICRO_LINE_HEIGHT.c1 }}
+            >
               <FormattedNumber value={materialInfo.minRecommended} />~
               <FormattedNumber value={materialInfo.maxRecommended} />{' '}
             </Text>
