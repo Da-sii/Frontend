@@ -11,7 +11,6 @@ import { clearTokens, getAccessToken } from '@/lib/authToken';
 import Constants from 'expo-constants';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
-
 import { ScrollView, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -129,7 +128,7 @@ export default function Mypage() {
               />
               <SettingItem
                 label='버전 정보'
-                value={`V ${Constants.expoConfig?.version || '1.4.1'}`}
+                value={`V ${Constants.expoConfig?.version || '1.5.2'}`}
               />
               <SettingItem label='문의 메일' value='podostore1111@gmail.com' />
             </SettingSection>

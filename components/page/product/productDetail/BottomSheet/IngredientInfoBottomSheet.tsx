@@ -13,12 +13,10 @@ export default function IngredientInfoBottomSheet({
   type,
   snapPoints,
 }: Props) {
-  if (!type) return null;
-
   return (
     <BottomSheetLayout sheetRef={sheetRef} snapPoints={snapPoints}>
       {/* 기능성 원료 출처 */}
-      {type === 'functional' ? (
+      {type === 'functional' && (
         <View className='px-[30px] mt-[30px] mb-[44px]'>
           <Text className='text-b-sm font-n-eb text-gray-900 mb-[25px]'>
             성분 정보의 출처
@@ -33,7 +31,8 @@ export default function IngredientInfoBottomSheet({
             (https://www.foodsafetykorea.go.kr)
           </Text>
         </View>
-      ) : (
+      )}
+      {type === 'other' && (
         // 기타 원료 출처
         <View className='px-[30px] mt-[30px] mb-[44px]'>
           <Text className='text-b-sm font-n-eb mb-[16px]'>기타 원료?</Text>
