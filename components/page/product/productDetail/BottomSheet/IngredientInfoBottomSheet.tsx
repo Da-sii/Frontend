@@ -32,9 +32,8 @@ export default function IngredientInfoBottomSheet({
           </Text>
         </View>
       )}
-
-      {/* 기타 원료 출처 */}
       {type === 'other' && (
+        // 기타 원료 출처
         <View className='px-[30px] mt-[30px] mb-[44px]'>
           <Text className='text-b-sm font-n-eb mb-[16px]'>기타 원료?</Text>
 
