@@ -55,7 +55,10 @@
           "image": "./assets/images/img_splash.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#ffffff",
+          "android": {
+            "imageWidth": 176
+          }
         }
       ],
       "expo-font",
