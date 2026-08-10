@@ -1,7 +1,7 @@
 // 기타 원료
 import InfoIcon from '@/assets/icons/ic_info.svg';
 import DefaultModal from '@/components/common/modals/DefaultModal';
-import { OtherIngredient } from '@/services/product/getProductDetail';
+import type { OtherIngredient } from '@/services/product/getProductDetail';
 import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 

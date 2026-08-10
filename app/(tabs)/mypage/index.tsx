@@ -128,7 +128,7 @@ export default function Mypage() {
               />
               <SettingItem
                 label='버전 정보'
-                value={`V ${Constants.expoConfig?.version || '1.4.1'}`}
+                value={`V ${Constants.expoConfig?.version || '1.5.1'}`}
               />
               <SettingItem label='문의 메일' value='podostore1111@gmail.com' />
             </SettingSection>

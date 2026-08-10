@@ -6,7 +6,14 @@ import UpArrowIcon from '@/assets/icons/product/productDetail/ic_arrow_up.svg';
 import { ProductIngredient } from '@/services/product/getProductDetail';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import {
+  Platform,
+  Pressable,
+  StyleProp,
+  Text,
+  TextStyle,
+  View,
+} from 'react-native';
 import Svg, {
   Circle,
   Defs,
@@ -32,10 +39,85 @@ function parseNumeric(s: string) {
   return parseFloat(s.replace(/[^0-9.]/g, '')) || 0;
 }
 
-function formatNumber(s: string): string {
-  const value = parseNumeric(s);
-  const unit = s.match(/[a-zA-Zμ]+/)?.[0] ?? '';
-  return `${value.toLocaleString('ko-KR')}${unit}`;
+// ─── 수치 + 단위 표기 ─────────────────────────────────────────────────────────
+
+/** 마이크로 기호(μ: 그리스 문자 / µ: micro sign) */
+const MICRO_CHAR_PATTERN = /([μµ])/;
+
+/**
+ * NanumSquareNeo에는 μ 글리프가 없어 시스템 폰트로 폴백되고,
+ * 그 폴백 글꼴이 주변 텍스트보다 굵게 보인다.
+ * μ만 시스템 폰트로 명시하고 굵기를 낮춰 주변 글자와 맞춘다.
+ */
+const MICRO_TEXT_STYLE: TextStyle = {
+  fontFamily: Platform.select({
+    ios: 'System',
+    android: 'sans-serif',
+    default: 'System',
+  }),
+  fontWeight: '500',
+};
+
+/**
+ * "1000mg" → { number: 1000, gap: '', unit: 'mg' }
+ * "5억 CFU" → { number: 5, gap: ' ', unit: '억 CFU' }  (한글 단위 유지)
+ * 숫자로 시작하지 않으면 number = null (원문 그대로 노출)
+ */
+function splitValue(raw: string): {
+  number: number | null;
+  gap: string;
+  unit: string;
+} {
+  const s = (raw ?? '').trim();
+  const match = s.match(/^([\d,]*\.?\d+)(\s*)(.*)$/);
+  if (!match) return { number: null, gap: '', unit: s };
+  const number = parseFloat(match[1].replace(/,/g, ''));
+  if (Number.isNaN(number)) return { number: null, gap: '', unit: s };
+  return { number, gap: match[2] ? ' ' : '', unit: match[3].trim() };
+}
+
+/**
+ * 기존 단위 규칙(천 단위 구분 + 단위 그대로 붙이기)을 적용해 렌더링한다.
+ * - 한글 단위(억 CFU, 개, 정 …)도 그대로 살린다.
+ * - μ 문자만 별도 폰트로 그려 굵기를 맞춘다.
+ * 부모 <Text> 안에 중첩해도 색상/크기는 상속된다.
+ */
+function FormattedNumber({
+  value,
+  className,
+  style,
+  microStyle,
+}: {
+  value: string;
+  className?: string;
+  style?: StyleProp<TextStyle>;
+  microStyle?: StyleProp<TextStyle>;
+}) {
+  const { number, gap, unit } = splitValue(value);
+
+  if (number === null) {
+    return (
+      <Text className={className} style={style}>
+        {unit}
+      </Text>
+    );
+  }
+
+  return (
+    <Text className={className} style={style}>
+      {number.toLocaleString('ko-KR')}
+      {gap}
+      {unit.split(MICRO_CHAR_PATTERN).map((part, idx) =>
+        MICRO_CHAR_PATTERN.test(part) ? (
+          <Text key={idx} style={[MICRO_TEXT_STYLE, microStyle]}>
+            {part}
+          </Text>
+        ) : (
+          part
+        ),
+      )}
+    </Text>
+  );
 }
 
 /** 단위를 μg 기준으로 정규화 */
@@ -136,12 +218,19 @@ function DonutChart({
       </Svg>
       {/* 중앙 텍스트 */}
       <View className='items-center'>
-        <Text className='text-c3 font-n-eb' style={{ color: amountTextColor }}>
-          {formatNumber(amount)}
-        </Text>
+        <FormattedNumber
+          value={amount}
+          className='text-c3 font-n-eb'
+          style={{ color: amountTextColor }}
+          microStyle={{ fontWeight: '600' }}
+        />
         <View className='w-[20px] h-[1px] bg-gray-200' />
         <Text className='text-c3 font-n-rg text-gray-400'>
-          /{formatNumber(maxRecommended)}
+          /
+          <FormattedNumber
+            value={maxRecommended}
+            microStyle={{ fontWeight: '300' }}
+          />
         </Text>
       </View>
     </View>
@@ -276,9 +365,10 @@ export default function MaterialInfo({
               <Text className='text-c3 font-n-rg text-gray-700'>포함량</Text>
             </View>
             <View style={{ width: 7 }} />
-            <Text className='text-c1 font-n-bd'>
-              {formatNumber(materialInfo.amount)}
-            </Text>
+            <FormattedNumber
+              value={materialInfo.amount}
+              className='text-c1 font-n-bd'
+            />
             <View style={{ width: 5 }} />
             <StatusTag status={status} />
           </View>
@@ -292,8 +382,8 @@ export default function MaterialInfo({
             </View>
             <View style={{ width: 7 }} />
             <Text className='text-c1 font-n-bd'>
-              {formatNumber(materialInfo.minRecommended)}~
-              {formatNumber(materialInfo.maxRecommended)}
+              <FormattedNumber value={materialInfo.minRecommended} />~
+              <FormattedNumber value={materialInfo.maxRecommended} />{' '}
             </Text>
           </View>
         </View>

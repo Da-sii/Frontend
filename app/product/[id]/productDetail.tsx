@@ -166,6 +166,7 @@ export default function ProductDetail() {
                     imageSource = { uri: first.url };
                   }
                 }
+
                 return imageSource ? (
                   <Image
                     source={imageSource}

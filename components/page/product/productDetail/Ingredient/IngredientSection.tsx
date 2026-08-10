@@ -1,4 +1,4 @@
-import { ProductDetail } from '@/services/product/getProductDetail';
+import type { ProductDetail } from '@/services/product/getProductDetail';
 import FunctionalIngredientsSection from './FunctionalIngredients';
 import OtherIngredientsSection from './OtherIngredients';
 
