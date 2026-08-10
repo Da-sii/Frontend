@@ -161,16 +161,13 @@ export default function ProductDetail() {
 
                 if (Array.isArray(img) && img.length > 0) {
                   const first = img[0];
-                  if (typeof first === 'string') {
-                    imageSource = { uri: first };
-                  } else if (
-                    first &&
-                    typeof first === 'object' &&
-                    typeof first.url === 'string'
-                  ) {
+
+                  // first.url이 존재하는지 & 빈 문자열이 아닌지 확인
+                  if (first?.url && first.url.trim() !== '') {
                     imageSource = { uri: first.url };
                   }
                 }
+
                 return imageSource ? (
                   <Image
                     source={imageSource}
@@ -455,8 +452,7 @@ export default function ProductDetail() {
           )
         }
       />
-      {/* data.coupang */}
-      <CoupangTabBar id={id} coupangUrl={data.coupang} />
+      <CoupangTabBar id={id} />
       <PortalHost name='overlay-top' />
       <DefaultModal
         visible={showIsMyReviewModal}
