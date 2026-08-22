@@ -4,6 +4,7 @@ import MagnifierIcon from '@/assets/icons/ic_magnifier.svg';
 import BannerCarousel from '@/components/page/home/BannerCarousel';
 import HomeFooter from '@/components/page/home/HomeFooter';
 import ProductRankingCarousel from '@/components/page/home/ProductRankingCarousel';
+import RecommendationPromptBottomSheet from '@/components/page/home/RecommendationPromptBottomSheet';
 import TagsView from '@/components/page/home/TagsView';
 import {
   useFetchBannersQuery,
@@ -97,6 +98,7 @@ export default function Home() {
         </View>
         <HomeFooter />
       </ScrollView>
+      <RecommendationPromptBottomSheet />
     </SafeAreaView>
   );
 }
