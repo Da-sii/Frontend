@@ -70,6 +70,10 @@ export default function Mypage() {
     router.push('/mypage/reviews');
   };
 
+  const handleRecommendationPress = () => {
+    router.push('/recommendation' as never);
+  };
+
   useFocusEffect(
     useCallback(() => {
       const checkLoginAndFetchData = async () => {
@@ -118,6 +122,13 @@ export default function Mypage() {
                 label='내가 쓴 제품 리뷰'
                 subLabel={`${mypageInfo?.review_count}개`}
                 onPress={handleReviewsPress}
+              />
+            </SettingSection>
+
+            <SettingSection title='추천' topBorder>
+              <SettingItem
+                label='내 몸에 맞는 보조제 추천'
+                onPress={handleRecommendationPress}
               />
             </SettingSection>
 
