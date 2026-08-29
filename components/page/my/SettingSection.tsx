@@ -15,10 +15,10 @@ export function SettingSection({
   bottomBorder = false,
 }: Props) {
   return (
-    <View className='px-4 pb-2'>
+    <View className='px-4 pb-5 '>
       {topBorder && <View className={`h-px bg-gray-100`} />}
       {title && (
-        <Text className='text-sm text-gray-500 mt-4 mb-2 font-semibold'>
+        <Text className='mt-4 mb-2 text-sm font-semibold text-gray-500'>
           {title}
         </Text>
       )}

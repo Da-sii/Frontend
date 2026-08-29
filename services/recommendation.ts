@@ -33,6 +33,17 @@ export type RecommendationResponse = {
   recommendations: RecommendationItem[];
 };
 
+export type SavedRecommendationItem = RecommendationItem & {
+  rank: number;
+};
+
+export type SavedRecommendation = {
+  id: number;
+  created_at: string;
+  updated_at: string;
+  items: SavedRecommendationItem[];
+};
+
 export async function createRecommendations(
   survey: RecommendationSurveyPayload,
 ): Promise<RecommendationResponse> {
@@ -53,4 +64,23 @@ export async function saveRecommendations(items: RecommendationItem[]) {
     })),
   });
   return data;
+}
+
+export async function getSavedRecommendations(): Promise<
+  SavedRecommendation | null
+> {
+  const { data } = await axiosInstance.get<{ saved: SavedRecommendation | null }>(
+    '/recommendations/saved/',
+  );
+  return data.saved;
+}
+
+export function toRecommendationResponse(
+  saved: SavedRecommendation,
+): RecommendationResponse {
+  const recommendations = [...saved.items]
+    .sort((a, b) => a.rank - b.rank)
+    .map(({ rank: _rank, ...item }) => ({ ...item, products: item.products ?? [] }));
+
+  return { count: recommendations.length, recommendations };
 }

@@ -19,8 +19,9 @@ export default function RecommendationResultPage() {
   const router = useRouter();
   const result = useRecommendationResult((state) => state.result);
   const clearResult = useRecommendationResult((state) => state.clear);
+  const resultIsSaved = useRecommendationResult((state) => state.isSaved);
+  const markSaved = useRecommendationResult((state) => state.markSaved);
   const [isSaving, setIsSaving] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
   const [saveModal, setSaveModal] = useState<'success' | 'error' | null>(null);
 
   useEffect(() => {
@@ -37,12 +38,12 @@ export default function RecommendationResultPage() {
   };
 
   const handleSave = async () => {
-    if (isSaving || isSaved) return;
+    if (isSaving || resultIsSaved) return;
 
     try {
       setIsSaving(true);
       await saveRecommendations(result.recommendations);
-      setIsSaved(true);
+      markSaved();
       setSaveModal('success');
     } catch {
       setSaveModal('error');
@@ -137,9 +138,9 @@ export default function RecommendationResultPage() {
         </Pressable>
         <View className='flex-1'>
           <LongButton
-            label={isSaved ? '저장 완료' : isSaving ? '저장 중...' : '저장하기'}
+            label={resultIsSaved ? '저장 완료' : isSaving ? '저장 중...' : '저장하기'}
             height='h-[50px]'
-            disabled={isSaving}
+            disabled={isSaving || resultIsSaved}
             onPress={handleSave}
           />
         </View>

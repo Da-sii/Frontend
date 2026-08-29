@@ -42,7 +42,7 @@ export default function RecommendationPromptBottomSheet() {
       onRequestClose={() => setIsVisible(false)}
     >
       <View className='justify-end flex-1 bg-black/60'>
-        <View className='w-full overflow-hidden rounded-t-2xl bg-white'>
+        <View className='w-full overflow-hidden bg-white rounded-t-2xl'>
           <View className='h-[150px] bg-[#CFE1FF] px-10 pt-[27px]'>
             <Text className='text-sm text-gray-900 font-n-eb'>
               내 몸에 맞는 보조제 추천받기

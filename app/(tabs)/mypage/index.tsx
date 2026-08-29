@@ -8,6 +8,13 @@ import { useCreateProductRequest } from '@/hooks/useCreateProductRequest';
 import { useLogout } from '@/hooks/useLogout';
 import { useUser } from '@/hooks/useUser';
 import { clearTokens, getAccessToken } from '@/lib/authToken';
+import {
+  getSavedRecommendations,
+  SavedRecommendation,
+  toRecommendationResponse,
+} from '@/services/recommendation';
+import SavedRecommendationSummary from '@/components/page/my/SavedRecommendationSummary';
+import { useRecommendationResult } from '@/store/useRecommendationResult';
 import Constants from 'expo-constants';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
@@ -18,6 +25,7 @@ export default function Mypage() {
   const router = useRouter();
   const logout = useLogout();
   const { deleteUser, mypageInfo, fetchMypage } = useUser();
+  const setSavedResult = useRecommendationResult((state) => state.setSavedResult);
 
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showEmailCopiedModal, setShowEmailCopiedModal] = useState(false);
@@ -28,6 +36,8 @@ export default function Mypage() {
   const [productRequest, setProductRequest] = useState('');
 
   const [isLogin, setIsLogin] = useState(true);
+  const [savedRecommendation, setSavedRecommendation] =
+    useState<SavedRecommendation | null>(null);
 
   const canChangePassword = mypageInfo?.login_type === 'email';
 
@@ -70,7 +80,19 @@ export default function Mypage() {
     router.push('/mypage/reviews');
   };
 
-  const handleRecommendationPress = () => {
+  const handleRecommendationPress = async () => {
+    try {
+      const saved = await getSavedRecommendations();
+      if (saved) {
+        setSavedRecommendation(saved);
+        setSavedResult(toRecommendationResponse(saved));
+        router.push('/recommendation/result' as never);
+        return;
+      }
+    } catch {
+      // 조회에 실패해도 사용자가 새 추천을 받을 수 있도록 추천 시작 화면으로 이동합니다.
+    }
+
     router.push('/recommendation' as never);
   };
 
@@ -82,6 +104,13 @@ export default function Mypage() {
         setIsLogin(isLoggedIn);
         if (isLoggedIn) {
           await fetchMypage();
+          try {
+            setSavedRecommendation(await getSavedRecommendations());
+          } catch {
+            // 추천 요약 조회 실패 시 기존 화면은 그대로 유지합니다.
+          }
+        } else {
+          setSavedRecommendation(null);
         }
       };
       checkLoginAndFetchData();
@@ -130,6 +159,11 @@ export default function Mypage() {
                 label='내 몸에 맞는 보조제 추천'
                 onPress={handleRecommendationPress}
               />
+              {savedRecommendation && (
+                <SavedRecommendationSummary
+                  recommendation={savedRecommendation}
+                />
+              )}
             </SettingSection>
 
             <SettingSection title='도움말' topBorder>
