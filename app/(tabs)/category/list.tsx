@@ -16,6 +16,7 @@ import ProductCard from '@/components/page/home/ProductCard';
 import ProductListRow from '@/components/page/home/ProductListRow';
 import colors from '@/constants/color';
 import { useCategory } from '@/hooks/useCategory';
+import { useDaisoProductIds } from '@/hooks/useDaisoProducts';
 import { useFetchProductsQuery } from '@/hooks/useProductQueries';
 import { IProduct } from '@/types/models/product';
 import {
@@ -48,6 +49,7 @@ export default function List() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { categories, fetchCategories } = useCategory();
+  const daisoProductIds = useDaisoProductIds();
   const params = useLocalSearchParams<{
     main?: string;
     middle?: string;
@@ -340,6 +342,7 @@ export default function List() {
                     });
                   }}
                   item={item as IProduct}
+                  isDaiso={daisoProductIds.has(item.id)}
                   style={{ width: cardWidth }}
                   imageStyle={{ width: cardWidth, height: cardWidth }}
                   titleNumberOfLines={2}
@@ -377,6 +380,7 @@ export default function List() {
             <View className='px-4'>
               <ProductListRow
                 item={item}
+                isDaiso={daisoProductIds.has(item.id)}
                 onPress={() => {
                   router.push({
                     pathname: '/product/[id]/productDetail',

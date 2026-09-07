@@ -1,5 +1,6 @@
 import BarIcon from '@/assets/icons/ic_bar.svg';
 import IndexIcon from '@/assets/icons/ic_ranking_index.svg';
+import DaisoBadge from '@/components/page/home/DaisoBadge';
 import colors from '@/constants/color';
 import { IRankingProduct } from '@/types/models/product';
 import { Image, Pressable, Text, View } from 'react-native';
@@ -8,6 +9,7 @@ interface Props {
   item: IRankingProduct;
   index: number;
   showDiff?: boolean;
+  isDaiso?: boolean;
   onPress?: () => void;
 }
 
@@ -18,6 +20,7 @@ export default function RankingItem({
   index,
   onPress,
   showDiff = false,
+  isDaiso = false,
 }: Props) {
   const isValidImage = item.image !== null;
   const left = index > 8 ? 22 : 25;
@@ -50,6 +53,7 @@ export default function RankingItem({
               <Text className='text-gray-500 text-xs'>준비중입니다</Text>
             </View>
           )}
+          {isDaiso && <DaisoBadge />}
         </View>
 
         <View
@@ -71,7 +75,11 @@ export default function RankingItem({
 
         <View className='flex-1 ml-3'>
           <Text
-            style={{ fontSize: 12, color: colors.gray[300], marginBottom: 8 }}
+            style={{
+              fontSize: 12,
+              color: colors.gray[300],
+              marginBottom: 8,
+            }}
           >
             {item.company}
           </Text>

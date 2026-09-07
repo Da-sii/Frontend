@@ -1,6 +1,8 @@
 import IndexIcon from '@/assets/icons/ic_ranking_index.svg';
 import ProductGridItemSkeleton from '@/components/common/skeleton/ProductGridItemSkeleton';
+import DaisoBadge from '@/components/page/home/DaisoBadge';
 import colors from '@/constants/color';
+import { useDaisoProductIds } from '@/hooks/useDaisoProducts';
 import { IRankingProduct } from '@/types/models/product';
 import { useRouter } from 'expo-router';
 import {
@@ -18,10 +20,17 @@ const cardWidth = screenWidth / 3;
 interface Props {
   data: IRankingProduct[];
   isLoading: boolean;
+  /** 순위 번호 배지 노출 여부. 다이소 제품처럼 랭킹이 아닌 목록은 false */
+  showRank?: boolean;
 }
 
-export default function ProductRankingCarousel({ data, isLoading }: Props) {
+export default function ProductRankingCarousel({
+  data,
+  isLoading,
+  showRank = true,
+}: Props) {
   const router = useRouter();
+  const daisoProductIds = useDaisoProductIds();
 
   const renderRankingItem = ({
     item,
@@ -62,22 +71,25 @@ export default function ProductRankingCarousel({ data, isLoading }: Props) {
                 <Text className='text-gray-500 text-xs'>준비중입니다</Text>
               </View>
             )}
+            {daisoProductIds.has(item.id) && <DaisoBadge />}
           </View>
-          <View
-            style={{
-              position: 'absolute',
-              top: 16,
-              left: left,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            <IndexIcon
-              className='absolute'
-              fill={index < 3 ? colors.green[500] : colors.gray[400]}
-            />
-            <Text className='text-white text-sm font-n-bd'>{index + 1}</Text>
-          </View>
+          {showRank && (
+            <View
+              style={{
+                position: 'absolute',
+                top: 16,
+                left: left,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <IndexIcon
+                className='absolute'
+                fill={index < 3 ? colors.green[500] : colors.gray[400]}
+              />
+              <Text className='text-white text-sm font-n-bd'>{index + 1}</Text>
+            </View>
+          )}
           <View className='flex-col ml-0.5'>
             <Text className='text-xs mt-1 text-gray-400' numberOfLines={1}>
               {item.company}

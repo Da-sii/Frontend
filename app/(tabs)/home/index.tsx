@@ -5,6 +5,8 @@ import BannerCarousel from '@/components/page/home/BannerCarousel';
 import HomeFooter from '@/components/page/home/HomeFooter';
 import ProductRankingCarousel from '@/components/page/home/ProductRankingCarousel';
 import TagsView from '@/components/page/home/TagsView';
+import { DAISO_BIG_CATEGORY, DAISO_PREVIEW_COUNT } from '@/constants/daiso';
+import { useDaisoProductsQuery } from '@/hooks/useDaisoProducts';
 import {
   useFetchBannersQuery,
   useFetchMainScreenQuery,
@@ -19,6 +21,21 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function Home() {
   const { data: mainScreenInfo, isLoading } = useFetchMainScreenQuery();
   const { data: bannersRaw = [] } = useFetchBannersQuery();
+  const { data: daisoProducts = [], isLoading: isDaisoLoading } =
+    useDaisoProductsQuery();
+  // daisoProducts는 다이소 대분류 전체 목록이라 캐러셀에 그대로 넘기면 안 된다.
+  // 페이지를 이어붙이는 과정에서 id가 겹칠 수 있어 중복 제거 후 상위 N개만 노출한다.
+  const daisoPreview = useMemo(() => {
+    const seen = new Set<number>();
+    return daisoProducts
+      .filter((item) => {
+        if (seen.has(item.id)) return false;
+        seen.add(item.id);
+        return true;
+      })
+      .slice(0, DAISO_PREVIEW_COUNT);
+  }, [daisoProducts]);
+
   const banners = useMemo(() => {
     const seen = new Set<number>();
     return bannersRaw
@@ -91,6 +108,31 @@ export default function Home() {
             isLoading={isLoading}
           />
         </View>
+
+        {(isDaisoLoading || daisoProducts.length > 0) && (
+          <View className='mt-2 mb-[30px]'>
+            <View className='flex-row items-center justify-between mx-6'>
+              <Text className='text-lg font-n-eb'>다이소 제품</Text>
+              <Pressable
+                hitSlop={8}
+                onPress={() =>
+                  router.push({
+                    pathname: '/(tabs)/category/list',
+                    params: { main: DAISO_BIG_CATEGORY },
+                  })
+                }
+              >
+                <GoRankingIcon />
+              </Pressable>
+            </View>
+
+            <ProductRankingCarousel
+              data={daisoPreview}
+              isLoading={isDaisoLoading}
+              showRank={false}
+            />
+          </View>
+        )}
 
         <View className='px-6 mb-8 '>
           <TagsView isLoading={isLoading} showArrow />

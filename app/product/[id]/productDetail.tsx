@@ -18,6 +18,7 @@ import PhotoCard from '@/components/page/product/productDetail/PhotoCard';
 import ReviewCard from '@/components/page/product/productDetail/ReviewCard';
 import ReviewItems from '@/components/page/product/productDetail/reviewItem';
 import CustomTabs from '@/components/page/product/productDetail/tab';
+import DaisoBadge from '@/components/page/home/DaisoBadge';
 import colors from '@/constants/color';
 import { useIsLoggedIn } from '@/hooks/auth/useIsLoggedIn';
 import { useGetReviewImageList } from '@/hooks/product/review/image/useGetReviewImageList';
@@ -25,6 +26,7 @@ import { useParseReviewIdFromImage } from '@/hooks/product/review/image/useParse
 import { useProductReviewsPreview } from '@/hooks/product/review/useGetProductReview';
 import { useProductRatingStats } from '@/hooks/product/review/useProductRatingStats';
 import { useProductDetail } from '@/hooks/product/useProductDetail';
+import { useDaisoProductIds } from '@/hooks/useDaisoProducts';
 import { useUser } from '@/hooks/useUser';
 import BottomSheet from '@gorhom/bottom-sheet';
 import { PortalHost } from '@gorhom/portal';
@@ -55,6 +57,8 @@ export default function ProductDetail() {
   const isLoggedIn = useIsLoggedIn();
   const idNum = Number(id);
   const { data, isLoading } = useProductDetail(id);
+  const daisoProductIds = useDaisoProductIds();
+  const isDaiso = daisoProductIds.has(idNum);
   const { data: reviews = [] } = useProductReviewsPreview(idNum, 'time');
   const { data: ratingStats, refetch: refetchRatingStats } =
     useProductRatingStats(id);
@@ -181,6 +185,7 @@ export default function ProductDetail() {
                   </View>
                 );
               })()}
+              {isDaiso && <DaisoBadge size='lg' />}
             </View>
 
             {/* 상품 정보 헤더 */}
