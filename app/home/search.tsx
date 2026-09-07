@@ -31,7 +31,9 @@ const sortOptions = [
   { id: 'review_desc', label: '리뷰순' },
 ];
 
+import { useDaisoProductIds } from '@/hooks/useDaisoProducts';
 import { useSearchProductsQuery } from '@/hooks/useProductQueries';
+import { normalizeSearchKeyword } from '@/utils/search';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const RECENT_SEARCHES_KEY = '@recent_searches';
@@ -54,6 +56,13 @@ export default function Search() {
   const [selectedSort, setSelectedSort] = useState('monthly_rank');
   const [hasSearched, setHasSearched] = useState(!!word);
 
+  // 'daiso', '다이소몰' 등 백엔드가 인식하지 못하는 별칭만 '다이소'로 치환해서 요청한다.
+  // 최근 검색어 저장이나 안내 문구는 사용자가 입력한 원문(searchQuery)을 그대로 쓴다.
+  const apiKeyword = useMemo(
+    () => normalizeSearchKeyword(searchQuery),
+    [searchQuery],
+  );
+
   const {
     data: searchData,
     fetchNextPage,
@@ -62,9 +71,11 @@ export default function Search() {
     refetch,
     isRefetching,
   } = useSearchProductsQuery({
-    word: searchQuery,
+    word: apiKeyword,
     sort: selectedSort as 'monthly_rank' | 'review_desc',
   });
+
+  const daisoProductIds = useDaisoProductIds();
 
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
 
@@ -148,6 +159,7 @@ export default function Search() {
   const renderProductItem = ({ item }: { item: IProduct }) => (
     <ProductListRow
       item={item}
+      isDaiso={daisoProductIds.has(item.id)}
       onPress={() => {
         router.push({
           pathname: '/product/[id]/productDetail',
@@ -274,6 +286,7 @@ export default function Search() {
               <View style={{ width: cardWidth }}>
                 <ProductCard
                   item={item as IProduct}
+                  isDaiso={daisoProductIds.has(item.id)}
                   style={{ width: cardWidth }}
                   imageStyle={{ width: cardWidth, height: cardWidth }}
                   titleNumberOfLines={2}

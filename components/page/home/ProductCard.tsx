@@ -1,3 +1,4 @@
+import DaisoBadge from '@/components/page/home/DaisoBadge';
 import colors from '@/constants/color';
 import { IProduct } from '@/types/models/product';
 import {
@@ -17,6 +18,7 @@ interface Props {
   titleStyle?: TextStyle;
   titleNumberOfLines?: number;
   infoContainerStyle?: ViewStyle;
+  isDaiso?: boolean;
   onPress?: () => void;
 }
 
@@ -26,6 +28,7 @@ export default function ProductCard({
   imageStyle,
   titleStyle,
   infoContainerStyle,
+  isDaiso = false,
   onPress,
 }: Props) {
   const isValidImage = item.image !== '';
@@ -54,6 +57,8 @@ export default function ProductCard({
             </Text>
           </View>
         )}
+
+        {isDaiso && <DaisoBadge />}
 
         <View style={[{ padding: 4, paddingTop: 6 }, infoContainerStyle]}>
           <Text

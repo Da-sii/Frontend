@@ -1,15 +1,21 @@
+import DaisoBadge from '@/components/page/home/DaisoBadge';
 import colors from '@/constants/color';
 import { IProduct } from '@/types/models/product';
 import { Image, Pressable, Text, View } from 'react-native';
 
 interface Props {
   item: IProduct;
+  isDaiso?: boolean;
   onPress?: () => void;
 }
 
 const ITEM_HEIGHT = 135;
 
-export default function ProductListRow({ item, onPress }: Props) {
+export default function ProductListRow({
+  item,
+  isDaiso = false,
+  onPress,
+}: Props) {
   const isValidImage = item.image !== null;
 
   return (
@@ -40,11 +46,16 @@ export default function ProductListRow({ item, onPress }: Props) {
               <Text className='text-gray-500 text-xs'>준비중입니다</Text>
             </View>
           )}
+          {isDaiso && <DaisoBadge />}
         </View>
 
         <View className='flex-1 ml-3'>
           <Text
-            style={{ fontSize: 12, color: colors.gray[300], marginBottom: 8 }}
+            style={{
+              fontSize: 12,
+              color: colors.gray[300],
+              marginBottom: 8,
+            }}
           >
             {item.company}
           </Text>

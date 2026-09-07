@@ -7,6 +7,7 @@ import Navigation from '@/components/layout/Navigation';
 import RankingItem from '@/components/page/home/RankingItem';
 import colors from '@/constants/color';
 import { useCategory } from '@/hooks/useCategory';
+import { useDaisoProductIds } from '@/hooks/useDaisoProducts';
 
 import { useFetchRankingQuery } from '@/hooks/useProductQueries';
 import { IRankingCategoryItem } from '@/types/models/category';
@@ -29,6 +30,7 @@ export default function Ranking() {
   const params = useLocalSearchParams();
 
   const { fetchRankingCategories, rankingCategories } = useCategory();
+  const daisoProductIds = useDaisoProductIds();
   const initialFilter = params.category ? (params.category as string) : '전체';
   const initialTab = params.initialTab === 'monthly' ? 'monthly' : 'daily';
   const [filter, setFilter] = useState<string>(initialFilter);
@@ -109,6 +111,7 @@ export default function Ranking() {
       item={item}
       index={index}
       showDiff={true}
+      isDaiso={daisoProductIds.has(item.id)}
       onPress={() =>
         router.push({
           pathname: '/product/[id]/productDetail',
