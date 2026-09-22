@@ -12,10 +12,14 @@ const SIZES: Record<
   DaisoBadgeSize,
   { offset: number; container: string; text: string }
 > = {
-  sm: { offset: 6, container: 'px-1 py-[1px]', text: 'text-[10px]' },
+  sm: {
+    offset: 6,
+    container: 'px-1 py-[2px] border-[0.5px]',
+    text: 'text-[6px] leading-[10px]',
+  },
   lg: {
     offset: 16,
-    container: 'h-[40px] px-3 justify-center',
+    container: 'py-2 px-3',
     text: 'text-h-md',
   },
 };
@@ -26,13 +30,13 @@ export default function DaisoBadge({ size = 'sm', style }: Props) {
 
   return (
     <View
-      className={`border border-blue-400 bg-blue-50 rounded-[4px] ${container}`}
+      className={`border-blue-400 rounded-[4px] border bg-blue-50 ${container}`}
       style={[
         { position: 'absolute', top: offset, right: offset, zIndex: 10 },
         style,
       ]}
     >
-      <Text className={`font-n-bd text-blue-500 ${text}`}>다이소 제품</Text>
+      <Text className={`font-n-bd text-blue-500 ${text}`}>다이소 판매</Text>
     </View>
   );
 }
