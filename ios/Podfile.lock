@@ -1,5 +1,7 @@
 PODS:
   - Alamofire (5.9.1)
+  - amplitude-react-native (1.9.0):
+    - React-Core
   - BVLinearGradient (2.8.3):
     - React-Core
   - EXApplication (7.0.8):
@@ -2398,6 +2400,7 @@ PODS:
   - Yoga (0.0.0)
 
 DEPENDENCIES:
+  - "amplitude-react-native (from `../node_modules/.pnpm/@amplitude+analytics-react-native@1.9.0_react-native@0.81.4_@babel+core@7.28.5_@react-n_03020cfe20c47a6a6646b562dd8f3e38/node_modules/@amplitude/analytics-react-native`)"
   - "BVLinearGradient (from `../node_modules/.pnpm/react-native-linear-gradient@2.8.3_react-native@0.81.4_@babel+core@7.28.5_@react-native_2b1b46c018fd654bfe77de5d0944911c/node_modules/react-native-linear-gradient`)"
   - "EXApplication (from `../node_modules/.pnpm/expo-application@7.0.8_expo@54.0.30/node_modules/expo-application/ios`)"
   - "EXConstants (from `../node_modules/.pnpm/expo-constants@18.0.12_expo@54.0.30_react-native@0.81.4_@babel+core@7.28.5_@react-nativ_c3cd28914505f5b2a77a7a64ccdd0f2b/node_modules/expo-constants/ios`)"
@@ -2527,6 +2530,8 @@ SPEC REPOS:
     - Sentry
 
 EXTERNAL SOURCES:
+  amplitude-react-native:
+    :path: "../node_modules/.pnpm/@amplitude+analytics-react-native@1.9.0_react-native@0.81.4_@babel+core@7.28.5_@react-n_03020cfe20c47a6a6646b562dd8f3e38/node_modules/@amplitude/analytics-react-native"
   BVLinearGradient:
     :path: "../node_modules/.pnpm/react-native-linear-gradient@2.8.3_react-native@0.81.4_@babel+core@7.28.5_@react-native_2b1b46c018fd654bfe77de5d0944911c/node_modules/react-native-linear-gradient"
   EXApplication:
@@ -2753,6 +2758,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Alamofire: f36a35757af4587d8e4f4bfa223ad10be2422b8c
+  amplitude-react-native: 0e3ff4151a93415c303a7b812637e450db0a5208
   BVLinearGradient: cb006ba232a1f3e4f341bb62c42d1098c284da70
   EXApplication: 1e98d4b1dccdf30627f92917f4b2c5a53c330e5f
   EXConstants: 805f35b1b295c542ca6acce836f21a1f9ee104d5

@@ -72,6 +72,8 @@ jobs:
           EXPO_PUBLIC_API_URL: ${{ secrets.EXPO_PUBLIC_API_URL }}
           EXPO_PUBLIC_CDN_PREFIX: ${{ secrets.EXPO_PUBLIC_CDN_PREFIX }}
           EXPO_PUBLIC_SENTRY_DSN: ${{ secrets.EXPO_PUBLIC_SENTRY_DSN }}
+          # Amplitude API Key는 클라이언트 공개 식별자이며 production 프로젝트 키를 사용합니다.
+          EXPO_PUBLIC_AMPLITUDE_API_KEY: 281f16334bb8f2773f2d13dab05612d2
 
           # ✅ Sentry sourcemap upload
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
