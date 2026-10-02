@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { serverLogout } from '@/services/auth/logout';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { resetAmplitudeUser } from '@/lib/amplitude';
 
 export function useLogout() {
   const qc = useQueryClient();
@@ -18,6 +19,7 @@ export function useLogout() {
       }
       // 2) 로컬 토큰 정리
       await clearTokens();
+      await resetAmplitudeUser();
     },
     onSuccess: async () => {
       // 3) "다음 로그인만 재인증" 플래그 저장

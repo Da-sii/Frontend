@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { signUp, SignUpRequest, SignUpResponse } from '../services/auth/signUp';
 import { Alert } from 'react-native';
+import { trackSignupCompleted } from '@/lib/amplitude';
 
 export const useSignup = (opts?: {
   onSuccess?: (data: SignUpResponse) => void;
@@ -9,6 +10,10 @@ export const useSignup = (opts?: {
   useMutation<SignUpResponse, unknown, SignUpRequest>({
     mutationFn: signUp,
     onSuccess: (data) => {
+      void trackSignupCompleted('email').catch((error) => {
+        if (__DEV__)
+          console.warn('[Amplitude] 회원가입 이벤트 전송 실패', error);
+      });
       opts?.onSuccess?.(data);
     },
     onError: (err: any) => {
