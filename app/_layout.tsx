@@ -1,5 +1,10 @@
 import DefaultModal from '@/components/common/modals/DefaultModal';
-import { getAccessToken } from '@/lib/authToken';
+import { getAccessToken, getUserIdFromAccessToken } from '@/lib/authToken';
+import {
+  identifyAmplitudeUser,
+  initializeAmplitude,
+  trackAppOpened,
+} from '@/lib/amplitude';
 import { usePendingKakaoAuth } from '@/store/usePendingKakaoAuth';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { PortalProvider } from '@gorhom/portal';
@@ -45,6 +50,34 @@ async function initSentry() {
 }
 
 function RootLayout() {
+  const [isAmplitudeReady, setIsAmplitudeReady] = useState(false);
+
+  useEffect(() => {
+    const bootstrapAmplitude = async () => {
+      try {
+        await initializeAmplitude();
+
+        const accessToken = await getAccessToken();
+        const userId = accessToken
+          ? getUserIdFromAccessToken(accessToken)
+          : null;
+
+        if (userId) await identifyAmplitudeUser(userId);
+
+        await trackAppOpened({
+          platform: Platform.OS,
+          app_version: Constants.expoConfig?.version ?? 'unknown',
+        });
+      } catch (error) {
+        if (__DEV__) console.warn('[Amplitude] 초기화 실패', error);
+      } finally {
+        setIsAmplitudeReady(true);
+      }
+    };
+
+    void bootstrapAmplitude();
+  }, []);
+
   useEffect(() => {
     if (Platform.OS === 'android') {
       getKeyHashAndroid().then(console.log).catch(console.error);
@@ -110,10 +143,10 @@ function RootLayout() {
 
   // 루트가 렌더됨 + 폰트가 로드(or 에러) 되었을 때 스플래시 숨김
   useEffect(() => {
-    if (rootMounted && (loaded || error)) {
+    if (rootMounted && (loaded || error) && isAmplitudeReady) {
       SplashScreen.hideAsync().catch(() => {});
     }
-  }, [rootMounted, loaded, error]);
+  }, [rootMounted, loaded, error, isAmplitudeReady]);
 
   // 앱 최소 버전 체크
   useEffect(() => {
@@ -176,7 +209,7 @@ function RootLayout() {
       <GestureHandlerRootView onLayout={onLayoutRootView} style={{ flex: 1 }}>
         <PortalProvider>
           <BottomSheetModalProvider>
-            {loaded || error ? (
+            {(loaded || error) && isAmplitudeReady ? (
               <>
                 <Stack
                   initialRouteName='index'

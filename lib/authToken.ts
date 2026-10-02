@@ -12,6 +12,26 @@ export async function getAccessToken() {
   return memAT;
 }
 
+export function getUserIdFromAccessToken(token: string): string | null {
+  try {
+    const payload = token.split('.')[1];
+    if (!payload) return null;
+
+    const normalized = payload.replace(/-/g, '+').replace(/_/g, '/');
+    const padded = normalized.padEnd(
+      normalized.length + ((4 - (normalized.length % 4)) % 4),
+      '=',
+    );
+    const claims = JSON.parse(globalThis.atob(padded)) as {
+      user_id?: string | number;
+    };
+
+    return claims.user_id == null ? null : String(claims.user_id);
+  } catch {
+    return null;
+  }
+}
+
 export async function setAccessToken(token: string) {
   memAT = token;
   return SecureStore.setItemAsync(KEYS.ACCESS_TOKEN, token);

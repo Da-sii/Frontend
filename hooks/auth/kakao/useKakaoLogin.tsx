@@ -3,6 +3,11 @@ import { useMutation } from '@tanstack/react-query';
 import { Alert } from 'react-native';
 import { setTokens } from '../../../lib/authToken';
 import {
+  identifyAmplitudeUser,
+  trackLoginSucceeded,
+  trackSignupCompleted,
+} from '../../../lib/amplitude';
+import {
   KakaoSignInResponse,
   signInWithKakao,
 } from '../../../services/auth/signInWithKakao';
@@ -27,6 +32,16 @@ export const useKakaoLogin = () => {
       }
 
       await setTokens(data.access);
+      void identifyAmplitudeUser(String(data.user.id))
+        .then(() =>
+          data.is_new_user
+            ? trackSignupCompleted('kakao')
+            : trackLoginSucceeded('kakao'),
+        )
+        .catch((error) => {
+          if (__DEV__)
+            console.warn('[Amplitude] 카카오 인증 이벤트 전송 실패', error);
+        });
 
       clear();
       await AsyncStorage.removeItem('pendingAgreement');
