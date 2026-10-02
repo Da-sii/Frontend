@@ -26,7 +26,6 @@ import { useProductReviewsPreview } from '@/hooks/product/review/useGetProductRe
 import { useProductRatingStats } from '@/hooks/product/review/useProductRatingStats';
 import { useProductDetail } from '@/hooks/product/useProductDetail';
 import { useUser } from '@/hooks/useUser';
-import { trackProductViewed } from '@/lib/amplitude';
 import BottomSheet from '@gorhom/bottom-sheet';
 import { PortalHost } from '@gorhom/portal';
 import { useQueryClient } from '@tanstack/react-query';
@@ -64,21 +63,6 @@ export default function ProductDetail() {
   const qc = useQueryClient();
   const router = useRouter();
   const { mypageInfo, fetchMypage } = useUser();
-  const trackedProductIdRef = useRef<string | null>(null);
-
-  useEffect(() => {
-    if (!data || trackedProductIdRef.current === String(data.id)) return;
-
-    trackedProductIdRef.current = String(data.id);
-    void trackProductViewed({
-      productId: data.id,
-      category: data.productType,
-      price: null,
-    }).catch((error) => {
-      if (__DEV__)
-        console.warn('[Amplitude] 상품 조회 이벤트 전송 실패', error);
-    });
-  }, [data]);
 
   useEffect(() => {
     fetchMypage();

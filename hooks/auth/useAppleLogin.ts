@@ -1,9 +1,4 @@
 import { setTokens } from '@/lib/authToken';
-import {
-  identifyAmplitudeUser,
-  trackLoginSucceeded,
-  trackSignupCompleted,
-} from '@/lib/amplitude';
 import { axiosInstance } from '@/services/index';
 import appleAuth from '@invertase/react-native-apple-authentication';
 import { router } from 'expo-router';
@@ -34,19 +29,7 @@ async function handleSignInApple() {
           identityToken: identityToken,
         });
 
-        await setTokens(backendResponse.data.access);
-        if (backendResponse.data.user?.id) {
-          void identifyAmplitudeUser(String(backendResponse.data.user.id))
-            .then(() =>
-              backendResponse.data.user.is_new_user
-                ? trackSignupCompleted('apple')
-                : trackLoginSucceeded('apple'),
-            )
-            .catch((error) => {
-              if (__DEV__)
-                console.warn('[Amplitude] Apple 인증 이벤트 전송 실패', error);
-            });
-        }
+        setTokens(backendResponse.data.access);
         router.replace('/home');
       } catch (backendError: any) {
         console.error(

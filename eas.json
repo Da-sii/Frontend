@@ -6,22 +6,13 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal",
-      "env": {
-        "EXPO_PUBLIC_AMPLITUDE_API_KEY": "b1f1b4ff82698972912b1f2de0613f46"
-      }
+      "distribution": "internal"
     },
     "preview": {
-      "distribution": "internal",
-      "env": {
-        "EXPO_PUBLIC_AMPLITUDE_API_KEY": "b1f1b4ff82698972912b1f2de0613f46"
-      }
+      "distribution": "internal"
     },
     "production": {
-      "autoIncrement": true,
-      "env": {
-        "EXPO_PUBLIC_AMPLITUDE_API_KEY": "281f16334bb8f2773f2d13dab05612d2"
-      }
+      "autoIncrement": true
     }
   },
   "submit": {
