@@ -19,23 +19,27 @@ export const AMPLITUDE_EVENTS = {
 let initializationPromise: Promise<void> | null = null;
 let appOpenedTracked = false;
 
+// Amplitude API keys are public client identifiers. Keep environment variables
+// as the first choice, but provide build-mode defaults so that an iOS Archive
+// created directly in Xcode does not silently disable analytics.
+const DEVELOPMENT_API_KEY = 'b1f1b4ff82698972912b1f2de0613f46';
+const PRODUCTION_API_KEY = '281f16334bb8f2773f2d13dab05612d2';
+
+function getAmplitudeApiKey(): string {
+  return (
+    process.env.EXPO_PUBLIC_AMPLITUDE_API_KEY ||
+    (__DEV__ ? DEVELOPMENT_API_KEY : PRODUCTION_API_KEY)
+  );
+}
+
 function isAmplitudeConfigured(): boolean {
-  return Boolean(process.env.EXPO_PUBLIC_AMPLITUDE_API_KEY);
+  return Boolean(getAmplitudeApiKey());
 }
 
 export function initializeAmplitude(): Promise<void> {
   if (initializationPromise) return initializationPromise;
 
-  const apiKey = process.env.EXPO_PUBLIC_AMPLITUDE_API_KEY;
-
-  if (!apiKey) {
-    if (__DEV__) {
-      console.warn(
-        '[Amplitude] EXPO_PUBLIC_AMPLITUDE_API_KEY가 없어 이벤트 수집을 시작하지 않습니다.',
-      );
-    }
-    return Promise.resolve();
-  }
+  const apiKey = getAmplitudeApiKey();
 
   initializationPromise = amplitude.init(apiKey).promise;
   return initializationPromise;
