@@ -10,18 +10,22 @@ import colors from '@/constants/color';
 import { saveRecommendations } from '@/services/recommendation';
 import { useRecommendationResult } from '@/store/useRecommendationResult';
 import { Ionicons } from '@expo/vector-icons';
+import * as Sharing from 'expo-sharing';
 import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, Share, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import ViewShot, { captureRef } from 'react-native-view-shot';
 
 export default function RecommendationResultPage() {
   const router = useRouter();
+  const shareCardRef = useRef<ViewShot>(null);
   const result = useRecommendationResult((state) => state.result);
   const clearResult = useRecommendationResult((state) => state.clear);
   const resultIsSaved = useRecommendationResult((state) => state.isSaved);
   const markSaved = useRecommendationResult((state) => state.markSaved);
   const [isSaving, setIsSaving] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
   const [saveModal, setSaveModal] = useState<'success' | 'error' | null>(null);
 
   useEffect(() => {
@@ -52,14 +56,41 @@ export default function RecommendationResultPage() {
     }
   };
 
-  const handleShare = () => {
+  const shareAsText = () => {
     const ingredientNames = result.recommendations
       .map((item) => item.ingredient_name)
       .join(', ');
 
-    Share.share({
+    return Share.share({
       message: `다시 맞춤 분석 결과: ${ingredientNames}`,
     });
+  };
+
+  const handleShare = async () => {
+    if (!shareCardRef.current || isSharing) return;
+
+    try {
+      setIsSharing(true);
+      const imageUri = await captureRef(shareCardRef, {
+        format: 'png',
+        quality: 1,
+        result: 'tmpfile',
+      });
+
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(imageUri, {
+          dialogTitle: '맞춤 분석 결과 공유',
+          mimeType: 'image/png',
+          UTI: 'public.png',
+        });
+      } else {
+        await shareAsText();
+      }
+    } catch {
+      await shareAsText();
+    } finally {
+      setIsSharing(false);
+    }
   };
 
   return (
@@ -123,6 +154,7 @@ export default function RecommendationResultPage() {
       >
         <Pressable
           onPress={handleShare}
+          disabled={isSharing}
           className='mr-[13px] p-[5px]'
           hitSlop={8}
         >
@@ -138,7 +170,9 @@ export default function RecommendationResultPage() {
         </Pressable>
         <View className='flex-1'>
           <LongButton
-            label={resultIsSaved ? '저장 완료' : isSaving ? '저장 중...' : '저장하기'}
+            label={
+              resultIsSaved ? '저장 완료' : isSaving ? '저장 중...' : '저장하기'
+            }
             height='h-[50px]'
             disabled={isSaving || resultIsSaved}
             onPress={handleSave}
@@ -160,6 +194,51 @@ export default function RecommendationResultPage() {
         singleButton
         onConfirm={() => setSaveModal(null)}
       />
+
+      <View
+        pointerEvents='none'
+        style={{
+          position: 'absolute',
+          left: -10000,
+          top: 0,
+          width: 390,
+        }}
+      >
+        <ViewShot ref={shareCardRef} options={{ format: 'png', quality: 1 }}>
+          <View className='bg-white px-5 pb-7 pt-8'>
+            <Text className='text-center font-n-eb text-xl text-green-500'>
+              다시
+            </Text>
+            <View className='mt-5 flex-row items-center gap-[5px]'>
+              <Ionicons name='checkmark' size={22} color={colors.green[500]} />
+              <Text className='font-n-eb text-lg text-gray-900'>
+                나를 위한 맞춤 성분 TOP 3
+              </Text>
+            </View>
+            <Text className='mt-1 font-n-bd text-sm text-gray-600'>
+              답변을 분석한 맞춤 성분 및 제품이에요.
+            </Text>
+
+            <View className='mt-5'>
+              {result.recommendations.map((item, index) => (
+                <View
+                  key={`share-${item.ingredient_id}`}
+                  style={{
+                    marginBottom:
+                      index < result.recommendations.length - 1 ? 12 : 0,
+                  }}
+                >
+                  <RecommendationResultCard item={item} rank={index + 1} />
+                </View>
+              ))}
+            </View>
+
+            <Text className='mt-6 text-center font-n-rg text-c3 text-gray-400'>
+              나에게 맞는 보조제, 다시
+            </Text>
+          </View>
+        </ViewShot>
+      </View>
     </SafeAreaView>
   );
 }
