@@ -71,7 +71,16 @@ export default function RecommendationResultCard({
           className='mt-[8px] gap-x-[12px]'
         >
           {item.products.map((product) => (
-            <Pressable key={product.id} className='w-[100px]'>
+            <Pressable
+              key={product.id}
+              className='w-[100px]'
+              onPress={() =>
+                router.push({
+                  pathname: '/product/[id]/productDetail',
+                  params: { id: String(product.id) },
+                })
+              }
+            >
               <Image
                 source={{ uri: product.thumbnail ?? '' }}
                 style={{ width: 100, aspectRatio: 1, borderRadius: 10 }}
