@@ -15,6 +15,7 @@ interface ModalProps {
     | 'age'
     | 'appUsage'
     | 'notification'
+    | 'recommendationPrivacy'
     | 'footerService'
     | 'footerPrivacyUsage'
     | 'footerReviewPolicy';
