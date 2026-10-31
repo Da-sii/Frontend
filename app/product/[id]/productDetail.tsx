@@ -13,6 +13,7 @@ import Navigation from '@/components/layout/Navigation';
 import LoadingSpinner from '@/components/common/LoadingSpinner/LoadingSpinner';
 import IngredientInfoBottomSheet from '@/components/page/product/productDetail/BottomSheet/IngredientInfoBottomSheet';
 import CoupangTabBar from '@/components/page/product/productDetail/CoupangTabBar';
+import HashtagList from '@/components/page/product/productDetail/HashtagList';
 import IngredientSection from '@/components/page/product/productDetail/Ingredient/IngredientSection';
 import PhotoCard from '@/components/page/product/productDetail/PhotoCard';
 import ReviewCard from '@/components/page/product/productDetail/ReviewCard';
@@ -219,6 +220,12 @@ export default function ProductDetail() {
                     {data?.reviewAvg ?? 0} ({data?.reviewCount ?? 0})
                   </Text>
                 </View>
+                <HashtagList
+                  hashtags={data?.hashtags}
+                  onPressTag={(tag) =>
+                    router.push({ pathname: '/home/search', params: { tag } })
+                  }
+                />
               </View>
             </View>
 
