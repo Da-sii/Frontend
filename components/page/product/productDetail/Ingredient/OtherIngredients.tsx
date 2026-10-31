@@ -25,7 +25,7 @@ export default function OtherIngredientsSection({
       <View className='flex-row items-center justify-between mb-[10px]'>
         <View className='flex-row'>
           <Text className='text-b-lg font-n-bd'>기타 원료 </Text>
-          <Text className='text-b-lg font-n-eb text-green-500'>
+          <Text className='text-green-500 text-b-lg font-n-eb'>
             {ingredients.length}개
           </Text>
         </View>

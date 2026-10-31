@@ -29,7 +29,7 @@ export const useSearchProductsQuery = (payload: SearchProductsPayload) => {
     queryKey: ['products', 'search', payload],
     queryFn: ({ pageParam = 1 }) =>
       productAPI.searchProducts({ ...payload, page: pageParam }),
-    enabled: !!payload.word?.trim(),
+    enabled: !!(payload.word?.trim() || payload.tag?.trim()),
 
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {

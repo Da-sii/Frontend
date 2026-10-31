@@ -1,5 +1,6 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { router } from 'expo-router';
+import { resetAmplitudeUser } from '../lib/amplitude';
 import { clearTokens, getAccessToken, setTokens } from '../lib/authToken';
 
 const baseUrl = process.env.EXPO_PUBLIC_API_URL;
@@ -111,6 +112,9 @@ axiosInstance.interceptors.response.use(
       } catch (e) {
         flushQueue(undefined, e);
         await clearTokens();
+        void resetAmplitudeUser().catch((error) => {
+          if (__DEV__) console.warn('[Amplitude] 사용자 식별 해제 실패', error);
+        });
 
         if (!original.disableRedirect) {
           router.replace('/auth/login');

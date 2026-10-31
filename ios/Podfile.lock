@@ -267,6 +267,8 @@ PODS:
     - Yoga
   - ExpoSecureStore (15.0.8):
     - ExpoModulesCore
+  - ExpoSharing (14.0.8):
+    - ExpoModulesCore
   - ExpoSplashScreen (31.0.13):
     - ExpoModulesCore
   - ExpoSymbols (1.0.8):
@@ -294,22 +296,22 @@ PODS:
     - KakaoSDKCommon/Common (= 2.22.0)
   - KakaoSDKUser (2.22.0):
     - KakaoSDKAuth (= 2.22.0)
-  - libavif/core (0.11.1)
-  - libavif/libdav1d (0.11.1):
+  - libavif/core (1.0.0)
+  - libavif/libdav1d (1.0.0):
     - libavif/core
     - libdav1d (>= 0.6.0)
   - libdav1d (1.2.0)
-  - libwebp (1.5.0):
-    - libwebp/demux (= 1.5.0)
-    - libwebp/mux (= 1.5.0)
-    - libwebp/sharpyuv (= 1.5.0)
-    - libwebp/webp (= 1.5.0)
-  - libwebp/demux (1.5.0):
+  - libwebp (1.6.0):
+    - libwebp/demux (= 1.6.0)
+    - libwebp/mux (= 1.6.0)
+    - libwebp/sharpyuv (= 1.6.0)
+    - libwebp/webp (= 1.6.0)
+  - libwebp/demux (1.6.0):
     - libwebp/webp
-  - libwebp/mux (1.5.0):
+  - libwebp/mux (1.6.0):
     - libwebp/demux
-  - libwebp/sharpyuv (1.5.0)
-  - libwebp/webp (1.5.0):
+  - libwebp/sharpyuv (1.6.0)
+  - libwebp/webp (1.6.0):
     - libwebp/sharpyuv
   - RCTDeprecation (0.81.4)
   - RCTRequired (0.81.4)
@@ -1659,6 +1661,28 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
+  - react-native-view-shot (4.0.3):
+    - hermes-engine
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-Core-prebuilt
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - Yoga
   - react-native-webview (13.15.0):
     - hermes-engine
     - RCTRequired
@@ -2385,9 +2409,9 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - SDWebImage (5.21.5):
-    - SDWebImage/Core (= 5.21.5)
-  - SDWebImage/Core (5.21.5)
+  - SDWebImage (5.21.7):
+    - SDWebImage/Core (= 5.21.7)
+  - SDWebImage/Core (5.21.7)
   - SDWebImageAVIFCoder (0.11.1):
     - libavif/core (>= 0.11.0)
     - SDWebImage (~> 5.10)
@@ -2427,6 +2451,7 @@ DEPENDENCIES:
   - "ExpoLinking (from `../node_modules/.pnpm/expo-linking@8.0.11_expo@54.0.30_react-native@0.81.4_@babel+core@7.28.5_@react-native-c_2789679603d82464523222f6d37bd3a8/node_modules/expo-linking/ios`)"
   - "ExpoModulesCore (from `../node_modules/.pnpm/expo-modules-core@3.0.29_react-native@0.81.4_@babel+core@7.28.5_@react-native-community_9dcf4fd9ac133653e66af5d10bc92d3c/node_modules/expo-modules-core`)"
   - "ExpoSecureStore (from `../node_modules/.pnpm/expo-secure-store@15.0.8_expo@54.0.30/node_modules/expo-secure-store/ios`)"
+  - "ExpoSharing (from `../node_modules/.pnpm/expo-sharing@14.0.8_expo@54.0.30/node_modules/expo-sharing/ios`)"
   - "ExpoSplashScreen (from `../node_modules/.pnpm/expo-splash-screen@31.0.13_expo@54.0.30/node_modules/expo-splash-screen/ios`)"
   - "ExpoSymbols (from `../node_modules/.pnpm/expo-symbols@1.0.8_expo@54.0.30_react-native@0.81.4_@babel+core@7.28.5_@react-native-co_6a25444ca6240eaea01ed6ec1a027bdd/node_modules/expo-symbols/ios`)"
   - "ExpoSystemUI (from `../node_modules/.pnpm/expo-system-ui@6.0.9_expo@54.0.30_react-native-web@0.21.2_react-dom@19.1.0_react@19.1.0_0a30f27382e1c6de98b992b5cf399ed6/node_modules/expo-system-ui/ios`)"
@@ -2470,6 +2495,7 @@ DEPENDENCIES:
   - "React-Mapbuffer (from `../node_modules/.pnpm/react-native@0.81.4_@babel+core@7.28.5_@react-native-community+cli@20.0.2_typescript@5._d78269053ac788d0c0cebf97b305c342/node_modules/react-native/ReactCommon`)"
   - "React-microtasksnativemodule (from `../node_modules/.pnpm/react-native@0.81.4_@babel+core@7.28.5_@react-native-community+cli@20.0.2_typescript@5._d78269053ac788d0c0cebf97b305c342/node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)"
   - "react-native-safe-area-context (from `../node_modules/.pnpm/react-native-safe-area-context@5.6.2_react-native@0.81.4_@babel+core@7.28.5_@react-nati_5392f6a3a819b2da26d49e748ba8390b/node_modules/react-native-safe-area-context`)"
+  - "react-native-view-shot (from `../node_modules/.pnpm/react-native-view-shot@4.0.3_react-native@0.81.4_@babel+core@7.28.5_@react-native-commu_e35bcd586834b40ff452b69170a61190/node_modules/react-native-view-shot`)"
   - "react-native-webview (from `../node_modules/.pnpm/react-native-webview@13.15.0_react-native@0.81.4_@babel+core@7.28.5_@react-native-commu_1cb2face8d7e43d01b14d3688a55fa84/node_modules/react-native-webview`)"
   - "React-NativeModulesApple (from `../node_modules/.pnpm/react-native@0.81.4_@babel+core@7.28.5_@react-native-community+cli@20.0.2_typescript@5._d78269053ac788d0c0cebf97b305c342/node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)"
   - "React-oscompat (from `../node_modules/.pnpm/react-native@0.81.4_@babel+core@7.28.5_@react-native-community+cli@20.0.2_typescript@5._d78269053ac788d0c0cebf97b305c342/node_modules/react-native/ReactCommon/oscompat`)"
@@ -2584,6 +2610,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/.pnpm/expo-modules-core@3.0.29_react-native@0.81.4_@babel+core@7.28.5_@react-native-community_9dcf4fd9ac133653e66af5d10bc92d3c/node_modules/expo-modules-core"
   ExpoSecureStore:
     :path: "../node_modules/.pnpm/expo-secure-store@15.0.8_expo@54.0.30/node_modules/expo-secure-store/ios"
+  ExpoSharing:
+    :path: "../node_modules/.pnpm/expo-sharing@14.0.8_expo@54.0.30/node_modules/expo-sharing/ios"
   ExpoSplashScreen:
     :path: "../node_modules/.pnpm/expo-splash-screen@31.0.13_expo@54.0.30/node_modules/expo-splash-screen/ios"
   ExpoSymbols:
@@ -2669,6 +2697,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/.pnpm/react-native@0.81.4_@babel+core@7.28.5_@react-native-community+cli@20.0.2_typescript@5._d78269053ac788d0c0cebf97b305c342/node_modules/react-native/ReactCommon/react/nativemodule/microtasks"
   react-native-safe-area-context:
     :path: "../node_modules/.pnpm/react-native-safe-area-context@5.6.2_react-native@0.81.4_@babel+core@7.28.5_@react-nati_5392f6a3a819b2da26d49e748ba8390b/node_modules/react-native-safe-area-context"
+  react-native-view-shot:
+    :path: "../node_modules/.pnpm/react-native-view-shot@4.0.3_react-native@0.81.4_@babel+core@7.28.5_@react-native-commu_e35bcd586834b40ff452b69170a61190/node_modules/react-native-view-shot"
   react-native-webview:
     :path: "../node_modules/.pnpm/react-native-webview@13.15.0_react-native@0.81.4_@babel+core@7.28.5_@react-native-commu_1cb2face8d7e43d01b14d3688a55fa84/node_modules/react-native-webview"
   React-NativeModulesApple:
@@ -2785,6 +2815,7 @@ SPEC CHECKSUMS:
   ExpoLinking: 8f0aaf69aa56f832913030503b6263dc6f647f37
   ExpoModulesCore: f3da4f1ab5a8375d0beafab763739dbee8446583
   ExpoSecureStore: d32f751874a2ceb5aaeebeb3578e165c1ba2b24a
+  ExpoSharing: 0d983394ed4a80334bab5a0d5384f75710feb7e8
   ExpoSplashScreen: bc3cffefca2716e5f22350ca109badd7e50ec14d
   ExpoSymbols: 349ee2b4d7d5ff3ea8436467914f8a67635aa354
   ExpoSystemUI: 2ad325f361a2fcd96a464e8574e19935c461c9cc
@@ -2796,9 +2827,9 @@ SPEC CHECKSUMS:
   KakaoSDKAuth: 569b377eda622d93d4575240b8031cd658163eef
   KakaoSDKCommon: d57127c339fc79e73aa8b236a4c77211c29924f1
   KakaoSDKUser: 043bcd7e91454ebf3bf64f150c430e6f65f0a08d
-  libavif: 84bbb62fb232c3018d6f1bab79beea87e35de7b7
+  libavif: 5f8e715bea24debec477006f21ef9e95432e254d
   libdav1d: 23581a4d8ec811ff171ed5e2e05cd27bad64c39f
-  libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
+  libwebp: af5937a13536ef73f3784d69cc342b98961acf33
   RCTDeprecation: 7487d6dda857ccd4cb3dd6ecfccdc3170e85dcbc
   RCTRequired: 54128b7df8be566881d48c7234724a78cb9b6157
   RCTTypeSafety: d2b07797a79e45d7b19e1cd2f53c79ab419fe217
@@ -2833,6 +2864,7 @@ SPEC CHECKSUMS:
   React-Mapbuffer: fbe1da882a187e5898bdf125e1cc6e603d27ecae
   React-microtasksnativemodule: 76905804171d8ccbe69329fc84c57eb7934add7f
   react-native-safe-area-context: 37e680fc4cace3c0030ee46e8987d24f5d3bdab2
+  react-native-view-shot: fb3c0774edb448f42705491802a455beac1502a2
   react-native-webview: b29007f4723bca10872028067b07abacfa1cb35a
   React-NativeModulesApple: a9464983ccc0f66f45e93558671f60fc7536e438
   React-oscompat: 73db7dbc80edef36a9d6ed3c6c4e1724ead4236d
@@ -2875,7 +2907,7 @@ SPEC CHECKSUMS:
   RNSentry: d32cbfc5b5a7cbefbcf51daa5bf00587d1298049
   RNSVG: 31d6639663c249b7d5abc9728dde2041eb2a3c34
   RNWorklets: 76bb19dda2bfd1112376edd4c8684620ce073ea7
-  SDWebImage: e9c98383c7572d713c1a0d7dd2783b10599b9838
+  SDWebImage: e9fc87c1aab89a8ab1bbd74eba378c6f53be8abf
   SDWebImageAVIFCoder: afe194a084e851f70228e4be35ef651df0fc5c57
   SDWebImageSVGCoder: 15a300a97ec1c8ac958f009c02220ac0402e936c
   SDWebImageWebPCoder: e38c0a70396191361d60c092933e22c20d5b1380
@@ -2884,4 +2916,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 7148f943a5a82cf83e30baf29e350e8489ecc99c
 
-COCOAPODS: 1.16.2
+COCOAPODS: 1.17.0

@@ -309,6 +309,7 @@ export default function MaterialInfo({
     materialInfo.minRecommended,
     materialInfo.maxRecommended,
   );
+  const hasLongIngredientName = materialInfo.ingredientName.length > 24;
 
   const renderBulletList = (items: string[]) => {
     if (!items || items.length === 0) {
@@ -338,10 +339,11 @@ export default function MaterialInfo({
         style={{ backgroundColor: '#F6F5FA' }}
       >
         {/* 좌측 콘텐츠 */}
-        <View className='flex-1 pl-5'>
+        <View className='flex-1 pl-5' style={{ minWidth: 0 }}>
           {/* 제목 */}
           <Pressable
             className='flex-row items-center pt-4'
+            style={{ minWidth: 0 }}
             onPress={() => {
               if (materialInfo.guideId) {
                 router.push({
@@ -353,7 +355,14 @@ export default function MaterialInfo({
               }
             }}
           >
-            <Text className='text-b-sm font-n-eb mr-[3px]'>
+            <Text
+              className={`${hasLongIngredientName ? 'text-c3' : 'text-b-sm'} font-n-eb mr-[3px]`}
+              // Keep the donut column fixed and let long ingredient names wrap.
+              style={{
+                flexShrink: 1,
+                lineHeight: hasLongIngredientName ? 14 : 18,
+              }}
+            >
               {materialInfo.ingredientName}
             </Text>
             <ArrowRightIcon width={10} height={10} />
@@ -362,8 +371,11 @@ export default function MaterialInfo({
           {/* 주성분 부제목 */}
           {materialInfo.mainIngredient ? (
             <Text
-              className='text-c3 text-gray-400 font-n-rg'
-              style={{ marginTop: 5 }}
+              className={`${hasLongIngredientName ? 'text-[7px]' : 'text-c3'} text-gray-400 font-n-rg`}
+              style={{
+                marginTop: 5,
+                lineHeight: hasLongIngredientName ? 10 : 14,
+              }}
             >
               (주성분 : {materialInfo.mainIngredient})
             </Text>

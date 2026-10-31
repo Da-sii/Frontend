@@ -14,6 +14,7 @@ import LoadingSpinner from '@/components/common/LoadingSpinner/LoadingSpinner';
 import DaisoBadge from '@/components/page/home/DaisoBadge';
 import IngredientInfoBottomSheet from '@/components/page/product/productDetail/BottomSheet/IngredientInfoBottomSheet';
 import CoupangTabBar from '@/components/page/product/productDetail/CoupangTabBar';
+import HashtagList from '@/components/page/product/productDetail/HashtagList';
 import IngredientSection from '@/components/page/product/productDetail/Ingredient/IngredientSection';
 import CategorySection from '@/components/page/product/productDetail/CategorySection';
 import PhotoCard from '@/components/page/product/productDetail/PhotoCard';
@@ -220,6 +221,12 @@ export default function ProductDetail() {
                     {data?.reviewAvg ?? 0} ({data?.reviewCount ?? 0})
                   </Text>
                 </View>
+                <HashtagList
+                  hashtags={data?.hashtags}
+                  onPressTag={(tag) =>
+                    router.push({ pathname: '/home/search', params: { tag } })
+                  }
+                />
               </View>
             </View>
 

@@ -19,25 +19,40 @@ export const AMPLITUDE_EVENTS = {
 let initializationPromise: Promise<void> | null = null;
 let appOpenedTracked = false;
 
+// Amplitude API keys are public client identifiers. Keep environment variables
+// as the first choice, but provide build-mode defaults so that an iOS Archive
+// created directly in Xcode does not silently disable analytics.
+const DEVELOPMENT_API_KEY = 'b1f1b4ff82698972912b1f2de0613f46';
+const PRODUCTION_API_KEY = '281f16334bb8f2773f2d13dab05612d2';
+
+function getAmplitudeApiKey(): string {
+  return (
+    process.env.EXPO_PUBLIC_AMPLITUDE_API_KEY ||
+    (__DEV__ ? DEVELOPMENT_API_KEY : PRODUCTION_API_KEY)
+  );
+}
+
 function isAmplitudeConfigured(): boolean {
-  return Boolean(process.env.EXPO_PUBLIC_AMPLITUDE_API_KEY);
+  return Boolean(getAmplitudeApiKey());
 }
 
 export function initializeAmplitude(): Promise<void> {
   if (initializationPromise) return initializationPromise;
 
-  const apiKey = process.env.EXPO_PUBLIC_AMPLITUDE_API_KEY;
+  const apiKey = getAmplitudeApiKey();
 
-  if (!apiKey) {
-    if (__DEV__) {
-      console.warn(
-        '[Amplitude] EXPO_PUBLIC_AMPLITUDE_API_KEY가 없어 이벤트 수집을 시작하지 않습니다.',
-      );
-    }
-    return Promise.resolve();
-  }
-
-  initializationPromise = amplitude.init(apiKey).promise;
+  // user_id로 DB 숫자 id를 그대로 쓰므로 5자 미만도 허용한다.
+  // (기본값 5에서는 서버가 'Invalid id length'로 이벤트를 거부함)
+  initializationPromise = amplitude.init(apiKey, undefined, {
+    minIdLength: 1,
+    // 세션·앱 실행/백그라운드 전환은 SDK가 자동 수집한다.
+    // 화면 조회(screenViews)는 trackScreenViewed로 직접 보낸다.
+    autocapture: {
+      sessions: true,
+      appLifecycles: true,
+      screenViews: true,
+    },
+  }).promise;
   return initializationPromise;
 }
 
@@ -57,6 +72,22 @@ export async function trackAppOpened(
 
   await trackEvent('App Opened', properties);
   appOpenedTracked = true;
+}
+
+let lastScreenName: string | null = null;
+
+// expo-router 경로가 바뀔 때 '[Amplitude] Screen Viewed' 이벤트를 보낸다.
+// screenName은 '/product/[id]/productDetail'처럼 동적 값이 빠진 라우트 이름을 쓴다.
+export async function trackScreenViewed(
+  screenName: string,
+  properties?: EventProperties,
+): Promise<void> {
+  if (screenName === lastScreenName) return;
+  lastScreenName = screenName;
+
+  await initializeAmplitude();
+  if (!isAmplitudeConfigured()) return;
+  amplitude.trackScreenView(screenName, properties);
 }
 
 export function trackSignupCompleted(signupMethod: AuthMethod): Promise<void> {

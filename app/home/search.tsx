@@ -33,7 +33,7 @@ const sortOptions = [
 
 import { useDaisoProductIds } from '@/hooks/useDaisoProducts';
 import { useSearchProductsQuery } from '@/hooks/useProductQueries';
-import { normalizeSearchKeyword } from '@/utils/search';
+import { normalizeSearchKeyword, parseHashtagQuery } from '@/utils/search';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const RECENT_SEARCHES_KEY = '@recent_searches';
@@ -44,17 +44,19 @@ const cardWidth = (screenWidth - 16 * 2 - 8 * 2) / 2;
 
 export default function Search() {
   const router = useRouter();
-  const { word } = useLocalSearchParams<{ word?: string }>();
+  const { word, tag } = useLocalSearchParams<{ word?: string; tag?: string }>();
+  // 해시태그로 진입하면 검색어를 '#태그' 형태로 보여준다.
+  const initialQuery = tag ? `#${tag}` : (word ?? '');
 
   const [viewType, setViewType] = useState<'grid' | 'list'>('grid');
   const toggleViewType = () => {
     setViewType((prev) => (prev === 'grid' ? 'list' : 'grid'));
   };
 
-  const [inputValue, setInputValue] = useState(word ?? '');
-  const [searchQuery, setSearchQuery] = useState(word ?? '');
+  const [inputValue, setInputValue] = useState(initialQuery);
+  const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [selectedSort, setSelectedSort] = useState('monthly_rank');
-  const [hasSearched, setHasSearched] = useState(!!word);
+  const [hasSearched, setHasSearched] = useState(!!initialQuery);
 
   // 'daiso', '다이소몰' 등 백엔드가 인식하지 못하는 별칭만 '다이소'로 치환해서 요청한다.
   // 최근 검색어 저장이나 안내 문구는 사용자가 입력한 원문(searchQuery)을 그대로 쓴다.
@@ -62,6 +64,8 @@ export default function Search() {
     () => normalizeSearchKeyword(searchQuery),
     [searchQuery],
   );
+  // '#'으로 시작하는 검색어는 해시태그 검색(tag)으로 요청한다.
+  const hashtag = useMemo(() => parseHashtagQuery(searchQuery), [searchQuery]);
 
   const {
     data: searchData,
@@ -71,7 +75,7 @@ export default function Search() {
     refetch,
     isRefetching,
   } = useSearchProductsQuery({
-    word: apiKeyword,
+    ...(hashtag ? { tag: hashtag } : { word: apiKeyword }),
     sort: selectedSort as 'monthly_rank' | 'review_desc',
   });
 
@@ -93,12 +97,12 @@ export default function Search() {
     loadRecentSearches();
   }, []);
 
-  // word param으로 진입 시 최근 검색어에 자동 추가
+  // word/tag param으로 진입 시 최근 검색어에 자동 추가
   useEffect(() => {
-    if (word) {
-      addRecentSearch(word);
+    if (initialQuery) {
+      addRecentSearch(initialQuery);
     }
-  }, [word]);
+  }, [initialQuery]);
 
   const addRecentSearch = async (searchTerm: string) => {
     if (!searchTerm.trim()) return;
