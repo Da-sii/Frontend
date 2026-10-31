@@ -1,5 +1,6 @@
 // 제품 상세 조회 API 서비스
 import { axiosInstance } from '..';
+import type { SmallCategory } from '@/types/models/product';
 
 export type ProductImage = { url: string };
 
@@ -24,6 +25,7 @@ export type ProductDetailDTO = {
   name: string;
   company: string;
   productType: string; // "supplement"
+  smallCategories: SmallCategory[];
   isMyReview: boolean;
   reviewCount: number; // int
   reviewAvg: number | null; // null 가능
@@ -54,6 +56,7 @@ function mapToProductDetail(dto: ProductDetailDTO): ProductDetail {
 
   return {
     ...dto,
+    smallCategories: dto.smallCategories ?? [],
     reviewCountNum: dto.reviewCount,
     reviewAvgNum: toNum(dto.reviewAvg),
     rankingNum: toNum(dto.ranking as any), // 빈 배열이면 null
