@@ -17,3 +17,18 @@ export const normalizeSearchKeyword = (word: string) => {
     ? DAISO_SEARCH_KEYWORD
     : trimmed;
 };
+
+/**
+ * 해시태그 이름에서 앞의 '#'과 공백을 제거한다.
+ * 검색 API의 tag 파라미터는 '#' 없이 이름만 받는다. (URL에서 '#' 뒤는 서버로 전달되지 않음)
+ */
+export const toHashtagName = (tag: string) =>
+  tag.trim().replace(/^#+/, '').trim();
+
+/** 검색어가 '#'으로 시작하면 해시태그 이름을, 아니면 null을 반환한다. */
+export const parseHashtagQuery = (query: string) => {
+  const trimmed = query.trim();
+  if (!trimmed.startsWith('#')) return null;
+  const name = toHashtagName(trimmed);
+  return name || null;
+};

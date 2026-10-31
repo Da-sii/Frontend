@@ -13,7 +13,9 @@ export interface GetProductsPayload {
 }
 
 export interface SearchProductsPayload {
-  word: string;
+  word?: string;
+  // 해시태그 검색('#' 없이 이름만). 전달 시 서버에서 word는 무시된다.
+  tag?: string;
   page?: number;
   sort?: 'monthly_rank' | 'review_desc';
 }
