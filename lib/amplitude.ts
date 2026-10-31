@@ -41,7 +41,11 @@ export function initializeAmplitude(): Promise<void> {
 
   const apiKey = getAmplitudeApiKey();
 
-  initializationPromise = amplitude.init(apiKey).promise;
+  // user_id로 DB 숫자 id를 그대로 쓰므로 5자 미만도 허용한다.
+  // (기본값 5에서는 서버가 'Invalid id length'로 이벤트를 거부함)
+  initializationPromise = amplitude.init(apiKey, undefined, {
+    minIdLength: 1,
+  }).promise;
   return initializationPromise;
 }
 
