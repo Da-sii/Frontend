@@ -9,6 +9,7 @@ import Navigation from '@/components/layout/Navigation';
 import { HomeFooterModal } from '@/components/page/home/HomeFooterModal';
 import { useLogout } from '@/hooks/useLogout';
 import { useUser } from '@/hooks/useUser';
+import { resetAmplitudeUser } from '@/lib/amplitude';
 import { clearTokens } from '@/lib/authToken';
 import { patchTermsAgreed } from '@/services/auth/terms';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -91,6 +92,9 @@ export default function Terms() {
       // 회원탈퇴 API 호출
       await deleteUser();
       await clearTokens(); // DELETE /auth/user 등
+      void resetAmplitudeUser().catch((error) => {
+        if (__DEV__) console.warn('[Amplitude] 사용자 식별 해제 실패', error);
+      });
 
       router.replace('/auth/login');
     } catch (e) {

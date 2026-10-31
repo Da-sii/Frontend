@@ -7,6 +7,7 @@ import { SettingSection } from '@/components/page/my/SettingSection';
 import { useCreateProductRequest } from '@/hooks/useCreateProductRequest';
 import { useLogout } from '@/hooks/useLogout';
 import { useUser } from '@/hooks/useUser';
+import { resetAmplitudeUser } from '@/lib/amplitude';
 import { clearTokens, getAccessToken } from '@/lib/authToken';
 import {
   getSavedRecommendations,
@@ -258,6 +259,10 @@ export default function Mypage() {
           setShowWithdrawModal(false);
           await deleteUser();
           await clearTokens();
+          void resetAmplitudeUser().catch((error) => {
+            if (__DEV__)
+              console.warn('[Amplitude] 사용자 식별 해제 실패', error);
+          });
           router.replace('/mypage/completion?action=withdraw');
         }}
         onCancel={() => setShowWithdrawModal(false)}

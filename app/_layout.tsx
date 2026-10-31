@@ -4,6 +4,7 @@ import {
   identifyAmplitudeUser,
   initializeAmplitude,
   trackAppOpened,
+  trackScreenViewed,
 } from '@/lib/amplitude';
 import { usePendingKakaoAuth } from '@/store/usePendingKakaoAuth';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
@@ -19,7 +20,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { compareVersions } from 'compare-versions';
 import Constants from 'expo-constants';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { Stack, usePathname, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import {
@@ -77,6 +78,20 @@ function RootLayout() {
 
     void bootstrapAmplitude();
   }, []);
+
+  // 화면 이동 시 Screen Viewed 이벤트 전송
+  const segments = useSegments();
+  const pathname = usePathname();
+  const screenName = `/${segments.join('/')}`;
+
+  useEffect(() => {
+    if (!isAmplitudeReady) return;
+    void trackScreenViewed(screenName, { path: pathname }).catch((error) => {
+      if (__DEV__)
+        console.warn('[Amplitude] 화면 조회 이벤트 전송 실패', error);
+    });
+    // pathname만 바뀌는 경우(같은 화면, 다른 id)는 다시 보내지 않는다.
+  }, [screenName, isAmplitudeReady]);
 
   useEffect(() => {
     if (Platform.OS === 'android') {
