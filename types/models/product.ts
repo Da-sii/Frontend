@@ -1,3 +1,5 @@
+export type SmallCategory = { category: string; iconUrl: string };
+
 export interface IProduct {
   id: number;
   name: string;

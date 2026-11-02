@@ -11,15 +11,16 @@ import DefaultModal from '@/components/common/modals/DefaultModal';
 import Navigation from '@/components/layout/Navigation';
 // import AISummary from '@/components/page/product/productDetail/AISummary';
 import LoadingSpinner from '@/components/common/LoadingSpinner/LoadingSpinner';
+import DaisoBadge from '@/components/page/home/DaisoBadge';
 import IngredientInfoBottomSheet from '@/components/page/product/productDetail/BottomSheet/IngredientInfoBottomSheet';
 import CoupangTabBar from '@/components/page/product/productDetail/CoupangTabBar';
 import HashtagList from '@/components/page/product/productDetail/HashtagList';
 import IngredientSection from '@/components/page/product/productDetail/Ingredient/IngredientSection';
+import CategorySection from '@/components/page/product/productDetail/CategorySection';
 import PhotoCard from '@/components/page/product/productDetail/PhotoCard';
 import ReviewCard from '@/components/page/product/productDetail/ReviewCard';
 import ReviewItems from '@/components/page/product/productDetail/reviewItem';
 import CustomTabs from '@/components/page/product/productDetail/tab';
-import DaisoBadge from '@/components/page/home/DaisoBadge';
 import colors from '@/constants/color';
 import { useIsLoggedIn } from '@/hooks/auth/useIsLoggedIn';
 import { useGetReviewImageList } from '@/hooks/product/review/image/useGetReviewImageList';
@@ -281,6 +282,8 @@ export default function ProductDetail() {
                     '과다 섭취하면 뭐든 다 안 좋아요 부디 아프지 마시고 오래 사세요...북세편살',
                   ]}
                 /> */}
+
+                <CategorySection smallCategories={data.smallCategories} />
                 <IngredientSection
                   product={data}
                   onPressFunctionalInfo={openFunctionalSheet}
