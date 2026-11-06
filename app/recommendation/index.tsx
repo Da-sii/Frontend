@@ -3,6 +3,8 @@ import HomeIcon from '@/assets/icons/ic_home.svg';
 import Navigation from '@/components/layout/Navigation';
 import { HomeFooterModal } from '@/components/page/home/HomeFooterModal';
 import colors from '@/constants/color';
+import { getAccessToken } from '@/lib/authToken';
+import { setPostLoginDestination } from '@/lib/postLoginDestination';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, Text, TouchableOpacity, View } from 'react-native';
@@ -29,6 +31,18 @@ const analysisSteps = [
 export default function RecommendationAnalysisPage() {
   const router = useRouter();
   const [isPrivacyModalVisible, setIsPrivacyModalVisible] = useState(false);
+
+  const handleStartRecommendation = async () => {
+    const accessToken = await getAccessToken();
+
+    if (!accessToken) {
+      await setPostLoginDestination('/recommendation/survey');
+      router.push('/auth/login/emergency' as never);
+      return;
+    }
+
+    router.push('/recommendation/survey' as never);
+  };
 
   return (
     <SafeAreaView className='flex-1 bg-white' edges={['top', 'left', 'right']}>
@@ -112,7 +126,7 @@ export default function RecommendationAnalysisPage() {
           </TouchableOpacity>
           <TouchableOpacity
             activeOpacity={0.8}
-            onPress={() => router.push('/recommendation/survey' as never)}
+            onPress={handleStartRecommendation}
             className='h-[66px] flex-[1.86] items-center justify-center rounded-[17px] bg-green-500'
           >
             <Text className='text-lg text-white font-n-eb'>
