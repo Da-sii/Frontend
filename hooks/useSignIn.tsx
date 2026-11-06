@@ -3,6 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { setTokens } from '../lib/authToken';
 import { identifyAmplitudeUser, trackLoginSucceeded } from '../lib/amplitude';
+import { consumePostLoginDestination } from '../lib/postLoginDestination';
 
 export const useSignin = () => {
   const router = useRouter();
@@ -17,7 +18,7 @@ export const useSignin = () => {
           if (__DEV__)
             console.warn('[Amplitude] 로그인 이벤트 전송 실패', error);
         });
-      router.replace('/home');
+      router.replace((await consumePostLoginDestination()) as never);
     },
     onError: (err: any) => {
       const msg =

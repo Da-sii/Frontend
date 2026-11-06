@@ -1,4 +1,5 @@
 import { setTokens } from '@/lib/authToken';
+import { consumePostLoginDestination } from '@/lib/postLoginDestination';
 import {
   identifyAmplitudeUser,
   trackLoginSucceeded,
@@ -47,7 +48,7 @@ async function handleSignInApple() {
                 console.warn('[Amplitude] Apple 인증 이벤트 전송 실패', error);
             });
         }
-        router.replace('/home');
+        router.replace((await consumePostLoginDestination()) as never);
       } catch (backendError: any) {
         console.error(
           '백엔드 Apple 로그인 실패:',

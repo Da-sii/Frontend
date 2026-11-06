@@ -1,4 +1,5 @@
 import DefaultModal from '@/components/common/modals/DefaultModal';
+import { clearPostLoginDestination } from '@/lib/postLoginDestination';
 import { Stack, useRouter } from 'expo-router';
 import { useState } from 'react';
 import Index from '.';
@@ -17,7 +18,8 @@ export default function EmergencyLogin() {
           onConfirm={() => {
             setLogin(true);
           }}
-          onCancel={() => {
+          onCancel={async () => {
+            await clearPostLoginDestination();
             router.back();
           }}
           title='로그인'

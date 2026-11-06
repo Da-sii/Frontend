@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { useKakaoLogin } from '@/hooks/auth/kakao/useKakaoLogin';
+import { consumePostLoginDestination } from '@/lib/postLoginDestination';
 import { postSocialPrelogin } from '../services/auth/prelogin';
 import { usePendingKakaoAuth } from '../store/usePendingKakaoAuth';
 
@@ -45,8 +46,7 @@ export default function OAuth() {
                 'kakao_is_new_user',
               ]);
 
-              // ✅ 완료되면 home
-              router.replace('/home');
+              router.replace((await consumePostLoginDestination()) as never);
             } catch (e) {
               console.log('kakao cleanup error:', e);
               router.replace('/auth/login');
