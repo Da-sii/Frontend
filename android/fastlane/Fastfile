@@ -14,7 +14,8 @@ platform :android do
         json_key_data: ENV["SUPPLY_JSON_KEY_DATA"]
       )
     end
-    default_code = File.read("app/build.gradle")[/^\s*versionCode\s+(\d+)/, 1].to_i
+    app_build_gradle = File.expand_path("../app/build.gradle", __dir__)
+    default_code = File.read(app_build_gradle)[/^\s*versionCode\s+(\d+)/, 1].to_i
     version_code = ([default_code] + play_codes).max + 1
     UI.message("Google Play 배포 버전: #{version_name} (#{version_code})")
 
