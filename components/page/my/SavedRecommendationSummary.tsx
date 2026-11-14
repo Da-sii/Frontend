@@ -12,9 +12,11 @@ export default function SavedRecommendationSummary({
   recommendation,
 }: SavedRecommendationSummaryProps) {
   const items = [...recommendation.items].sort((a, b) => a.rank - b.rank);
+  // SVG 파일명과 아이콘 안의 순위 숫자가 1·2등끼리 반대로 되어 있어,
+  // 저장된 추천 순서(1위 → 3위)에 맞게 표시 순서를 보정한다.
   const rankIcons = [
-    RecommendationRank1Icon,
     RecommendationRank2Icon,
+    RecommendationRank1Icon,
     RecommendationRank3Icon,
   ];
 
