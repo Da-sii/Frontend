@@ -1,15 +1,31 @@
-name: Android Release (Tag -> Play Internal)
+name: Android Release (Manual -> Play Internal)
 
 on:
-  push:
-    tags:
-      - 'android-v*'
+  workflow_dispatch:
+    inputs:
+      version_name:
+        description: '배포할 버전명 (예: 1.6.2)'
+        required: true
+        type: string
+
+concurrency:
+  group: android-play-internal-release
+  cancel-in-progress: false
 
 jobs:
   android-internal:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Ensure main branch
+        env:
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          if [ "$REF_NAME" != main ]; then
+            echo 'Android 배포는 main 브랜치에서만 실행할 수 있습니다.' >&2
+            exit 1
+          fi
+
       - uses: actions/checkout@v4
 
       - uses: actions/setup-java@v4
@@ -34,16 +50,6 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       # ✅ 태그에서 버전 뽑기: android-v1.2.0 -> 1.2.0
-      - name: Extract version from tag
-        run: |
-          TAG="${GITHUB_REF_NAME}"                 # android-v1.2.0+11
-          VERSION_WITH_CODE="${TAG#android-v}"     # 1.2.0+11
-          VERSION_NAME="${VERSION_WITH_CODE%%+*}"  # 1.2.0
-          VERSION_CODE="${VERSION_WITH_CODE##*+}"  # 11
-
-          echo "CI_VERSION_NAME=$VERSION_NAME" >> $GITHUB_ENV
-          echo "CI_VERSION_CODE=$VERSION_CODE" >> $GITHUB_ENV
-
       # ✅ keystore 생성
       - name: Decode keystore
         env:
@@ -65,8 +71,7 @@ jobs:
       - name: Build & Upload (Fastlane)
         env:
           SUPPLY_JSON_KEY_DATA: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
-          CI_VERSION_NAME: ${{ env.CI_VERSION_NAME }}
-          CI_VERSION_CODE: ${{ env.CI_VERSION_CODE }}
+          CI_VERSION_NAME: ${{ inputs.version_name }}
 
           # ✅ Expo public env
           EXPO_PUBLIC_API_URL: ${{ secrets.EXPO_PUBLIC_API_URL }}

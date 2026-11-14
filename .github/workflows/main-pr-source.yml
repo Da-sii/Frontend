@@ -1,0 +1,22 @@
+name: Main PR Source
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  require-develop:
+    name: Require develop as PR source
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check source branch
+        env:
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
+          BASE_REPO: ${{ github.repository }}
+        run: |
+          if [ "$HEAD_REPO" != "$BASE_REPO" ] || [ "$HEAD_BRANCH" != develop ]; then
+            echo 'main 대상 PR은 같은 저장소의 develop 브랜치에서만 생성할 수 있습니다.' >&2
+            exit 1
+          fi
