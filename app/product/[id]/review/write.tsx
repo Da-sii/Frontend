@@ -125,7 +125,7 @@ export default function ReviewWritePage() {
         if (!newId) throw new Error('리뷰 생성 실패: review_id 없음');
 
         if (images.length) await upload(newId, images);
-        router.push(`/product/${id}/review/success`);
+        router.replace(`/product/${id}/review/success`);
         return;
       }
 
