@@ -4,7 +4,19 @@ platform :android do
   desc "Build AAB and upload to Google Play internal track"
   lane :internal do
     version_name = ENV["CI_VERSION_NAME"]
-    version_code = ENV["CI_VERSION_CODE"]
+    UI.user_error!("버전명을 입력해 주세요.") if version_name.to_s.strip.empty?
+
+    # Google Play에 올라간 최신 코드와 프로젝트 기본값 중 큰 값 다음 번호를 사용합니다.
+    play_codes = %w[internal production beta alpha].flat_map do |track|
+      google_play_track_version_codes(
+        package_name: "com.dasii",
+        track: track,
+        json_key_data: ENV["SUPPLY_JSON_KEY_DATA"]
+      )
+    end
+    default_code = File.read("app/build.gradle")[/^\s*versionCode\s+(\d+)/, 1].to_i
+    version_code = ([default_code] + play_codes).max + 1
+    UI.message("Google Play 배포 버전: #{version_name} (#{version_code})")
 
     gradle(
       task: "bundle",

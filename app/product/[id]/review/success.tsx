@@ -5,7 +5,7 @@ import { useGetThreeRandomProduct } from '@/hooks/product/useGetRandomProduct';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-export default function sucess() {
+export default function ReviewSuccess() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>(); // 제품 id
   const { data: randomProducts, isLoading, isError } = useGetThreeRandomProduct();
@@ -20,13 +20,13 @@ export default function sucess() {
         title='리뷰 작성 완료'
         right={<XIcon width={18} height={18} />}
         onRightPress={() => {
-          router.replace(`/product/${id}/productDetail` as any);
+          router.dismissTo(`/product/${id}/productDetail`);
         }}
       />
 
       <View className='p-5'>
         <Text className='text-b-sm font-extrabold mb-5'>
-          이 제품을 써 봤다면 리뷰를 남겨주세요!
+          이 제품도 함께 둘러보세요!
         </Text>
 
         {isLoading && <Text className='text-g-sm'>추천 상품을 불러오는 중…</Text>}
@@ -39,18 +39,10 @@ export default function sucess() {
               brand={p?.company ?? ''}
               name={p?.name ?? ''}
               image={typeof p?.image === 'string' ? p.image : ''}
-              buttonName='리뷰쓰기'
+              buttonName='보러가기'
               onPress={() => {
-                if (!p?.id) return; // 안전 가드
-                router.push({
-                  pathname: `/product/${p.id}/review/write` as any,
-                  params: {
-                    id: String(p.id),
-                    name: p?.name ?? '',
-                    brand: p?.company ?? '',
-                    image: typeof p?.image === 'string' ? p.image : '',
-                  },
-                });
+                if (!p?.id) return;
+                router.push(`/product/${p.id}/productDetail`);
               }}
             />
           ))}
